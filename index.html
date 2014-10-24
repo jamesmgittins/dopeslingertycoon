@@ -8,6 +8,17 @@
     <script src="js/bootstrap.min.js"></script>
     <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
     <style>
+
+        .icongreen {
+            color:#00BB00;
+            font-size:18px;
+        }
+
+        div.container {
+               max-width:900px;
+               padding:15px 0;
+        }
+
         @viewport {
             zoom: 1.0;
         }
@@ -30,7 +41,7 @@
         }
 
         #weed, #total-weed {
-            color: #00CC00;
+            color: #00BB00;
         }
 
         label {
@@ -130,7 +141,7 @@
             $('#weed').html(formatDrugs(weed));
             $('#earned').html(formatMoney(totalCashEarned));
 
-            $('#upgrade-dealer span').html(formatMoney(dealerUpgradePrice));
+            $('#upgrade-dealer span.price').html(formatMoney(dealerUpgradePrice));
 
 
             if (dealerUpgradePrice > cash) {
@@ -347,7 +358,7 @@
     </script>
 </head>
 <body>
-    <div class="container" style="padding:30px 0;">
+    <div class="container">
         <div class="col-xs-12 hidden-xs">
             <!-- dopeslinger -->
             <ins class="adsbygoogle"
@@ -373,7 +384,7 @@
         </div>
 
         <div class="col-xs-12 col-sm-4">
-            <button onclick="buyTree()" class="btn btn-default">Buy tree (<span class="tree-price">20</span>)</button>
+            <button onclick="buyTree()" class="btn btn-default"><span class="glyphicon icongreen glyphicon-tree-conifer"></span> Buy tree (<span class="tree-price">20</span>)</button>
             <div class="progress"><div id="tree-progress" class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="50"></div></div>
         </div>
 
@@ -381,7 +392,7 @@
 
         <div class="clearfix"></div>
         <div class="col-xs-12 col-sm-4">
-            <button onclick="upgradeTrees()" class="btn btn-default" type="button">Upgrade trees (<span class="upgrade-price"></span>)</button>
+            <button onclick="upgradeTrees()" class="btn btn-default" type="button"><span class="glyphicon glyphicon-arrow-up icongreen"></span> Upgrade trees (<span class="upgrade-price"></span>)</button>
             <div class="progress"><div id="upgrade-progress" class="progress-bar progress-bar-striped"></div></div>
         </div>
         <div class="col-xs-12 col-sm-4"><label>Auto buy</label><input type="checkbox" id="auto_buy_upgrade" class="checkbox"></div>
@@ -395,7 +406,7 @@
         <div class="clearfix"></div>
         <div class="col-xs-12 col-sm-4">
 
-            <button id="upgrade-dealer" onclick="upgradeDealers()" class="btn btn-default" type="button">Upgrade dealers (<span></span>)</button>
+            <button id="upgrade-dealer" onclick="upgradeDealers()" class="btn btn-default" type="button"><span class="glyphicon glyphicon-arrow-up icongreen"></span> Upgrade dealers (<span class="price"></span>)</button>
 
             <div class="progress"><div id="upgrade-dealer-progress" class="progress-bar progress-bar-striped"></div></div>
 
