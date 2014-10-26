@@ -156,7 +156,7 @@
             var dealerUpgradePrice = dealerUpgradeBasePrice * Math.pow(dealerUpgradePriceMulti, dealerUpgrades);
 
             $('#cash').html(formatMoneyHtml(cash));
-            updateToolTipText($('#cash'), 'Total cash earned £' + formatMoney(totalCashEarned));
+            updateToolTipText($('#cash'), 'Total cash earned $' + formatMoney(totalCashEarned));
             $('#weed').html(formatDrugs(weed));
             updateToolTipText($('#weed'), 'Total weed grown ' + formatDrugs(totalWeedGrown));
 
@@ -318,7 +318,7 @@
         }
 
         function formatMoneyHtml(value) {
-            return '&pound;' + formatMoney(value);
+            return '$' + formatMoney(value);
         }
 
         function formatDrugs(value) {
