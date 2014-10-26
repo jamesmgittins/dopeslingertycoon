@@ -275,6 +275,7 @@
                 cash = cash - upgradeCost;
                 treeUpgrades++;
                 writeToCookie();
+                updateToolTipText($('#buy-tree-btn'), 'Buy a tree, increasing your weed production by ' + formatDrugs(baseWeedPerTree * Math.pow(treeUpgradeWeedMulti, treeUpgrades) * 1000) + ' per second');
             }
         }
 
@@ -285,6 +286,7 @@
                 cash = cash - upgradeCost;
                 dealerUpgrades++;
                 writeToCookie();
+                updateToolTipText($('#hire-dealer-button'), 'Hire a dealer to sell your weed costs $1 per second and sells 1g of weed for $' + formatMoney(dealerMulti * Math.pow(dealerUpgradeMulti, dealerUpgrades) * dealers * dealerConversion * 1000));
             }
         }
 
@@ -334,6 +336,11 @@
         $(document).ready(function () {
             readFromCookie();
             interval = setInterval(update, 90);
+            updateToolTipText($('#buy-tree-btn'), 'Buy a tree, increasing your weed production by 0.1g per second');
+            updateToolTipText($('#upgrade-tree-btn'), 'Upgrade your trees, increasing the amount of weed they produce by 20%');
+            updateToolTipText($('#hire-dealer-button'), 'Hire a dealer to sell your weed costs $1 per second and sells 1g of weed for $4');
+            updateToolTipText($('#fire-dealer'), 'Fire a dealer to reduce your costs by $1 per second');
+            updateToolTipText($('#upgrade-dealer'), 'Upgrade your dealers, increasing the amount of money they earn by 15%');
         });
 
     </script>
@@ -369,19 +376,19 @@
         </div>
 
         <div class="col-xs-12 col-sm-4">
-            <button onclick="buyTree()" class="btn btn-default"><span class="glyphicon icongreen glyphicon-tree-conifer"></span> Buy tree (<span class="tree-price strong">20</span>)</button>
+            <button onclick="buyTree()" class="btn btn-default" id="buy-tree-btn"><span class="glyphicon icongreen glyphicon-tree-conifer"></span> Buy tree (<span class="tree-price strong">20</span>)</button>
             <div class="progress"><div id="tree-progress" class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="50"></div></div>
         </div>
         
         <div class="clearfix"></div>
         <div class="col-xs-12 col-sm-4">
-            <button onclick="upgradeTrees()" class="btn btn-default" type="button"><span class="glyphicon glyphicon-arrow-up icongreen"></span> Upgrade trees (<span class="upgrade-price strong"></span>)</button>
+            <button onclick="upgradeTrees()" class="btn btn-default" type="button" id="upgrade-tree-btn"><span class="glyphicon glyphicon-arrow-up icongreen"></span> Upgrade trees (<span class="upgrade-price strong"></span>)</button>
             <div class="progress"><div id="upgrade-progress" class="progress-bar progress-bar-striped"></div></div>
         </div>
 
         <div class="clearfix"></div>
         <div class="col-xs-12 col-sm-4"> 
-            <button onclick="hireDealer()" class="btn btn-default" type="button"><span class="glyphicon icongreen glyphicon-user"></span> Hire dealer (<span class="dealer-price strong">&pound;1</span> per second)</button>
+            <button onclick="hireDealer()" class="btn btn-default" type="button" id="hire-dealer-button"><span class="glyphicon icongreen glyphicon-user"></span> Hire dealer (<span class="dealer-price strong">&pound;1</span> per second)</button>
             <button id="fire-dealer" onclick="fireDealer()" class="btn btn-default" type="button"><span class="glyphicon iconred glyphicon-user"></span> Fire a dealer</button>
         </div>
 
