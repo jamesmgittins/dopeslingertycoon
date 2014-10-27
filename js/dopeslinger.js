@@ -1,6 +1,6 @@
-﻿var maleFirstNames = ['Jethro','John','Spencer','Snoop','Leeroy','Maxwell','Kingston','Clark','Clarence','Drexyl','Randy'];
-var femaleFirstNames = ['Harriet','Amanda','Snoop','Eve','Tanya','Patricia','Muriel','Julia','Samantha','Scarlet','Nicki','Rachel'];
-var lastNames = ['Tull','Sulley','Matrix','Jenkins','Jackson','Gentworth','Heart','Rippley','Stewart','Lee','Roper','Whirley','Murphy','Rico'];
+var maleFirstNames = ['Avon','Billy','Bobby','Bret','Cedric','Charles','Clarence','Clark','Dexter','Drexyl','Floyd','Frank','Freddy','Jethro','Jimmy','John','Kingston','Leeroy','Lester','Maxwell','Michael','Mike','Randy','Reggie','Rico','Roland','Ronnie','Roper','Ross','Sean','Snoop','Spencer','Spike','Steve','Stringer','Stu','Tommy','Tony','William'];
+var femaleFirstNames = ['Alicia','Amanda','Barbara','Becky','Eve','Harriet','Jane','Jenny','Jessica','Joanne','Jodie','Julia','June','Kate','Kim','Kimmy','Laura','Margaret','Muriel','Nicki','Pam','Patricia','Rachel','Rhonda','Rose','Ruby','Samantha','Sarah','Scarlet','Snoop','Stacy','Stephanie','Susie','Tanya','Toni'];
+var lastNames = ['Adams','Barksdale','Baxter','Bell','Braxton','Bronson','Cray','Diamond','Ford','Franklin','French','Gentworth','George','Grey','Harrison','Hogan','Jackson','Jenkins','Jones','Lee','Lloyd','Marshall','Matrix','McGrath','Moreno','Murphy','Rhoades','Savage','Scott','Smith','Stewart','Sulley','Templeton','Thompson','Tull','Washington','Whirley','Wilson'];
 
 function Dealer(seed) {
     this.seed = seed;
