@@ -6,38 +6,48 @@
     <link rel="stylesheet" href="css/bootstrap-theme.min.css">
     <script src="js/jquery.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
+    <script src=//cdnjs.cloudflare.com/ajax/libs/seedrandom/2.3.10/seedrandom.min.js></script>
+    <script src="js/dopeslinger.js"></script>
     <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
     <style>
-
         .iconred {
-            color:#AA0000;
-            font-size:18px;
-            float:left;
+            color: #AA0000;
+            font-size: 18px;
+            float: left;
+        }
+
+        .progress {
+            margin: 0;
         }
 
         .icongreen {
-            color:#00BB00;
-            font-size:18px;
-            float:left;
+            color: #00BB00;
+            font-size: 18px;
+            float: left;
         }
 
-        div.container {
-               max-width:900px;
-               padding:15px 0;
+        .iconyellow {
+            color: #ffd800;
+            font-size: 18px;
         }
+
         span.strong {
-            font-weight:bold;
+            font-weight: bold;
         }
+
         @viewport {
             zoom: 1.0;
         }
+
         button.btn.options-button {
-            margin-bottom:10px;
+            margin-bottom: 10px;
         }
+
         button.btn {
             width: 100%;
             margin-top: 10px;
         }
+
         .progress-bar {
             -webkit-transition: none;
             -moz-transition: none;
@@ -49,12 +59,14 @@
         .weed {
             color: #00A000;
         }
-        .weed + .tooltip > .tooltip-inner {
-            background-color:#00A000;
-        }
-        .weed + .tooltip > .tooltip-arrow {
-            border-top-color:#00A000;
-        }
+
+            .weed + .tooltip > .tooltip-inner {
+                background-color: #00A000;
+            }
+
+            .weed + .tooltip > .tooltip-arrow {
+                border-top-color: #00A000;
+            }
 
         label {
             float: left;
@@ -66,339 +78,89 @@
             margin: 20px 0 0 10px !important;
         }
     </style>
-    <script>
-        var autoMode = false;
-        var cash = 100;
-        var totalCashEarned = 0;
-
-        var weed = 0;
-        var totalWeedGrown = 0;
-
-        var trees = 0;
-        var treeBasePrice = 15;
-
-        var baseWeedPerTree = 0.0001;
-
-        var treeUpgrades = 0;
-
-        var treePriceMulti = 1.07;
-
-        var treeUpgradeBasePrice = 1000;
-
-        var treeUpgradePriceMulti = 1.95;
-
-        var treeUpgradeWeedMulti = 1.2;
-
-        var dealers = 0;
-
-        var dealerUpgrades = 0;
-
-        var dealerUpgradePriceMulti = 2.95;
-
-        var dealerUpgradeMulti = 1.15;
-
-        var dealerUpgradeBasePrice = 500;
-        var costPerDealer = 0.001;
-        var dealerConversion = 0.001;
-        var dealerMulti = 4;
-
-        var interval;
-        var lastUpdate = 0;
-        var lastSaved = 0;
-
-        function readFromCookie() {
-            console.log("reading from local storage");
-            if (typeof (Storage) == "undefined") {
-                console.log("no local storage!");
-                return;
-            }
-            if (localStorage.getItem("cash") != null) cash = Number(localStorage.getItem("cash"));
-            if (localStorage.getItem("totalCashEarned") != null) totalCashEarned = Number(localStorage.getItem("totalCashEarned"));
-            if (localStorage.getItem("totalWeedGrown") != null) totalWeedGrown = Number(localStorage.getItem("totalWeedGrown"));
-            if (localStorage.getItem("trees") != null) trees = Number(localStorage.getItem("trees"));
-            if (localStorage.getItem("treeUpgrades") != null) treeUpgrades = Number(localStorage.getItem("treeUpgrades"));
-            if (localStorage.getItem("dealerUpgrades") != null) dealerUpgrades = Number(localStorage.getItem("dealerUpgrades"));
-            if (localStorage.getItem("dealers") != null) dealers = Number(localStorage.getItem("dealers"));
-            if (localStorage.getItem("weed") != null) weed = Number(localStorage.getItem("weed"));
-        }
-
-        function writeToCookie() {
-            console.log("writing to local storage")
-            if (typeof (Storage) == "undefined") {
-                console.log("no local storage!");
-                return;
-            }
-            localStorage.setItem("cash", cash);
-            localStorage.setItem("totalCashEarned", totalCashEarned);
-            localStorage.setItem("totalWeedGrown", totalWeedGrown);
-            localStorage.setItem("trees", trees);
-            localStorage.setItem("treeUpgrades", treeUpgrades);
-            localStorage.setItem("dealers", dealers);
-            localStorage.setItem("dealerUpgrades", dealerUpgrades);
-            localStorage.setItem("weed", weed);
-        }
-
-        function updateToolTipText(target, text) {
-            if ($(target).data('bs.tooltip') && $(target).data('bs.tooltip').$tip) {
-                $(target).attr('title', text).tooltip('fixTitle').data('bs.tooltip').$tip.find('.tooltip-inner').text(text);
-            } else {
-                $(target).tooltip({title:text});
-            }
-            
-        }
-
-        function updateUI() {
-
-            var treePrice = treeBasePrice * Math.pow(treePriceMulti, trees);
-
-            var upgradePrice = treeUpgradeBasePrice * Math.pow(treeUpgradePriceMulti, treeUpgrades);
-
-            var dealerUpgradePrice = dealerUpgradeBasePrice * Math.pow(dealerUpgradePriceMulti, dealerUpgrades);
-
-            $('#cash').html(formatMoneyHtml(cash));
-            updateToolTipText($('#cash'), 'Total cash earned $' + formatMoney(totalCashEarned));
-            $('#weed').html(formatDrugs(weed));
-            updateToolTipText($('#weed'), 'Total weed grown ' + formatDrugs(totalWeedGrown));
-
-            $('#upgrade-dealer span.price').html(formatMoneyHtml(dealerUpgradePrice));
-
-
-            if (dealerUpgradePrice > cash) {
-                $('#upgrade-dealer').attr('disabled', 'disabled');
-
-                $('#upgrade-dealer-progress').removeClass('progress-bar-success').addClass('active progress-bar-striped');
-
-            } else {
-
-                $('#upgrade-dealer').removeAttr('disabled');
-
-                $('#upgrade-dealer-progress').addClass('progress-bar-success').removeClass('active progress-bar-striped');
-
-            }
-
-            $('.tree-price').each(function () {
-                $(this).html(formatMoneyHtml(treePrice));
-                if (treePrice > cash) {
-                    $(this).closest('button').attr('disabled', 'disabled');
-                    $('#tree-progress').removeClass('progress-bar-success').addClass('active progress-bar-striped');
-                } else {
-                    $(this).closest('button').removeAttr('disabled');
-                    $('#tree-progress').addClass('progress-bar-success').removeClass('active progress-bar-striped');
-                }
-            });
-
-            $('.upgrade-price').each(function () {
-                $(this).html(formatMoneyHtml(upgradePrice));
-                if (upgradePrice > cash) {
-                    $(this).closest('button').attr('disabled', 'disabled');
-                    $('#upgrade-progress').removeClass('progress-bar-success').addClass('active progress-bar-striped');
-                } else {
-                    $(this).closest('button').removeAttr('disabled');
-                    $('#upgrade-progress').addClass('progress-bar-success').removeClass('active progress-bar-striped');
-                }
-            });
-
-            $('.dealer-price').html(formatMoneyHtml(costPerDealer * 1000));
-            $('#generating').html(formatDrugs(trees * baseWeedPerTree * Math.pow(treeUpgradeWeedMulti, treeUpgrades) * 1000));
-            $('#generate_per_tree').html(formatDrugs(baseWeedPerTree * Math.pow(treeUpgradeWeedMulti, treeUpgrades) * 1000));
-            $('#tree-progress').css('width', Math.min(100, (cash / (treeBasePrice * Math.pow(treePriceMulti, trees)) * 100)).toFixed(2) + '%');
-            $('#upgrade-progress').css('width', Math.min(100, (cash / (treeUpgradeBasePrice * Math.pow(treeUpgradePriceMulti, treeUpgrades)) * 100)).toFixed(2) + '%');
-            $('#upgrade-dealer-progress').css('width', Math.min(100, (cash / (dealerUpgradeBasePrice * Math.pow(dealerUpgradePriceMulti, dealerUpgrades)) * 100)).toFixed(2) + '%');
-            $('#upgrades').html(treeUpgrades);
-            $('#dealers').html(dealers);
-            $('#converting').html(formatDrugs(dealers * dealerConversion * 1000));
-            $('#revenue').html(formatMoneyHtml(dealerMulti * Math.pow(dealerUpgradeMulti, dealerUpgrades) * dealers * dealerConversion * 1000));
-            $('#trees').html(trees);
-            $('#dealer-upgrades').html(dealerUpgrades);
-            $('#dealer-upgrade-income').html(formatMoneyHtml(dealerMulti * Math.pow(dealerUpgradeMulti, dealerUpgrades)));
-        }
-
-        function update() {
-            var updateTime = new Date().getTime();
-            var timeDiff = (Math.min(1000, updateTime - lastUpdate));
-
-            if (autoMode) {
-                buyTree();
-                upgradeTrees();
-                upgradeDealers();
-                dealers = Math.min(Math.floor(weed), (trees * (baseWeedPerTree * Math.pow(treeUpgradeWeedMulti, treeUpgrades)) * (2000)).toFixed());
-            }
-
-            var cashEarned = 0;
-            var weedGrown = trees * (baseWeedPerTree * Math.pow(treeUpgradeWeedMulti, treeUpgrades)) * (timeDiff);
-            var weedSold = 0;
-            var cashSpent = (dealers * costPerDealer * (timeDiff));
-
-            if (weed + weedGrown >= dealers * dealerConversion * (timeDiff)) {
-                cashEarned = dealerMulti * Math.pow(dealerUpgradeMulti, dealerUpgrades) * dealerConversion * dealers * (timeDiff);
-                weedSold = dealers * dealerConversion * (timeDiff);
-            }
-
-            weed = weed + weedGrown - weedSold;
-            cash = cash + cashEarned - cashSpent;
-
-            totalWeedGrown += weedGrown;
-            totalCashEarned += cashEarned;
-            lastUpdate = updateTime;
-            updateUI();
-            if (lastSaved < updateTime - 30000) {
-                writeToCookie();
-                lastSaved = updateTime;
-            }
-        }
-
-        function resetGame() {
-            localStorage.removeItem("cash");
-            localStorage.removeItem("totalCashEarned");
-            localStorage.removeItem("totalWeedGrown");
-            localStorage.removeItem("trees");
-            localStorage.removeItem("treeUpgrades");
-            localStorage.removeItem("dealerUpgrades");
-            localStorage.removeItem("dealers");
-            localStorage.removeItem("weed");
-            window.location.reload();
-        }
-
-        function buyTree() {
-            var treeCost = treeBasePrice * Math.pow(treePriceMulti, trees);
-            if (cash > treeCost) {
-                cash = cash - treeCost;
-                trees++;
-                writeToCookie();
-            }
-        }
-
-        function upgradeTrees() {
-
-            var upgradeCost = treeUpgradeBasePrice * Math.pow(treeUpgradePriceMulti, treeUpgrades);
-            if (cash > upgradeCost) {
-                cash = cash - upgradeCost;
-                treeUpgrades++;
-                writeToCookie();
-                updateToolTipText($('#buy-tree-btn'), 'Buy a tree, increasing your weed production by ' + formatDrugs(baseWeedPerTree * Math.pow(treeUpgradeWeedMulti, treeUpgrades) * 1000) + ' per second');
-            }
-        }
-
-
-        function upgradeDealers() {
-            var upgradeCost = dealerUpgradeBasePrice * Math.pow(dealerUpgradePriceMulti, dealerUpgrades);
-            if (cash > upgradeCost) {
-                cash = cash - upgradeCost;
-                dealerUpgrades++;
-                writeToCookie();
-                updateToolTipText($('#hire-dealer-button'), 'Hire a dealer to sell your weed costs $1 per second and sells 1g of weed for $' + formatMoney(dealerMulti * Math.pow(dealerUpgradeMulti, dealerUpgrades)));
-            }
-        }
-
-        function hireDealer() {
-            dealers++;
-            $('#fire-dealer').removeAttr('disabled');
-        }
-
-        function toggleNsfwMode() {
-            $('.nsfw').toggleClass('hidden');
-        }
-
-        function fireDealer() {
-            if (dealers > 0)
-                dealers--;
-            if (dealers <= 0)
-                $('#fire-dealer').attr('disabled', 'disabled');
-        }
-
-        function formatMoney(value) {
-            if (value > 1000000000000)
-                return (value / 1000000000000).toFixed(2) + 'T';
-            if (value > 1000000000)
-                return  (value / 1000000000).toFixed(2) + 'B';
-            if (value > 1000000)
-                return (value / 1000000).toFixed(2) + 'M';
-            if (value > 1000)
-                return (value / 1000).toFixed(2) + 'K';
-
-            return value.toFixed(2);
-        }
-
-        function formatMoneyHtml(value) {
-            return '$' + formatMoney(value);
-        }
-
-        function formatDrugs(value) {
-            if (value > 1000)
-                return (value / 1000).toFixed(2) + 'kg';
-
-            if (value < 0.01)
-                return (value * 1000).toFixed(2) + 'mg'
-
-            return value.toFixed(2) + "g";
-        }
-
-        $(document).ready(function () {
-            readFromCookie();
-            interval = setInterval(update, 90);
-            updateToolTipText($('#buy-tree-btn'), 'Buy a tree, increasing your weed production by ' + formatDrugs(baseWeedPerTree * Math.pow(treeUpgradeWeedMulti, treeUpgrades) * 1000) + ' per second');
-            updateToolTipText($('#upgrade-tree-btn'), 'Upgrade your trees, increasing the amount of weed they produce by 20%');
-            updateToolTipText($('#hire-dealer-button'), 'Hire a dealer to sell your weed costs $1 per second and sells 1g of weed for $' + formatMoney(dealerMulti * Math.pow(dealerUpgradeMulti, dealerUpgrades)));
-            updateToolTipText($('#fire-dealer'), 'Fire a dealer to reduce your costs by $1 per second');
-            updateToolTipText($('#upgrade-dealer'), 'Upgrade your dealers, increasing the amount of money they earn by 15%');
-        });
-
-    </script>
 </head>
 <body>
     <div class="container">
-        <div class="col-xs-12 hidden-xs">
-            <!-- dopeslinger -->
-            <ins class="adsbygoogle"
-                 style="display:inline-block;width:728px;height:90px"
-                 data-ad-client="ca-pub-5746977543491330"
-                 data-ad-slot="1058480603"></ins>
-            <script>
-                (adsbygoogle = window.adsbygoogle || []).push({});
-            </script>
-        </div>
-        <div class="col-xs-12 col-sm-9">
-            <h1 class="nsfw">Dope slinger tycoon</h1>
-            <p class="nsfw"><strong>Buy canabis plants to grow weed. Hire dealers to sell the weed.</strong></p>
+        <div class="row">
+            <div class="col-xs-12 hidden-xs">
+                <!-- dopeslinger -->
+                <ins class="adsbygoogle"
+                     style="display:inline-block;width:728px;height:90px"
+                     data-ad-client="ca-pub-5746977543491330"
+                     data-ad-slot="1058480603"></ins>
+                <script>
+                    (adsbygoogle = window.adsbygoogle || []).push({});
+                </script>
+            </div>
+            <div class="col-xs-12 col-sm-9 col-md-10">
+                <h1 class="nsfw">Dope slinger tycoon</h1>
+                <p class="nsfw"><strong>Buy canabis plants to grow weed. Hire dealers to sell the weed.</strong></p>
+            </div>
+
+            <div class="col-xs-12 col-sm-3 col-md-2">
+                <button onclick="$('#optionsModal').modal('show');" class="btn btn-default options-button"><span class="iconred glyphicon glyphicon-cog"></span> Options</button>
+            </div>
+
+            <div class="col-xs-12">
+                <p>Current cash: <span id="cash" class="strong"></span></p>
+                <p>Current <span class="nsfw">weed</span> stash: <span id="weed" class="strong weed"></span></p>
+                <p>Trees: <span id="trees" class="strong"></span> Generating <span id="generating" class="strong weed">0</span> per second</p>
+                <p>Tree upgrades: <span id="upgrades" class="strong">0</span> each tree now generates <span id="generate_per_tree" class="strong weed"></span> per second</p>
+                <p>Dealers: <span id="dealers" class="strong">0</span> selling <span id="converting" class="strong weed"></span> <span class="nsfw">of weed</span> for <span id="revenue" class="strong"></span> per second</p>
+                <p>Dealer upgrades: <span id="dealer-upgrades" class="strong">0</span>, each dealer now sells <span class="strong dealer-sells weed">1g</span> for <span id="dealer-upgrade-income" class="strong"></span></p>
+            </div>
+
+            <div class="col-xs-12 col-sm-4">
+                <button onclick="buyTree()" class="btn btn-default" id="buy-tree-btn"><span class="glyphicon icongreen glyphicon-tree-conifer"></span> Buy tree (<span class="tree-price strong">20</span>)</button>
+                <div class="progress"><div id="tree-progress" class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="50"></div></div>
+                <button onclick="upgradeTrees()" class="btn btn-default" type="button" id="upgrade-tree-btn"><span class="glyphicon glyphicon-arrow-up icongreen"></span> Upgrade trees (<span class="upgrade-price strong"></span>)</button>
+                <div class="progress"><div id="upgrade-progress" class="progress-bar progress-bar-striped"></div></div>
+            </div>
+
+
+            <div class="col-xs-12 col-sm-4">
+                <button onclick="showDealerModal()" class="btn btn-default" type="button" id="hire-dealer-button"><span class="glyphicon icongreen glyphicon-user"></span> Hire dealer</button>
+                <div id="dealer-ui"></div>
+            </div>
+
+            <div class="col-xs-12 col-sm-4">
+                <button id="upgrade-dealer" onclick="upgradeDealers()" class="btn btn-default" type="button"><span class="glyphicon glyphicon-arrow-up icongreen"></span> Upgrade dealers (<span class="price strong"></span>)</button>
+                <div class="progress"><div id="upgrade-dealer-progress" class="progress-bar progress-bar-striped"></div></div>
+            </div>
+
         </div>
 
-        <div class="col-xs-12 col-sm-3 col-md-2">
-            <button onclick="$('#optionsModal').modal('show');" class="btn btn-default options-button"><span class="iconred glyphicon glyphicon-cog"></span> Options</button>
-        </div>
+    </div>
 
-        <div class="col-xs-12">
-            <p>Current cash: <span id="cash" class="strong"></span></p>
-            <p>Current <span class="nsfw">weed</span> stash: <span id="weed" class="strong weed"></span></p>
-            <p>Trees: <span id="trees" class="strong"></span> Generating <span id="generating" class="strong">0</span> per second</p>
-            <p>Tree upgrades: <span id="upgrades" class="strong">0</span> each tree now generates <span id="generate_per_tree" class="strong weed"></span> per second</p>
-            <p>Dealers: <span id="dealers" class="strong">0</span> selling <span id="converting" class="strong weed"></span> <span class="nsfw">of weed</span> for <span id="revenue" class="strong"></span> per second</p>
-            <p>Dealer upgrades: <span id="dealer-upgrades" class="strong">0</span>, each dealer now sells <span class="strong dealer-sells weed">1g</span> for <span id="dealer-upgrade-income" class="strong"></span></p>
+    <div class="modal fade" id="hireDealerModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Hire dealer</h4>
+                </div>
+                <div class="modal-body row">
+                    <div class="col-xs-12 col-sm-4 dealer1">
+                        <p><span class="name strong"></span></p>
+                        <p>Volume: <span class="volume iconyellow"></span></p>
+                        <p>Price: <span class="price iconyellow"></span></p>
+                        <button class="btn btn-default" onclick="hireDealer(this)">Hire dealer</button>
+                    </div>
+                    <div class="col-xs-12 col-sm-4 dealer2">
+                        <p><span class="name strong"></span></p>
+                        <p>Volume: <span class="volume iconyellow"></span></p>
+                        <p>Price: <span class="price iconyellow"></span></p>
+                        <button class="btn btn-default" onclick="hireDealer(this)">Hire dealer</button>
+                    </div>
+                    <div class="col-xs-12 col-sm-4 dealer3">
+                        <p><span class="name strong"></span></p>
+                        <p>Volume: <span class="volume iconyellow"></span></p>
+                        <p>Price: <span class="price iconyellow"></span></p>
+                        <button class="btn btn-default" onclick="hireDealer(this)">Hire dealer</button>
+                    </div>
+                </div>
+            </div>
         </div>
-
-        <div class="col-xs-12 col-sm-4">
-            <button onclick="buyTree()" class="btn btn-default" id="buy-tree-btn"><span class="glyphicon icongreen glyphicon-tree-conifer"></span> Buy tree (<span class="tree-price strong">20</span>)</button>
-            <div class="progress"><div id="tree-progress" class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="50"></div></div>
-        </div>
-        
-        <div class="clearfix"></div>
-        <div class="col-xs-12 col-sm-4">
-            <button onclick="upgradeTrees()" class="btn btn-default" type="button" id="upgrade-tree-btn"><span class="glyphicon glyphicon-arrow-up icongreen"></span> Upgrade trees (<span class="upgrade-price strong"></span>)</button>
-            <div class="progress"><div id="upgrade-progress" class="progress-bar progress-bar-striped"></div></div>
-        </div>
-
-        <div class="clearfix"></div>
-        <div class="col-xs-12 col-sm-4"> 
-            <button onclick="hireDealer()" class="btn btn-default" type="button" id="hire-dealer-button"><span class="glyphicon icongreen glyphicon-user"></span> Hire dealer (<span class="dealer-price strong">&pound;1</span> per second)</button>
-            <button id="fire-dealer" onclick="fireDealer()" class="btn btn-default" type="button"><span class="glyphicon iconred glyphicon-user"></span> Fire a dealer</button>
-        </div>
-
-        <div class="clearfix"></div>
-
-        <div class="col-xs-12 col-sm-4">
-            <button id="upgrade-dealer" onclick="upgradeDealers()" class="btn btn-default" type="button"><span class="glyphicon glyphicon-arrow-up icongreen"></span> Upgrade dealers (<span class="price strong"></span>)</button>
-            <div class="progress"><div id="upgrade-dealer-progress" class="progress-bar progress-bar-striped"></div></div>
-        </div>
-        
     </div>
 
     <div class="modal fade" id="optionsModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -419,5 +181,6 @@
             </div>
         </div>
     </div>
+
 </body>
 </html>
