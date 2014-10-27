@@ -76,7 +76,7 @@ function readFromCookie() {
         var dealerSeeds = String(localStorage.getItem("dealers")).split(';');
         dealers = [];
         for (var index = 0; index < dealerSeeds.length; index++) {
-            dealers[index] = new Dealer(Number(dealerSeeds[index]));
+            dealers[index] = new Dealer(String(dealerSeeds[index]));
         }
     }
     if (localStorage.getItem("weed") != null) weed = Number(localStorage.getItem("weed"));
@@ -162,7 +162,7 @@ function updateUI() {
     });
     $('#generating').html(formatDrugs(trees * baseWeedPerTree * Math.pow(treeUpgradeWeedMulti, treeUpgrades) * 1000));
     $('#generate_per_tree').html(formatDrugs(baseWeedPerTree * Math.pow(treeUpgradeWeedMulti, treeUpgrades) * 1000));
-    $('#tree-progress').css('width', Math.min(100, (cash / (treeBasePrice * Math.pow(treePriceMulti, trees)) * 100)).toFixed(2) + '%');
+    $('#tree-progress').css('width', Math.min(100, (cash / (treeBasePrice * Math.pow(treePriceMulti, trees)) * 100)).toFixed(0) + '%');
     $('#upgrade-progress').css('width', Math.min(100, (cash / (treeUpgradeBasePrice * Math.pow(treeUpgradePriceMulti, treeUpgrades)) * 100)).toFixed(2) + '%');
     $('#upgrade-dealer-progress').css('width', Math.min(100, (cash / (dealerUpgradeBasePrice * Math.pow(dealerUpgradePriceMulti, dealerUpgrades)) * 100)).toFixed(2) + '%');
     $('#upgrades').html(treeUpgrades);
@@ -177,7 +177,7 @@ function updateUI() {
     $('#revenue').html(formatMoneyHtml(totalEarned));
     $('#trees').html(trees);
     $('#dealer-upgrades').html(dealerUpgrades);
-    $('#dealer-upgrade-income').html(formatMoneyHtml(dealerMulti * Math.pow(dealerUpgradeMulti, dealerUpgrades)));
+    $('#dealer-upgrade-income').html((Math.pow(dealerUpgradeMulti, dealerUpgrades) * 100 - 100).toFixed(2) + '%');
 }
 
 function update() {
@@ -334,16 +334,16 @@ function showDealerModal() {
 
     var seed = (new Date().getTime() / 60000).toFixed();
 
-    createDealerToHire(new Dealer(seed), '.dealer1');
-    createDealerToHire(new Dealer(seed + 1), '.dealer2');
-    createDealerToHire(new Dealer(seed + 2), '.dealer3');
+    createDealerToHire(new Dealer(String(seed)), '.dealer1');
+    createDealerToHire(new Dealer(String(seed + 1)), '.dealer2');
+    createDealerToHire(new Dealer(String(seed + 2)), '.dealer3');
 
     $('#hireDealerModal').modal('show');
 }
 
 function hireDealer(button) {
     console.log($(button).data('dealer'));
-    dealers[dealers.length] = new Dealer($(button).data('dealer'));
+    dealers[dealers.length] = new Dealer(String($(button).data('dealer')));
     updateDealersUI();
     $('#hireDealerModal').modal('hide');
     $('#fire-dealer').removeAttr('disabled');
