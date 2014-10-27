@@ -1,6 +1,6 @@
-var maleFirstNames = ['Avon','Billy','Bobby','Bret','Cedric','Charles','Clarence','Clark','Dexter','Drexyl','Floyd','Frank','Freddy','Jethro','Jimmy','John','Kingston','Leeroy','Lester','Maxwell','Michael','Mike','Randy','Reggie','Rico','Roland','Ronnie','Roper','Ross','Sean','Snoop','Spencer','Spike','Steve','Stringer','Stu','Tommy','Tony','William'];
-var femaleFirstNames = ['Alicia','Amanda','Barbara','Becky','Eve','Harriet','Jane','Jenny','Jessica','Joanne','Jodie','Julia','June','Kate','Kim','Kimmy','Laura','Margaret','Muriel','Nicki','Pam','Patricia','Rachel','Rhonda','Rose','Ruby','Samantha','Sarah','Scarlet','Snoop','Stacy','Stephanie','Susie','Tanya','Toni'];
-var lastNames = ['Adams','Barksdale','Baxter','Bell','Braxton','Bronson','Cray','Diamond','Ford','Franklin','French','Gentworth','George','Grey','Harrison','Hogan','Jackson','Jenkins','Jones','Lee','Lloyd','Marshall','Matrix','McGrath','Moreno','Murphy','Rhoades','Savage','Scott','Smith','Stewart','Sulley','Templeton','Thompson','Tull','Washington','Whirley','Wilson'];
+var maleFirstNames = ['Avon', 'Billy', 'Bobby', 'Bret', 'Cedric', 'Charles', 'Clarence', 'Clark', 'Dexter', 'Drexyl', 'Floyd', 'Frank', 'Freddy', 'Jethro', 'Jimmy', 'John', 'Kingston', 'Leeroy', 'Lester', 'Maxwell', 'Michael', 'Mike', 'Randy', 'Reggie', 'Robert', 'Roland', 'Ronnie', 'Roper', 'Ross', 'Sean', 'Snoop', 'Spencer', 'Spike', 'Steve', 'Stringer', 'Stu', 'Tommy', 'Tony', 'William'];
+var femaleFirstNames = ['Alicia', 'Amanda', 'Barbara', 'Becky', 'Eve', 'Harriet', 'Jane', 'Jenny', 'Jessica', 'Joanne', 'Jodie', 'Julia', 'June', 'Kate', 'Kim', 'Kimmy', 'Laura', 'Margaret', 'Muriel', 'Nicki', 'Pam', 'Patricia', 'Rachel', 'Rhonda', 'Rose', 'Ruby', 'Samantha', 'Sarah', 'Scarlet', 'Snoop', 'Stacy', 'Stephanie', 'Susie', 'Tanya', 'Toni', 'Victoria'];
+var lastNames = ['Adams', 'Barksdale', 'Baxter', 'Bell', 'Braxton', 'Bronson', 'Cray', 'Diamond', 'Ford', 'Franklin', 'French', 'Gentworth', 'George', 'Grey', 'Harrison', 'Hogan', 'Jackson', 'Jenkins', 'Jones', 'Lee', 'Lloyd', 'Marshall', 'Matrix', 'McGrath', 'Moreno', 'Murphy', 'Rhoades', 'Rico', 'Savage', 'Scott', 'Smith', 'Stewart', 'Sulley', 'Templeton', 'Thompson', 'Tull', 'Washington', 'Wilson', 'Worley', 'Young'];
 
 function Dealer(seed) {
     this.seed = seed;
@@ -14,6 +14,12 @@ function Dealer(seed) {
         this.male = false;
         this.name = femaleFirstNames[Math.floor(Math.random() * femaleFirstNames.length)] + ' ' + lastNames[Math.floor(Math.random() * lastNames.length)];
     }
+}
+Dealer.prototype.getActualVolume = function () {
+    return this.volume * dealerConversion;
+}
+Dealer.prototype.getActualPrice = function () {
+    return this.price * dealerMulti * Math.pow(dealerUpgradeMulti, dealerUpgrades);
 }
 
 var autoMode = false;
@@ -47,8 +53,7 @@ var dealerUpgradePriceMulti = 2.95;
 var dealerUpgradeMulti = 1.15;
 
 var dealerUpgradeBasePrice = 500;
-var costPerDealer = 0.001;
-var dealerConversion = 0.001;
+var dealerConversion = 0.003;
 var dealerMulti = 4;
 
 var interval;
@@ -126,15 +131,10 @@ function updateUI() {
     if (dealerUpgradePrice > cash) {
         $('#upgrade-dealer').tooltip('hide');
         $('#upgrade-dealer').attr('disabled', 'disabled');
-
         $('#upgrade-dealer-progress').removeClass('progress-bar-success').addClass('active progress-bar-striped');
-
     } else {
-
         $('#upgrade-dealer').removeAttr('disabled');
-
         $('#upgrade-dealer-progress').addClass('progress-bar-success').removeClass('active progress-bar-striped');
-
     }
 
     $('.tree-price').each(function () {
@@ -160,8 +160,6 @@ function updateUI() {
             $('#upgrade-progress').addClass('progress-bar-success').removeClass('active progress-bar-striped');
         }
     });
-
-    $('.dealer-price').html(formatMoneyHtml(costPerDealer * 1000));
     $('#generating').html(formatDrugs(trees * baseWeedPerTree * Math.pow(treeUpgradeWeedMulti, treeUpgrades) * 1000));
     $('#generate_per_tree').html(formatDrugs(baseWeedPerTree * Math.pow(treeUpgradeWeedMulti, treeUpgrades) * 1000));
     $('#tree-progress').css('width', Math.min(100, (cash / (treeBasePrice * Math.pow(treePriceMulti, trees)) * 100)).toFixed(2) + '%');
@@ -169,8 +167,14 @@ function updateUI() {
     $('#upgrade-dealer-progress').css('width', Math.min(100, (cash / (dealerUpgradeBasePrice * Math.pow(dealerUpgradePriceMulti, dealerUpgrades)) * 100)).toFixed(2) + '%');
     $('#upgrades').html(treeUpgrades);
     $('#dealers').html(dealers.length);
-    $('#converting').html(formatDrugs(dealers.length * dealerConversion * 1000));
-    $('#revenue').html(formatMoneyHtml(dealerMulti * Math.pow(dealerUpgradeMulti, dealerUpgrades) * dealers.length * dealerConversion * 1000));
+    var weedSold = 0;
+    var totalEarned = 0;
+    for (var i = 0; i < dealers.length; i++) {
+        weedSold += dealers[i].getActualVolume() * 1000;
+        totalEarned += dealers[i].getActualVolume() * 1000 * dealers[i].getActualPrice();
+    }
+    $('#converting').html(formatDrugs(weedSold));
+    $('#revenue').html(formatMoneyHtml(totalEarned));
     $('#trees').html(trees);
     $('#dealer-upgrades').html(dealerUpgrades);
     $('#dealer-upgrade-income').html(formatMoneyHtml(dealerMulti * Math.pow(dealerUpgradeMulti, dealerUpgrades)));
@@ -187,13 +191,15 @@ function update() {
     }
 
     var cashEarned = 0;
+    var cashSpent = 0;
     var weedGrown = trees * (baseWeedPerTree * Math.pow(treeUpgradeWeedMulti, treeUpgrades)) * (timeDiff);
     var weedSold = 0;
-    var cashSpent = (dealers.length * costPerDealer * (timeDiff));
 
-    if (weed + weedGrown >= dealers.length * dealerConversion * (timeDiff)) {
-        cashEarned = dealerMulti * Math.pow(dealerUpgradeMulti, dealerUpgrades) * dealerConversion * dealers.length * (timeDiff);
-        weedSold = dealers.length * dealerConversion * (timeDiff);
+    for (var i = 0; i < dealers.length; i++) {
+        if (weed + weedGrown - weedSold >= dealers[i].getActualVolume() * timeDiff) {
+            cashEarned += dealers[i].getActualPrice() * dealers[i].getActualVolume() * timeDiff;
+            weedSold += dealers[i].getActualVolume() * timeDiff;
+        }
     }
 
     weed = weed + weedGrown - weedSold;
@@ -234,8 +240,41 @@ function updateDealersUI() {
 
     $('#dealer-ui').empty();
     for (var index = 0; index < dealers.length; index++) {
-        $('#dealer-ui').append('<p>' + dealers[index].name + '</p>');
+        $('#dealer-ui').append('<div class="dealer" data-dealer-seed="' + dealers[index].seed + '">' + dealers[index].name + '</div>');
     }
+    $('#dealer-ui div.dealer').click(function () {
+        var dealerClicked = $(this);
+        var dealer = getDealerById(dealerClicked.data('dealer-seed'));
+        if (dealerClicked.hasClass('open')) {
+            $('div.dealer-content').slideUp(function () {
+                $('div.dealer-content').remove();
+                $('div.dealer.open').removeClass('open');
+            });
+            return;
+        }
+        $('div.dealer.open').removeClass('open');
+        dealerClicked.addClass('open');
+        if ($('div.dealer-content').length > 0) {
+            $('div.dealer-content').slideUp(function () {
+                $('div.dealer-content').remove();
+                dealerClicked.after('<div class="dealer-content" style="display:none"><p>Volume: <span class="volume iconyellow"></span></p><p>Price: <span class="price iconyellow"></span></p><button class="btn btn-default" onclick="fireDealer(this)"><span class="glyphicon iconred glyphicon-user"></span>Fire ' + dealer.name.split(' ')[0] + '</button></div>');
+                $('div.dealer-content').slideDown();
+                $('#dealer-ui div.dealer-content span.volume').html(getStars(dealer.volume, 5));
+                updateToolTipText($('#dealer-ui div.dealer-content span.volume'), 'Sells up to ' + formatDrugs(dealer.getActualVolume() * 1000) + ' of weed per second');
+                $('#dealer-ui div.dealer-content span.price').html(getStars(dealer.price, 5));
+                updateToolTipText($('#dealer-ui div.dealer-content span.price'), 'Sells each 1g of weed for $' + formatMoney(dealer.getActualPrice()));
+                $('#dealer-ui div.dealer-content button').data('dealer-seed', dealer.seed);
+            });
+        } else {
+            dealerClicked.after('<div class="dealer-content" style="display:none"><p>Volume: <span class="volume iconyellow"></span></p><p>Price: <span class="price iconyellow"></span></p><button class="btn btn-default" onclick="fireDealer(this)"><span class="glyphicon iconred glyphicon-user"></span>Fire ' + dealer.name.split(' ')[0] + '</button></div>');
+            $('div.dealer-content').slideDown();
+            $('#dealer-ui div.dealer-content span.volume').html(getStars(dealer.volume, 5));
+            updateToolTipText($('#dealer-ui div.dealer-content span.volume'), 'Sells up to ' + formatDrugs(dealer.getActualVolume() * 1000) + ' of weed per second');
+            $('#dealer-ui div.dealer-content span.price').html(getStars(dealer.price, 5));
+            updateToolTipText($('#dealer-ui div.dealer-content span.price'), 'Sells each 1g of weed for $' + formatMoney(dealer.getActualPrice()));
+            $('#dealer-ui div.dealer-content button').data('dealer-seed', dealer.seed);
+        }
+    });
 }
 
 function upgradeTrees() {
@@ -256,7 +295,6 @@ function upgradeDealers() {
         cash = cash - upgradeCost;
         dealerUpgrades++;
         writeToCookie();
-        updateToolTipText($('#hire-dealer-button'), 'Hire a dealer to sell your weed costs $1 per second and sells 1g of weed for $' + formatMoney(dealerMulti * Math.pow(dealerUpgradeMulti, dealerUpgrades)));
     }
 }
 
@@ -268,50 +306,37 @@ function getStars(number, max) {
     return stars;
 }
 
+function getDealerById(dealerId) {
+    for (var i = 0; i < dealers.length; i++) {
+        if (dealers[i].seed == dealerId)
+            return dealers[i];
+    }
+    return null;
+}
+
+function createDealerToHire(dealer, selector) {
+    $('#hireDealerModal ' + selector + ' .name').html(dealer.name);
+    $('#hireDealerModal ' + selector + ' .volume').html(getStars(dealer.volume, 5));
+    updateToolTipText($('#hireDealerModal ' + selector + ' .volume'), 'Sells up to ' + formatDrugs(dealer.getActualVolume() * 1000) + ' of weed per second');
+    $('#hireDealerModal ' + selector + ' .price').html(getStars(dealer.price, 5));
+    updateToolTipText($('#hireDealerModal ' + selector + ' .price'), 'Sells each 1g of weed for $' + formatMoney(dealer.getActualPrice()));
+    if (getDealerById(dealer.seed) != null) {
+        $('#hireDealerModal ' + selector + ' button').attr('disabled', 'disabled');
+        $('#hireDealerModal ' + selector + ' button').html('Hired');
+    } else {
+        $('#hireDealerModal ' + selector + ' button').data("dealer", dealer.seed);
+        $('#hireDealerModal ' + selector + ' button').html('Hire dealer');
+        $('#hireDealerModal ' + selector + ' button').removeAttr('disabled');
+    }
+}
+
 function showDealerModal() {
 
     var seed = (new Date().getTime() / 60000).toFixed();
 
-    var dealer1 = new Dealer(seed);
-    var dealer2 = new Dealer(seed + 2);
-    var dealer3 = new Dealer(seed + 5);
-    $('#hireDealerModal .dealer1 .name').html(dealer1.name);
-    $('#hireDealerModal .dealer1 .volume').html(getStars(dealer1.volume,5));
-    $('#hireDealerModal .dealer1 .price').html(getStars(dealer1.price,5));
-    if($.inArray(dealer1, dealers) != -1) {
-	$('#hireDealerModal .dealer1 button').attr('disabled','disabled');
-	$('#hireDealerModal .dealer1 button').html('Hired');
-    } else {
-    	$('#hireDealerModal .dealer1 button').data("dealer", dealer1.seed);
-	$('#hireDealerModal .dealer1 button').html('Hire dealer');
-	$('#hireDealerModal .dealer1 button').removeAttr('disabled');
-    }
-
-    $('#hireDealerModal .dealer2 .name').html(dealer2.name);
-    $('#hireDealerModal .dealer2 .volume').html(getStars(dealer2.volume, 5));
-    $('#hireDealerModal .dealer2 .price').html(getStars(dealer2.price, 5));
-    if($.inArray(dealer2, dealers) != -1) {
-	$('#hireDealerModal .dealer2 button').attr('disabled','disabled');
-	$('#hireDealerModal .dealer2 button').html('Hired');
-    } else {
-    	$('#hireDealerModal .dealer2 button').data("dealer", dealer2.seed);
-	$('#hireDealerModal .dealer2 button').html('Hire dealer');
-	$('#hireDealerModal .dealer2 button').removeAttr('disabled');
-    }
-
-    $('#hireDealerModal .dealer3 .name').html(dealer3.name);
-    $('#hireDealerModal .dealer3 .volume').html(getStars(dealer3.volume, 5));
-    $('#hireDealerModal .dealer3 .price').html(getStars(dealer3.price, 5));
-    if($.inArray(dealer3, dealers) != -1) {
-	$('#hireDealerModal .dealer3 button').attr('disabled','disabled');
-	$('#hireDealerModal .dealer3 button').html('Hired');
-    } else {
-    	$('#hireDealerModal .dealer3 button').data("dealer", dealer3.seed);
-	$('#hireDealerModal .dealer3 button').html('Hire dealer');
-	$('#hireDealerModal .dealer3 button').removeAttr('disabled');
-    }
-
-    console.log($('#hireDealerModal .dealer3 button').html());
+    createDealerToHire(new Dealer(seed), '.dealer1');
+    createDealerToHire(new Dealer(seed + 1), '.dealer2');
+    createDealerToHire(new Dealer(seed + 2), '.dealer3');
 
     $('#hireDealerModal').modal('show');
 }
@@ -328,11 +353,22 @@ function toggleNsfwMode() {
     $('.nsfw').toggleClass('hidden');
 }
 
-function fireDealer() {
-    if (dealers > 0)
-        dealers--;
-    if (dealers <= 0)
-        $('#fire-dealer').attr('disabled', 'disabled');
+function fireDealer(button) {
+    var newDealerArray = [];
+    for (var i = 0; i < dealers.length; i++) {
+        if (dealers[i].seed != $(button).data('dealer-seed')) {
+            newDealerArray.push(dealers[i]);
+        }
+    }
+    dealers = newDealerArray;
+    writeToCookie();
+    $('div.dealer-content').slideUp(function () {
+        $('div.dealer-content').remove();
+        $('div.dealer.open').removeClass('open').slideUp(function () {
+            updateDealersUI();
+        });
+    });
+    
 }
 
 function formatMoney(value) {
@@ -369,7 +405,7 @@ $(document).ready(function () {
     interval = setInterval(update, 90);
     updateToolTipText($('#buy-tree-btn'), 'Buy a tree, increasing your weed production by ' + formatDrugs(baseWeedPerTree * Math.pow(treeUpgradeWeedMulti, treeUpgrades) * 1000) + ' per second');
     updateToolTipText($('#upgrade-tree-btn'), 'Upgrade your trees, increasing the amount of weed they produce by 20%');
-    updateToolTipText($('#hire-dealer-button'), 'Hire a dealer to sell your weed costs $1 per second and sells 1g of weed for $' + formatMoney(dealerMulti * Math.pow(dealerUpgradeMulti, dealerUpgrades)));
+    updateToolTipText($('#hire-dealer-button'), 'Hire a dealer to sell your weed');
     updateToolTipText($('#fire-dealer'), 'Fire a dealer to reduce your costs by $1 per second');
     updateToolTipText($('#upgrade-dealer'), 'Upgrade your dealers, increasing the amount of money they earn by 15%');
 });
