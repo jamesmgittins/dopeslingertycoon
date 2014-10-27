@@ -278,17 +278,38 @@ function showDealerModal() {
     $('#hireDealerModal .dealer1 .name').html(dealer1.name);
     $('#hireDealerModal .dealer1 .volume').html(getStars(dealer1.volume,5));
     $('#hireDealerModal .dealer1 .price').html(getStars(dealer1.price,5));
-    $('#hireDealerModal .dealer1 button').data("dealer", dealer1.seed);
+    if($.inArray(dealer1, dealers) != -1) {
+	$('#hireDealerModal .dealer1 button').attr('disabled','disabled');
+	$('#hireDealerModal .dealer1 button').html('Hired');
+    } else {
+    	$('#hireDealerModal .dealer1 button').data("dealer", dealer1.seed);
+	$('#hireDealerModal .dealer1 button').html('Hire dealer');
+	$('#hireDealerModal .dealer1 button').removeAttr('disabled');
+    }
 
     $('#hireDealerModal .dealer2 .name').html(dealer2.name);
     $('#hireDealerModal .dealer2 .volume').html(getStars(dealer2.volume, 5));
     $('#hireDealerModal .dealer2 .price').html(getStars(dealer2.price, 5));
-    $('#hireDealerModal .dealer2 button').data("dealer", dealer2.seed);
+    if($.inArray(dealer2, dealers) != -1) {
+	$('#hireDealerModal .dealer2 button').attr('disabled','disabled');
+	$('#hireDealerModal .dealer2 button').html('Hired');
+    } else {
+    	$('#hireDealerModal .dealer2 button').data("dealer", dealer2.seed);
+	$('#hireDealerModal .dealer2 button').html('Hire dealer');
+	$('#hireDealerModal .dealer2 button').removeAttr('disabled');
+    }
 
     $('#hireDealerModal .dealer3 .name').html(dealer3.name);
     $('#hireDealerModal .dealer3 .volume').html(getStars(dealer3.volume, 5));
     $('#hireDealerModal .dealer3 .price').html(getStars(dealer3.price, 5));
-    $('#hireDealerModal .dealer3 button').data("dealer", dealer3.seed);
+    if($.inArray(dealer3, dealers) != -1) {
+	$('#hireDealerModal .dealer3 button').attr('disabled','disabled');
+	$('#hireDealerModal .dealer3 button').html('Hired');
+    } else {
+    	$('#hireDealerModal .dealer3 button').data("dealer", dealer3.seed);
+	$('#hireDealerModal .dealer3 button').html('Hire dealer');
+	$('#hireDealerModal .dealer3 button').removeAttr('disabled');
+    }
 
     console.log($('#hireDealerModal .dealer3 button').html());
 
