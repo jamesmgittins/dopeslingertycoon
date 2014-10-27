@@ -124,6 +124,7 @@ function updateUI() {
 
 
     if (dealerUpgradePrice > cash) {
+        $('#upgrade-dealer').tooltip('hide');
         $('#upgrade-dealer').attr('disabled', 'disabled');
 
         $('#upgrade-dealer-progress').removeClass('progress-bar-success').addClass('active progress-bar-striped');
@@ -139,6 +140,7 @@ function updateUI() {
     $('.tree-price').each(function () {
         $(this).html(formatMoneyHtml(treePrice));
         if (treePrice > cash) {
+	    $(this).closest('button').tooltip('hide');
             $(this).closest('button').attr('disabled', 'disabled');
             $('#tree-progress').removeClass('progress-bar-success').addClass('active progress-bar-striped');
         } else {
@@ -150,6 +152,7 @@ function updateUI() {
     $('.upgrade-price').each(function () {
         $(this).html(formatMoneyHtml(upgradePrice));
         if (upgradePrice > cash) {
+	    $(this).closest('button').tooltip('hide');
             $(this).closest('button').attr('disabled', 'disabled');
             $('#upgrade-progress').removeClass('progress-bar-success').addClass('active progress-bar-striped');
         } else {
