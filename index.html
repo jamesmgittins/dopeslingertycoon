@@ -10,10 +10,19 @@
     <script src="js/dopeslinger.js"></script>
     <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
     <style>
+        body {
+            padding-bottom:20px;
+        }
         .iconred {
             color: #AA0000;
             font-size: 18px;
             float: left;
+            margin-right:-16px;
+        }
+
+        .dealer-warning {
+            color:#AA0000;
+            font-weight:bold;
         }
 
         .progress {
@@ -24,11 +33,13 @@
             color: #00BB00;
             font-size: 18px;
             float: left;
+            margin-right:-16px;
         }
 
         .iconyellow {
             color: #ffd800;
             font-size: 18px;
+            margin-right:-16px;
         }
 
         span.strong {
@@ -76,6 +87,18 @@
             background-image: linear-gradient(to bottom,#fff 0,#e0e0e0 100%);
             text-align:center;
             cursor:pointer;
+        }
+
+        div.dealer > span.glyphicon {
+            float:right;
+            display:none;
+            color: #00BB00;
+            font-size: 18px;
+            margin-left:-18px;
+        }
+
+        div.dealer:hover > span.glyphicon {
+            display:inline;
         }
 
         div.dealer.open {
@@ -136,7 +159,6 @@
                 <p>Trees: <span id="trees" class="strong"></span> Generating <span id="generating" class="strong weed">0</span> per second</p>
                 <p>Tree upgrades: <span id="upgrades" class="strong">0</span> each tree now generates <span id="generate_per_tree" class="strong weed"></span> per second</p>
                 <p>Dealers: <span id="dealers" class="strong">0</span> selling up to <span id="converting" class="strong weed"></span> <span class="nsfw">of weed</span> for a maximum of <span id="revenue" class="strong"></span> per second</p>
-                <p>Dealer upgrades: <span id="dealer-upgrades" class="strong">0</span>, your dealers selling price is increased by <span id="dealer-upgrade-income" class="strong"></span></p>
             </div>
 
             <div class="col-xs-12 col-sm-6" id="log">
@@ -154,12 +176,12 @@
 
 
             <div class="col-xs-12 col-sm-4">
-                <button onclick="showDealerModal()" class="btn btn-default" type="button" id="hire-dealer-button"><span class="glyphicon icongreen glyphicon-user"></span> Hire dealer</button>
+                <button onclick="showDealerModal()" class="btn btn-default" type="button" id="hire-dealer-button"><span class="glyphicon icongreen glyphicon-user"></span> Hire dealer <span class="dealer-count strong">0/1</span></button>
                 <div id="dealer-ui"></div>
             </div>
 
             <div class="col-xs-12 col-sm-4">
-                <button id="upgrade-dealer" onclick="upgradeDealers()" class="btn btn-default" type="button"><span class="glyphicon glyphicon-arrow-up icongreen"></span> Upgrade dealers (<span class="price strong"></span>)</button>
+                <button id="upgrade-dealer" onclick="upgradeDealers()" class="btn btn-default" type="button"><span class="glyphicon glyphicon-globe icongreen"></span> Expand territory (<span class="price strong"></span>)</button>
                 <div class="progress"><div id="upgrade-dealer-progress" class="progress-bar progress-bar-striped"></div></div>
             </div>
 
@@ -175,6 +197,7 @@
                     <h4 class="modal-title" id="myModalLabel">Hire dealer</h4>
                 </div>
                 <div class="modal-body row">
+                    <p class="col-xs-12 dealer-warning"></p>
                     <div class="col-xs-12 col-sm-4 dealer1">
                         <p><span class="name strong"></span></p>
                         <p>Volume: <span class="volume iconyellow"></span></p>
