@@ -41,7 +41,7 @@ var baseWeedPerTree = 0.0001;
 
 var treeUpgrades = 0;
 
-var treePriceMulti = 1.07;
+var treePriceMulti = 1.1;
 
 var treeUpgradeBasePrice = 1000;
 
@@ -54,7 +54,7 @@ var dealers = [];
 var dealerUpgrades = 0;
 
 var dealerUpgradePriceMulti = 3.95;
-var dealerUpgradeBasePrice = 3000;
+var dealerUpgradeBasePrice = 2000;
 var dealerConversion = 0.003;
 var dealerMulti = 4;
 
