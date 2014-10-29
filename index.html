@@ -1,12 +1,15 @@
-<html>
+<!DOCTYPE html>
+<html ng-app="dopeslingerApp">
 <head>
     <title>Dope slinger tycoon</title>
     <meta name="viewport" content="initial-scale=1.0">
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="css/bootstrap-theme.min.css">
     <script src="js/jquery.min.js"></script>
+    <script src="js/angular.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
     <script src="js/seedrandom.min.js"></script>
+    <script src="js/angulardope.js"></script>
     <script src="js/dopeslinger.js"></script>
     <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
     <style>
@@ -131,7 +134,7 @@
         }
     </style>
 </head>
-<body>
+<body ng-controller="dopeController">
     <div class="container">
         <div class="row">
             <div class="col-xs-12 hidden-xs">
@@ -145,7 +148,7 @@
                 </script>
             </div>
             <div class="col-xs-12 col-sm-9 col-md-10">
-                <h1 class="nsfw">Dope slinger tycoon</h1>
+                <h1 class="{{nsfw()}}">Dope slinger tycoon</h1>
                 <p class="nsfw"><strong>Buy canabis plants to grow weed. Hire dealers to sell the weed.</strong></p>
             </div>
 
@@ -233,7 +236,7 @@
                         <button onclick="if (confirm('This will reset all progress, are you sure?')) { resetGame(); }" class="btn btn-default"><span class="glyphicon iconred glyphicon-exclamation-sign"></span> Reset game</button>
                     </div>
                     <div class="col-xs-12 col-sm-6">
-                        <button onclick="toggleNsfwMode();" class="btn btn-default"><span class="glyphicon glyphicon-filter iconred"></span> Toggle nsfw mode</button>
+                        <button ng-click="toggleNsfw()" class="btn btn-default"><span class="glyphicon glyphicon-filter iconred"></span> Toggle nsfw mode</button>
                     </div>
                 </div>
             </div>
