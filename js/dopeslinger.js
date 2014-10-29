@@ -241,7 +241,7 @@ function updateDealersUI() {
 
     $('#dealer-ui').empty();
     for (var index = 0; index < dealers.length; index++) {
-        $('#dealer-ui').append('<div class="dealer" data-dealer-seed="' + dealers[index].seed + '">' + dealers[index].name + '<span class="glyphicon glyphicon-chevron-down"><span></div>');
+        $('#dealer-ui').append('<div class="dealer" data-dealer-seed="' + dealers[index].seed + '">' + dealers[index].name + '<span class="glyphicon glyphicon-chevron-down"></span></div>');
     }
     $('#dealer-ui div.dealer').click(function () {
         var dealerClicked = $(this);
@@ -403,10 +403,10 @@ function formatDrugs(value) {
 }
 
 $(document).ready(function () {
-    readFromCookie();
-    updateDealersUI();
-    updateUI();
-    interval = setInterval(update, 90);
+//    readFromCookie();
+//    updateDealersUI();
+//    updateUI();
+//    interval = setInterval(update, 90);
     updateToolTipText($('#buy-tree-btn'), 'Buy a tree, increasing your weed production by ' + formatDrugs(baseWeedPerTree * Math.pow(treeUpgradeWeedMulti, treeUpgrades) * 1000) + ' per second');
     updateToolTipText($('#upgrade-tree-btn'), 'Upgrade your trees, increasing the amount of weed they produce by 20%');
     updateToolTipText($('#hire-dealer-button'), 'Hire a dealer to sell your weed');

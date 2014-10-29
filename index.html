@@ -10,7 +10,6 @@
     <script src="js/bootstrap.min.js"></script>
     <script src="js/seedrandom.min.js"></script>
     <script src="js/angulardope.js"></script>
-    <script src="js/dopeslinger.js"></script>
     <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
     <style>
         body {
@@ -157,8 +156,8 @@
             </div>
 
             <div class="col-xs-12 col-sm-6">
-                <p>Current cash: <span id="cash" class="strong"></span></p>
-                <p>Current <span ng-show="!nsfw">weed</span> stash: <span id="weed" class="strong weed"></span></p>
+                <p>Current cash: <span id="cash" class="strong">${{formatMoney(cash)}}</span></p>
+                <p>Current <span ng-show="!nsfw">weed</span> stash: <span id="weed" class="strong weed">{{weedForDisplay()}}</span></p>
                 <p>Trees: <span id="trees" class="strong"></span> Generating <span id="generating" class="strong weed">0</span> per second</p>
                 <p>Tree upgrades: <span id="upgrades" class="strong">0</span> each tree now generates <span id="generate_per_tree" class="strong weed"></span> per second</p>
                 <p>Dealers: <span id="dealers" class="strong">0</span> selling up to <span id="converting" class="strong weed"></span> <span ng-show="!nsfw">of weed</span> for a maximum of <span id="revenue" class="strong"></span> per second</p>
@@ -171,7 +170,7 @@
             <div class="clearfix"></div>
 
             <div class="col-xs-12 col-sm-4">
-                <button onclick="buyTree()" class="btn btn-default" id="buy-tree-btn"><span class="glyphicon icongreen glyphicon-tree-conifer"></span> Buy tree (<span class="tree-price strong">20</span>)</button>
+                <button ng-click="buyTree()" class="btn btn-default" id="buy-tree-btn"><span class="glyphicon icongreen glyphicon-tree-conifer"></span> Buy tree (<span class="tree-price strong">20</span>)</button>
                 <div class="progress"><div id="tree-progress" class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="50"></div></div>
                 <button onclick="upgradeTrees()" class="btn btn-default" type="button" id="upgrade-tree-btn"><span class="glyphicon glyphicon-arrow-up icongreen"></span> Upgrade trees (<span class="upgrade-price strong"></span>)</button>
                 <div class="progress"><div id="upgrade-progress" class="progress-bar progress-bar-striped"></div></div>
@@ -180,7 +179,14 @@
 
             <div class="col-xs-12 col-sm-4">
                 <button onclick="showDealerModal()" class="btn btn-default" type="button" id="hire-dealer-button"><span class="glyphicon icongreen glyphicon-user"></span> Hire dealer <span class="dealer-count strong">0/1</span></button>
-                <div id="dealer-ui"></div>
+                <div class="dealer-ui" ng-repeat="dealer in dealers" data-dealer-seed="{{dealer.seed}}">
+                    <div class="dealer" ng-click="selectDealer(dealer.seed)">{{dealer.name}}<span class="glyphicon glyphicon-chevron-down"></span></div>
+                    <div class="dealer-content" style="display:none">
+                        <p>Volume: <span class="volume iconyellow" ng-bind-html="getStars(dealer.volume,5)"></span></p>
+                        <p>Price: <span class="price iconyellow" ng-bind-html="getStars(dealer.price,5)"></span></p>
+                        <button class="btn btn-default" ng-click="fireDealer(dealer.seed)"><span class="glyphicon iconred glyphicon-user"></span>Fire {{dealer.name.split(' ')[0]}}</button>
+                    </div>
+                </div>
             </div>
 
             <div class="col-xs-12 col-sm-4">
