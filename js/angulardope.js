@@ -1,14 +1,9 @@
 ﻿angular.module('dopeslingerApp', [])
-    .controller('dopeController', ['scope', function ($scope) {
-        $scope.nsfwVal = false;
+    .controller('DopeController', ['$scope', function ($scope) {
 
-        $scope.nsfw = function () {
-            if ($scope.nsfwVal) return "hidden";
-            return "";
-        }
-
+        $scope.nsfw = true;
         $scope.toggleNsfw = function () {
-            $scope.nsfwVal = !$scope.nsfwVal;
+            $scope.nsfw = !$scope.nsfw;
         }
 
     }]);

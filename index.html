@@ -134,7 +134,7 @@
         }
     </style>
 </head>
-<body ng-controller="dopeController">
+<body ng-controller="DopeController">
     <div class="container">
         <div class="row">
             <div class="col-xs-12 hidden-xs">
@@ -148,8 +148,8 @@
                 </script>
             </div>
             <div class="col-xs-12 col-sm-9 col-md-10">
-                <h1 class="{{nsfw()}}">Dope slinger tycoon</h1>
-                <p class="nsfw"><strong>Buy canabis plants to grow weed. Hire dealers to sell the weed.</strong></p>
+                <h1 ng-show="!nsfw">Dope slinger tycoon</h1>
+                <p ng-show="!nsfw"><strong>Buy canabis plants to grow weed. Hire dealers to sell the weed.</strong></p>
             </div>
 
             <div class="col-xs-12 col-sm-3 col-md-2">
@@ -158,10 +158,10 @@
 
             <div class="col-xs-12 col-sm-6">
                 <p>Current cash: <span id="cash" class="strong"></span></p>
-                <p>Current <span class="nsfw">weed</span> stash: <span id="weed" class="strong weed"></span></p>
+                <p>Current <span ng-show="!nsfw">weed</span> stash: <span id="weed" class="strong weed"></span></p>
                 <p>Trees: <span id="trees" class="strong"></span> Generating <span id="generating" class="strong weed">0</span> per second</p>
                 <p>Tree upgrades: <span id="upgrades" class="strong">0</span> each tree now generates <span id="generate_per_tree" class="strong weed"></span> per second</p>
-                <p>Dealers: <span id="dealers" class="strong">0</span> selling up to <span id="converting" class="strong weed"></span> <span class="nsfw">of weed</span> for a maximum of <span id="revenue" class="strong"></span> per second</p>
+                <p>Dealers: <span id="dealers" class="strong">0</span> selling up to <span id="converting" class="strong weed"></span> <span ng-show="!nsfw">of weed</span> for a maximum of <span id="revenue" class="strong"></span> per second</p>
             </div>
 
             <div class="col-xs-12 col-sm-6" id="log">

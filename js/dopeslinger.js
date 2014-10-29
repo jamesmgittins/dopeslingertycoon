@@ -360,10 +360,6 @@ function hireDealer(button) {
     }
 }
 
-function toggleNsfwMode() {
-    $('.nsfw').toggleClass('hidden');
-}
-
 function fireDealer(button) {
     var newDealerArray = [];
     for (var i = 0; i < dealers.length; i++) {
