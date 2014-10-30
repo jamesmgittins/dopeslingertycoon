@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html ng-app="dopeslingerApp">
 <head>
     <title>Dope slinger tycoon</title>
@@ -13,6 +13,7 @@
     <script src="js/angular.min.js"></script>
     <script src="js/angular-sanitize.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
+    <script src="js/ui-bootstrap-tpls-0.11.2.min.js"></script>
     <script src="js/seedrandom.min.js"></script>
     <script src="js/angulardope.js"></script>
     <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
@@ -23,41 +24,22 @@
         }
     </script>
     <style>
-        body {
-            padding-bottom:20px;
-        }
-        .iconred {
-            color: #AA0000;
-            font-size: 18px;
-            float: left;
-            margin-right:-16px;
-        }
+        .nav, .pagination, .carousel, .panel-title a { cursor: pointer; }
+        body { padding-bottom:20px; }
 
-        .dealer-warning {
-            color:#AA0000;
-            font-weight:bold;
-        }
+        span.inline-glyph {margin-right:2px; }
 
-        .progress {
-            margin: 0;
-        }
+        .iconred { color: #AA0000; font-size: 18px; float: left; margin-right:-16px; }
 
-        .icongreen {
-            color: #00BB00;
-            font-size: 18px;
-            float: left;
-            margin-right:-16px;
-        }
+        .dealer-warning { color:#AA0000; font-weight:bold; }
 
-        .iconyellow {
-            color: #ffd800;
-            font-size: 18px;
-            margin-right:-16px;
-        }
+        .progress { margin: 0; }
 
-        span.strong {
-            font-weight: bold;
-        }
+        .icongreen { color: #00BB00; font-size: 18px; float: left;  margin-right:-16px; }
+
+        .iconyellow {  color: #ffd800; font-size: 18px; margin-right:-16px; }
+
+        span.strong { font-weight: bold; }
 
         @viewport {
             zoom: 1.0;
@@ -69,30 +51,31 @@
 
         button.btn {
             width: 100%;
-            margin-top: 10px;
         }
-
-        .progress-bar {
-            -webkit-transition: none;
-            -moz-transition: none;
-            -ms-transition: none;
-            -o-transition: none;
-            transition: none;
-        }
-
-        div.dealer-content {
-            border:1px solid #ccc;
-            border-top:none;
-            border-radius:0 0 4px 4px;
-            margin:0 0 5px;
-            padding:6px 12px;
-        }
-
-        div.dealer-content button > span.glyphicon {
+        span.qty {
+            float:left;
+            font-size:18px;
+            font-weight:bold;
             margin-right:-18px;
         }
 
-        div.dealer {
+        div.dealer-content,
+        div.drug-content {
+            margin:0 0 5px;
+            padding:6px 12px;
+            max-height:9999px;
+            border:1px solid #ccc;
+            border-top:none;
+            border-radius:0 0 4px 4px;
+        }
+
+        div.dealer-content button > span.glyphicon,
+        div.drug-content button > span.glyphicon {
+            margin-right:-18px;
+        }
+
+        div.dealer,
+        div.drug {
             border:1px solid #ccc;
             border-radius:4px;
             margin:5px 0;
@@ -102,7 +85,8 @@
             cursor:pointer;
         }
 
-        div.dealer > span.glyphicon {
+        div.dealer > span.glyphicon,
+        div.drug > span.glyphicon {
             float:right;
             display:none;
             color: #00BB00;
@@ -110,11 +94,13 @@
             margin-left:-18px;
         }
 
-        div.dealer:hover > span.glyphicon {
+        div.dealer:hover > span.glyphicon,
+        div.drug:hover > span.glyphicon {
             display:inline;
         }
 
-        div.dealer.open {
+        div.dealer.open,
+        div.drug.open {
             margin:5px 0 0;
             border-radius:4px 4px 0 0;
             border-bottom:none;
@@ -124,14 +110,6 @@
         .weed {
             color: #00A000;
         }
-
-            .weed + .tooltip > .tooltip-inner {
-                background-color: #00A000;
-            }
-
-            .weed + .tooltip > .tooltip-arrow {
-                border-top-color: #00A000;
-            }
 
         label {
             float: left;
@@ -167,11 +145,8 @@
             </div>
 
             <div class="col-xs-12 col-sm-6">
-                <p>Current cash: <span id="cash" class="strong">{{cashForDisplay()}}</span></p>
-                <p>Current <span ng-show="!nsfw">weed</span> stash: <span id="weed" class="strong weed">{{weedForDisplay()}}</span></p>
-                <p>Trees: <span id="trees" class="strong">{{gameModel.trees}}</span> Generating <span id="generating" class="strong weed">{{weedPerSecond()}}</span> per second</p>
-                <p>Tree upgrades: <span id="upgrades" class="strong">0</span> each tree now generates <span id="generate_per_tree" class="strong weed"></span> per second</p>
-                <p>Dealers: <span id="dealers" class="strong">0</span> selling up to <span id="converting" class="strong weed"></span> <span ng-show="!nsfw">of weed</span> for a maximum of <span id="revenue" class="strong"></span> per second</p>
+                <p>Current cash: <span id="cash" class="strong" tooltip="Total earned {{gameModel.totalCashEarned|money}}">{{gameModel.cash|money}}</span></p>
+                <p>Dealers: <span id="dealers" class="strong">{{gameModel.dealers.length}}</span> selling up to <span id="converting" class="strong weed"></span> <span ng-show="!nsfw">of weed</span> for a maximum of <span id="revenue" class="strong"></span> per second</p>
             </div>
 
             <div class="col-xs-12 col-sm-6" id="log">
@@ -181,18 +156,33 @@
             <div class="clearfix"></div>
 
             <div class="col-xs-12 col-sm-4">
-                <button ng-click="buyTree()" class="btn btn-default" id="buy-tree-btn"><span class="glyphicon icongreen glyphicon-tree-conifer"></span> Buy tree (<span class="tree-price strong">{{treePrice()}}</span>)</button>
-                <div class="progress"><div id="tree-progress" class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="50" ng-style="{'width': treeProgressStyle()}"></div></div>
-                <button onclick="upgradeTrees()" class="btn btn-default" type="button" id="upgrade-tree-btn"><span class="glyphicon glyphicon-arrow-up icongreen"></span> Upgrade trees (<span class="upgrade-price strong"></span>)</button>
-                <div class="progress"><div id="upgrade-progress" class="progress-bar progress-bar-striped"></div></div>
+                <h3>Production</h3>
+                <div ng-repeat="drug in gameModel.drugs track by $index" ng-show="drug.visible">
+                    <div class="drug" ng-click="selectDrug(drug)" ng-class="{'open' : drug.selected}">{{drug.name}} <strong>{{drug.qty|weight}}</strong>
+                        <span class="glyphicon" ng-class="drug.selected ? 'glyphicon-chevron-up' : 'glyphicon-chevron-down'"></span></div>
+                    <div class="drug-content row" collapse="!drug.selected">
+                        <p class="col-xs-6" tooltip="You are producing {{drugMadePerSecond(drug)|weight}} of {{drug.name}} per second"><span class="glyphicon glyphicon-arrow-up inline-glyph icongreen"></span>{{drugMadePerSecond(drug)|weight}} / sec</p>
+                        <p class="col-xs-6" tooltip="Your dealers are able to sell {{drugSoldPerSecond(drug)|weight}} of {{drug.name}} per second"><span class="glyphicon glyphicon-arrow-down inline-glyph iconred"></span>{{drugSoldPerSecond(drug)|weight}} / sec</p>
+                        <div class="col-xs-12" ng-repeat="producer in producersForDrug(drug)" tooltip="Buy a {{producer.name}} to increase your {{drug.name}} production by {{producer.prodPerUnit|weight}} per second">
+                            <button class="btn btn-default" ng-click="increaseProduction(producer)" ng-disabled="gameModel.cash < productionPrice(producer)">
+                                <span class="qty">{{producer.qty}}</span>{{producer.name}} (<strong>{{productionPrice(producer)|money}}</strong>)
+                            </button>
+                            <progressbar animate="false" value="cashPercentage(productionPrice(producer))" type="success" ng-class="gameModel.cash < productionPrice(producer) ? 'active progress-striped' : 'progress-bar-success'"></progressbar>
+                        </div>
+                    </div>
+                </div>
             </div>
 
 
             <div class="col-xs-12 col-sm-4">
-                <button ng-click="hireDealerModal()" class="btn btn-default" type="button" id="hire-dealer-button"><span class="glyphicon icongreen glyphicon-user"></span> Hire dealer <span class="dealer-count strong">{{gameModel.dealers.length + '/' + (1 + gameModel.territoryUpgrades)}}</span></button>
-                <div class="dealer-ui" ng-repeat="dealer in gameModel.dealers" data-dealer-seed="{{dealer.seed}}">
-                    <div class="dealer" ng-click="selectDealer(dealer.seed)">{{dealer.name}}<span class="glyphicon glyphicon-chevron-down"></span></div>
-                    <div class="dealer-content" style="display:none">
+                <h3>Distribution</h3>
+                <button ng-click="hireDealerModal()" class="btn btn-default" type="button" id="hire-dealer-button" tooltip="Hire another dealer">
+                    <span class="glyphicon icongreen glyphicon-user"></span> Hire dealer <span class="dealer-count strong">{{gameModel.dealers.length + '/' + (1 + gameModel.territoryUpgrades)}}</span>
+                </button>
+                <div class="dealer-ui" ng-repeat="dealer in gameModel.dealers track by $index" data-dealer-seed="{{dealer.seed}}">
+                    <div class="dealer" ng-class="{'open':dealer.selected}" ng-click="selectDealer(dealer)">{{dealer.name}}<span class="glyphicon" ng-class="dealer.selected ? 'glyphicon-chevron-up' : 'glyphicon-chevron-down'"></span></div>
+                    <div class="dealer-content" collapse="!dealer.selected">
+                        <p>Cash earned: <strong>{{dealer.cashEarned|money}}</strong></p>
                         <p>Volume: <span class="volume iconyellow" ng-bind-html="getStars(dealer.volume,5)"></span></p>
                         <p>Price: <span class="price iconyellow" ng-bind-html="getStars(dealer.price,5)"></span></p>
                         <button class="btn btn-default" ng-click="fireDealer(dealer.seed)"><span class="glyphicon iconred glyphicon-user"></span>Fire {{dealer.name.split(' ')[0]}}</button>
@@ -201,8 +191,11 @@
             </div>
 
             <div class="col-xs-12 col-sm-4">
-                <button id="upgrade-dealer" onclick="upgradeDealers()" class="btn btn-default" type="button"><span class="glyphicon glyphicon-globe icongreen"></span> Expand territory (<span class="price strong"></span>)</button>
-                <div class="progress"><div id="upgrade-dealer-progress" class="progress-bar progress-bar-striped"></div></div>
+                <h3>Upgrades</h3>
+                <div tooltip="Expand your territory, allowing you to hire an additional dealer">
+                    <button ng-click="expandTerritory()" class="btn btn-default" ng-disabled="gameModel.cash < priceOfTerritory()" type="button"><span class="glyphicon glyphicon-globe icongreen"></span> Expand territory (<strong>{{priceOfTerritory()|money}}</strong>)</button>
+                    <progressbar animate="false" value="cashPercentage(priceOfTerritory())" type="success" ng-class="gameModel.cash < priceOfTerritory() ? 'active progress-striped' : 'progress-bar-success'"></progressbar>
+                </div>
             </div>
 
         </div>
@@ -217,12 +210,12 @@
                     <h4 class="modal-title" id="myModalLabel">Hire dealer</h4>
                 </div>
                 <div class="modal-body row">
-                    <p class="col-xs-12 dealer-warning"></p>
+                    <p class="col-xs-12 dealer-warning" ng-show="gameModel.dealers.length >= gameModel.territoryUpgrades + 1">You already have the maximum number of dealers working for you. Either fire a dealer or expand your territory to hire another.</p>
                     <div class="col-xs-12 col-sm-4" ng-repeat="dealer in hireDealers">
                         <p><span class="name strong">{{dealer.name}}</span></p>
                         <p>Volume: <span class="volume iconyellow" ng-bind-html="getStars(dealer.volume,5)"></span></p>
                         <p>Price: <span class="price iconyellow" ng-bind-html="getStars(dealer.price,5)"></span></p>
-                        <button class="btn btn-default" ng-click="hireDealer(dealer.seed)">Hire dealer</button>
+                        <button class="btn btn-default" ng-click="hireDealer(dealer.seed)" ng-disabled="gameModel.dealers.length >= gameModel.territoryUpgrades + 1 || dealerHired(dealer.seed)">Hire dealer</button>
                     </div>
                 </div>
             </div>
@@ -241,7 +234,7 @@
                         <button onclick="if (confirm('This will reset all progress, are you sure?')) { resetGame(); }" class="btn btn-default"><span class="glyphicon iconred glyphicon-exclamation-sign"></span> Reset game</button>
                     </div>
                     <div class="col-xs-12 col-sm-6">
-                        <button ng-click="toggleWorkMode()" class="btn btn-default"><span class="glyphicon glyphicon-filter iconred"></span> Toggle nsfw mode</button>
+                        <button ng-click="toggleWorkMode()" class="btn btn-default"><span class="glyphicon glyphicon-filter iconred"></span> Toggle work mode</button>
                     </div>
                 </div>
             </div>
