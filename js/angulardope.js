@@ -70,7 +70,7 @@ function GameModel() {
     this.dealers = [];
     this.production = productionMaster
     this.territoryUpgrades = 0;
-    this.workMode = true;
+    this.workMode = false;
 }
 
 angular.module('dopeslingerApp', ['ngSanitize', 'ui.bootstrap'])
