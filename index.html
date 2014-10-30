@@ -163,7 +163,7 @@
                     <div class="drug-content row" collapse="!drug.selected">
                         <p class="col-xs-6" tooltip="You are producing {{drugMadePerSecond(drug)|weight}} of {{drug.name.toLowerCase()}} per second"><span class="glyphicon glyphicon-arrow-up inline-glyph icongreen"></span>{{drugMadePerSecond(drug)|weight}} / sec</p>
                         <p class="col-xs-6" tooltip="Your dealers are able to sell {{drugSoldPerSecond(drug)|weight}} of {{drug.name.toLowerCase()}} per second"><span class="glyphicon glyphicon-arrow-down inline-glyph iconred"></span>{{drugSoldPerSecond(drug)|weight}} / sec</p>
-                        <div class="col-xs-12" ng-repeat="producer in producersForDrug(drug)" tooltip="Buy a {{producer.name.toLowerCase()}} to increase your {{drug.name.toLowerCase}} production by {{producer.prodPerUnit|weight}} per second">
+                        <div class="col-xs-12" ng-repeat="producer in producersForDrug(drug)" tooltip="Buy a {{producer.name.toLowerCase()}} to increase your {{drug.name.toLowerCase()}} production by {{producer.prodPerUnit|weight}} per second">
                             <button class="btn btn-default" ng-click="increaseProduction(producer)" ng-disabled="gameModel.cash < productionPrice(producer)">
                                 <span class="qty">{{producer.qty}}</span>{{producer.name}} (<strong>{{productionPrice(producer)|money}}</strong>)
                             </button>
