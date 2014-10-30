@@ -1,98 +1,87 @@
-﻿angular.module('dopeslingerApp', [])
-    .controller('DopeController', ['$scope', '$document', function ($scope, $document) {
+﻿
+// dealer names
+var maleFirstNames = ['Aidan', 'Alphonso', 'Anthony', 'Avon', 'Ben', 'Billy', 'Bobby', 'Bojack', 'Bret', 'Bruce', 'Cedric', 'Charles', 'Charlie', 'Chris', 'Clarence', 'Clark', 'Dave', 'David', 'Dexter', 'Drexyl', 'Eddie', 'Floyd', 'Frank', 'Freddie', 'Gerald', 'Gordon', 'Ilka', 'James', 'Jeff', 'Jethro', 'Jimmy', 'John', 'Ken', 'Kingston', 'Larry', 'Laurence', 'Leeroy', 'Lester', 'Malcolm', 'Marty', 'Maxwell', 'Michael', 'Mike', 'Paul', 'Pete', 'Randy', 'Ray', 'Reggie', 'Rick', 'Robert', 'Roland', 'Ron', 'Ronnie', 'Ross', 'Sean', 'Spencer', 'Spike', 'Steve', 'Stevie', 'Stringer', 'Stu', 'Stuart', 'Terry', 'Thomas', 'Tommy', 'Tony', 'William', 'Brian'];
+var femaleFirstNames = ['Alicia', 'Amanda', 'Ashley', 'Barbara', 'Becky', 'Beverly', 'Catriona', 'Charlotte', 'Debbie', 'Eve', 'Fiona', 'Francesca', 'Geraldine', 'Harriet', 'Jacki', 'Jane', 'Jenny', 'Jessica', 'Joanne', 'Jodie', 'Josie', 'Julia', 'June', 'Kate', 'Kim', 'Kimmy', 'Laura', 'Lisa', 'Liz', 'Louisa', 'Louise', 'Margaret', 'Martina', 'Mary', 'Muriel', 'Natasha', 'Nicki', 'Pam', 'Patricia', 'Rachel', 'Rebecca', 'Rebel', 'Rhonda', 'Riley', 'Rose', 'Ruby', 'Samantha', 'Sarah', 'Scarlet', 'Shannon', 'Sharon', 'Sophie', 'Stacy', 'Stephanie', 'Susie', 'Tabitha', 'Tanya', 'Toni', 'Tracy', 'Tricia', 'Trish', 'Vera', 'Victoria', 'Yolanda', 'Michelle', 'Felicity'];
+var lastNames = ['Adams', 'Barksdale', 'Baxter', 'Bell', 'Braxton', 'Bronson', 'Cray', 'Diamond', 'Edwards', 'Findus', 'Ford', 'Fox', 'Franklin', 'French', 'Gentworth', 'George', 'Gibson', 'Gittins', 'Grey', 'Grimes', 'Harrison', 'Hogan', 'Hopkins', 'Jackson', 'Jenkins', 'Jones', 'Lee', 'Lloyd', 'Long', 'Mackintosh', 'Manero', 'Marshall', 'Matrix', 'McGrath', 'McLaren', 'Mills', 'Moreno', 'Murphy', 'Page', 'Palmer', 'Perry', 'Plant', 'Potts', 'Reed', 'Rhoades', 'Rico', 'Roper', 'Savage', 'Scott', 'Smith', 'Somerville', 'Stevens', 'Stewart', 'Sulley', 'Templeton', 'Thompson', 'Tull', 'Washington', 'Willis', 'Wilson', 'Worley', 'Young', 'Merchant', 'Rodriguez', 'Gonzalez', 'King'];
+var nicknames = ['Ace', 'Babyface', 'Beefsteak', 'Big dog', 'Birdy', 'Blaster', 'Boffin', 'Bones', 'Brains', 'Brandy', 'Brick', 'Bubbles', 'Bug Eye', 'Butter', 'California', 'Cheese', 'Chips', 'Coffee', 'Corky', 'Crusher', 'Doc', 'Dolamite', 'Egg', 'Fingers', 'Fletch', 'Foxy', 'Frosty', 'G', 'Ghost', 'Goat', 'Grafter', 'Hollywood', 'Ice', 'Jellybean', 'Linebacker', 'Lucky', 'Maniac', 'Muscles', 'Papa', 'Psycho', 'Scarface', 'Shooter', 'Silencer', 'Slim', 'Snoop', 'Space Cadet', 'Spud', 'The Face', 'The Hat', 'The Kid', 'The Mouth', 'Unit', 'Upgrayedd', 'Vampire', 'Wheezy', 'Wonder'];
 
-        var maleFirstNames = ['Aidan', 'Alphonso', 'Anthony', 'Avon', 'Ben', 'Billy', 'Bobby', 'Bojack', 'Bret', 'Bruce', 'Cedric', 'Charles', 'Charlie', 'Chris', 'Clarence', 'Clark', 'Dave', 'David', 'Dexter', 'Drexyl', 'Eddie', 'Floyd', 'Frank', 'Freddie', 'Gerald', 'Gordon', 'Ilka', 'James', 'Jeff', 'Jethro', 'Jimmy', 'John', 'Ken', 'Kingston', 'Larry', 'Laurence', 'Leeroy', 'Lester', 'Malcolm', 'Marty', 'Maxwell', 'Michael', 'Mike', 'Paul', 'Pete', 'Randy', 'Ray', 'Reggie', 'Rick', 'Robert', 'Roland', 'Ron', 'Ronnie', 'Ross', 'Sean', 'Spencer', 'Spike', 'Steve', 'Stevie', 'Stringer', 'Stu', 'Stuart', 'Terry', 'Thomas', 'Tommy', 'Tony', 'William', 'Brian'];
-        var femaleFirstNames = ['Alicia', 'Amanda', 'Ashley', 'Barbara', 'Becky', 'Beverly', 'Catriona', 'Charlotte', 'Debbie', 'Eve', 'Fiona', 'Francesca', 'Geraldine', 'Harriet', 'Jacki', 'Jane', 'Jenny', 'Jessica', 'Joanne', 'Jodie', 'Josie', 'Julia', 'June', 'Kate', 'Kim', 'Kimmy', 'Laura', 'Lisa', 'Liz', 'Louisa', 'Louise', 'Margaret', 'Martina', 'Mary', 'Muriel', 'Natasha', 'Nicki', 'Pam', 'Patricia', 'Rachel', 'Rebecca', 'Rebel', 'Rhonda', 'Riley', 'Rose', 'Ruby', 'Samantha', 'Sarah', 'Scarlet', 'Shannon', 'Sharon', 'Sophie', 'Stacy', 'Stephanie', 'Susie', 'Tabitha', 'Tanya', 'Toni', 'Tracy', 'Tricia', 'Trish', 'Vera', 'Victoria', 'Yolanda', 'Michelle', 'Felicity'];
-        var lastNames = ['Adams', 'Barksdale', 'Baxter', 'Bell', 'Braxton', 'Bronson', 'Cray', 'Diamond', 'Edwards', 'Findus', 'Ford', 'Fox', 'Franklin', 'French', 'Gentworth', 'George', 'Gibson', 'Gittins', 'Grey', 'Grimes', 'Harrison', 'Hogan', 'Hopkins', 'Jackson', 'Jenkins', 'Jones', 'Lee', 'Lloyd', 'Long', 'Mackintosh', 'Manero', 'Marshall', 'Matrix', 'McGrath', 'McLaren', 'Mills', 'Moreno', 'Murphy', 'Page', 'Palmer', 'Perry', 'Plant', 'Potts', 'Reed', 'Rhoades', 'Rico', 'Roper', 'Savage', 'Scott', 'Smith', 'Somerville', 'Stevens', 'Stewart', 'Sulley', 'Templeton', 'Thompson', 'Tull', 'Washington', 'Willis', 'Wilson', 'Worley', 'Young', 'Merchant', 'Rodriguez', 'Gonzalez', 'King'];
-        var nicknames = ['Ace', 'Babyface', 'Beefsteak', 'Big dog', 'Birdy', 'Blaster', 'Boffin', 'Bones', 'Brains', 'Brandy', 'Brick', 'Bubbles', 'Bug Eye', 'Butter', 'California', 'Cheese', 'Chips', 'Coffee', 'Corky', 'Crusher', 'Doc', 'Dolamite', 'Egg', 'Fingers', 'Fletch', 'Foxy', 'Frosty', 'G', 'Ghost', 'Goat', 'Grafter', 'Hollywood', 'Ice', 'Jellybean', 'Linebacker', 'Lucky', 'Maniac', 'Muscles', 'Papa', 'Psycho', 'Scarface', 'Shooter', 'Silencer', 'Slim', 'Snoop', 'Space Cadet', 'Spud', 'The Face', 'The Hat', 'The Kid', 'The Mouth', 'Unit', 'Upgrayedd', 'Vampire', 'Wheezy', 'Wonder'];
+// constants
+var treeBasePrice = 15;
+var baseWeedPerTree = 0.0001;
+var treePriceMulti = 1.1;
+var treeUpgradeBasePrice = 1000;
+var treeUpgradePriceMulti = 1.95;
+var treeUpgradeWeedMulti = 1.2;
 
-        function Dealer(seed) {
-            this.seed = seed;
-            Math.seedrandom(seed);
-            this.volume = Math.random() + 0.5;
-            this.price = Math.random() + 0.5;
+var territoryUpgradePriceMulti = 3.95;
+var territoryUpgradeBasePrice = 2000;
 
-            this.male = true;
-            this.name = maleFirstNames[Math.floor(Math.random() * maleFirstNames.length)];
-            if (Math.random() > 0.7) {
-                this.male = false;
-                this.name = femaleFirstNames[Math.floor(Math.random() * femaleFirstNames.length)];
-            }
-            if (Math.random() > 0.9) {
-                this.name = this.name + ' "' + nicknames[Math.floor(Math.random() * nicknames.length)] + '"';
-            }
-            this.name = this.name + ' ' + lastNames[Math.floor(Math.random() * lastNames.length)];
-        }
-        Dealer.prototype.getActualVolume = function () {
-            return this.volume * dealerConversion;
-        }
-        Dealer.prototype.getActualPrice = function () {
-            return this.price * dealerMulti;
-        }
+function Producer(name, basePrice, drug) {
+    this.name = name;
+    this.basePrice = basePrice;
+    this.qty = 0;
+    this.drug = drug;
+}
 
-        var interval;
+function Dealer(seed) {
+    this.seed = seed;
+    Math.seedrandom(seed);
+    this.volume = Math.random() + 0.5;
+    this.price = Math.random() + 0.5;
 
-        $scope.cash = 100;
-        $scope.cashForDisplay = function () { return '$' + $scope.formatMoney(cash);}
+    this.male = true;
+    this.name = maleFirstNames[Math.floor(Math.random() * maleFirstNames.length)];
+    if (Math.random() > 0.7) {
+        this.male = false;
+        this.name = femaleFirstNames[Math.floor(Math.random() * femaleFirstNames.length)];
+    }
+    if (Math.random() > 0.9) {
+        this.name = this.name + ' "' + nicknames[Math.floor(Math.random() * nicknames.length)] + '"';
+    }
+    this.name = this.name + ' ' + lastNames[Math.floor(Math.random() * lastNames.length)];
+}
 
-        var totalCashEarned = 0;
+function getActualDealerPrice(dealer) { return dealer.price * 4; }
+function getActualDealerVolume(dealer) { return dealer.volume * 0.003; }
 
-        var weed = 0;
-        $scope.weedForDisplay = function () { return $scope.formatDrugs(weed); }
-        var totalWeedGrown = 0;
+function GameModel() {
+    this.currencyCode = '$';
+    this.cash = 100;
+    this.totalCashEarned = 0;
+    this.trees = 0;
+    this.treeUpgrades = 0;
+    this.weed = 0;
+    this.totalWeedGrown = 0;
+    this.dealers = [];
+    this.territoryUpgrades = 0;
+    this.workMode = true;
+}
 
-        var trees = 0;
-        var treeBasePrice = 15;
-
-        var baseWeedPerTree = 0.0001;
-
-        var treeUpgrades = 0;
-
-        var treePriceMulti = 1.1;
-
-        var treeUpgradeBasePrice = 1000;
-
-        var treeUpgradePriceMulti = 1.95;
-
-        var treeUpgradeWeedMulti = 1.2;
-
-        $scope.dealers = [];
-
-        $scope.dealerUpgrades = 0;
-
-        var dealerUpgradePriceMulti = 3.95;
-        var dealerUpgradeBasePrice = 2000;
-        var dealerConversion = 0.003;
-        var dealerMulti = 4;
+angular.module('dopeslingerApp', ['ngSanitize'])
+    .controller('DopeController', ['$scope', '$document', '$window', '$sce', '$interval', '$timeout', function ($scope, $document, $window, $sce, $interval, $timeout) {
 
         var lastUpdate = 0;
         var lastSaved = 0;
+        var interval;
 
-        $scope.nsfw = true;
-        $scope.toggleNsfw = function () {
-            $scope.nsfw = !$scope.nsfw;
-        }
+        $scope.gameModel = new GameModel();
+
+        $scope.hireDealers = [];
+
+        $scope.cashForDisplay = function () { return $scope.gameModel.currencyCode + $scope.formatMoney($scope.gameModel.cash); }
+        $scope.weedForDisplay = function () { return $scope.formatDrugs($scope.gameModel.weed); }
+        $scope.toggleWorkMode = function () { $scope.gameModel.workMode = !$scope.gameModel.workMode; }
+        $scope.weedPerSecond = function () { return  $scope.gameModel.trees * (baseWeedPerTree * Math.pow(treeUpgradeWeedMulti, $scope.gameModel.treeUpgrades)) * 1000 };
+        $scope.treePrice = function () { return $scope.gameModel.currencyCode + $scope.formatMoney(treeBasePrice * Math.pow(treePriceMulti, $scope.gameModel.trees)); }
+        $scope.treeProgressStyle = function() {return Math.min(100,($scope.gameModel.cash / (treeBasePrice * Math.pow(treePriceMulti, $scope.gameModel.trees)) * 100)) + '%'; }
 
         function readFromCookie() {
             console.log("reading from local storage");
             if (typeof (Storage) == "undefined") {
-                console.log("no local storage!");
+                alert("no local storage! game cannot not be saved");
                 return;
             }
-            if (localStorage.getItem("cash") != null) $scope.cash = Number(localStorage.getItem("cash"));
-            if (localStorage.getItem("totalCashEarned") != null) totalCashEarned = Number(localStorage.getItem("totalCashEarned"));
-            if (localStorage.getItem("totalWeedGrown") != null) totalWeedGrown = Number(localStorage.getItem("totalWeedGrown"));
-            if (localStorage.getItem("trees") != null) trees = Number(localStorage.getItem("trees"));
-            if (localStorage.getItem("treeUpgrades") != null) treeUpgrades = Number(localStorage.getItem("treeUpgrades"));
-            if (localStorage.getItem("dealerUpgrades") != null) dealerUpgrades = Number(localStorage.getItem("dealerUpgrades"));
-            if (localStorage.getItem("dealers") != null) {
-                var dealerSeeds = String(localStorage.getItem("dealers")).split(';');
-                $scope.dealers = [];
-                for (var index = 0; index < dealerSeeds.length; index++) {
-                    $scope.dealers[index] = new Dealer(String(dealerSeeds[index]));
-                }
-            }
-            if (localStorage.getItem("weed") != null) weed = Number(localStorage.getItem("weed"));
+            if (localStorage.getItem("gameModel") != null) $scope.gameModel = JSON.parse(localStorage.getItem("gameModel"));
         }
         $scope.formatDrugs = function () {
             if (value > 1000)
@@ -104,42 +93,23 @@
         function writeToCookie() {
             console.log("writing to local storage")
             if (typeof (Storage) == "undefined") {
-                console.log("no local storage!");
+                alert("no local storage! game cannotWas there not be saved");
                 return;
             }
-            localStorage.setItem("cash", $scope.cash);
-            localStorage.setItem("totalCashEarned", totalCashEarned);
-            localStorage.setItem("totalWeedGrown", totalWeedGrown);
-            localStorage.setItem("trees", trees);
-            localStorage.setItem("treeUpgrades", treeUpgrades);
-            var dealerString = "";
-            for (var index = 0; index < $scope.dealers.length; index++) {
-                dealerString = dealerString + ";" + $scope.dealers[index].seed;
-            }
-            console.log("saving: " + dealerString);
-            localStorage.setItem("dealers", dealerString.substring(1));
-            localStorage.setItem("dealerUpgrades", dealerUpgrades);
-            localStorage.setItem("weed", weed);
+            localStorage.setItem("gameModel", JSON.stringify($scope.gameModel));
         }
 
         $scope.resetGame = function() {
-            localStorage.removeItem("cash");
-            localStorage.removeItem("totalCashEarned");
-            localStorage.removeItem("totalWeedGrown");
-            localStorage.removeItem("trees");
-            localStorage.removeItem("treeUpgrades");
-            localStorage.removeItem("dealerUpgrades");
-            localStorage.removeItem("dealers");
-            localStorage.removeItem("weed");
+            localStorage.clear();
             window.location.reload();
         }
 
         $scope.upgradeTrees = function() {
 
-            var upgradeCost = treeUpgradeBasePrice * Math.pow(treeUpgradePriceMulti, treeUpgrades);
+            var upgradeCost = treeUpgradeBasePrice * Math.pow(treeUpgradePriceMulti, $scope.gameModel.treeUpgrades);
             if ($scope.cash > upgradeCost) {
                 $scope.cash = $scope.cash - upgradeCost;
-                treeUpgrades++;
+                $scope.gameModel.treeUpgrades++;
                 writeToCookie();
             }
         }
@@ -172,9 +142,9 @@
         }
 
         function getDealerById(dealerId) {
-            for (var i = 0; i < $scope.dealers.length; i++) {
-                if ($scope.dealers[i].seed == dealerId)
-                    return $scope.dealers[i];
+            for (var i = 0; i < $scope.gameModel.dealers.length; i++) {
+                if ($scope.gameModel.dealers[i].seed == dealerId)
+                    return $scope.gameModel.dealers[i];
             }
             return null;
         }
@@ -199,22 +169,50 @@
             return value.toFixed(2) + "g";
         }
 
+        $scope.hireDealerModal = function () {
+            var seed = (new Date().getTime() / 120000).toFixed();
+            $scope.hireDealers = [new Dealer(seed), new Dealer(seed + 25), new Dealer(seed + 2001)];
+            $('#hireDealerModal').modal('show');
+        }
+
+        $scope.hireDealer = function (seed) {
+            $('#hireDealerModal').modal('hide');
+            if ($scope.gameModel.dealers.length < 1 + $scope.gameModel.territoryUpgrades) {
+                $scope.gameModel.dealers.push(new Dealer(seed));
+            } else {
+                $timeout(function () {
+                    $window.alert('You already have the maximum number of dealers working for you. Either fire a dealer or expand your territory to hire another.');
+                });
+            }
+        }
+
+        $scope.fireDealer = function(seed) {
+            var newDealerArray = [];
+            for (var i = 0; i < $scope.gameModel.dealers.length; i++) {
+                if ($scope.gameModel.dealers[i].seed != seed) {
+                    newDealerArray.push($scope.gameModel.dealers[i]);
+                }
+            }
+            $scope.gameModel.dealers = newDealerArray;
+            writeToCookie();
+        }
+
 
         $scope.upgradeDealers = function() {
-            var upgradeCost = dealerUpgradeBasePrice * Math.pow(dealerUpgradePriceMulti, dealerUpgrades);
-            if ($scope.cash > upgradeCost) {
-                $scope.cash = $scope.cash - upgradeCost;
-                dealerUpgrades++;
+            var upgradeCost = territoryUpgradeBasePrice * Math.pow(territoryUpgradePriceMulti, $scope.gameModel.territoryUpgrades);
+            if ($scope.gameModel.cash > upgradeCost) {
+                $scope.gameModel.cash = $scope.gameModel.cash - upgradeCost;
+                $scope.gameModel.territoryUpgrades++;
                 writeToCookie();
             }
         }
 
         $scope.buyTree = function () {
             console.log('buyTree');
-            var treeCost = treeBasePrice * Math.pow(treePriceMulti, trees);
-            if ($scope.cash > treeCost) {
-                $scope.cash = $scope.cash - treeCost;
-                trees++;
+            var treeCost = treeBasePrice * Math.pow(treePriceMulti, $scope.gameModel.trees);
+            if ($scope.gameModel.cash > treeCost) {
+                $scope.gameModel.cash = $scope.gameModel.cash - treeCost;
+                $scope.gameModel.trees++;
                 writeToCookie();
             }
         }
@@ -225,33 +223,32 @@
 
             var cashEarned = 0;
             var cashSpent = 0;
-            var weedGrown = trees * (baseWeedPerTree * Math.pow(treeUpgradeWeedMulti, treeUpgrades)) * (timeDiff);
+            var weedGrown = $scope.gameModel.trees * (baseWeedPerTree * Math.pow(treeUpgradeWeedMulti, $scope.gameModel.treeUpgrades)) * (timeDiff);
             var weedSold = 0;
 
-            for (var i = 0; i < $scope.dealers.length; i++) {
-                if (weed + weedGrown - weedSold >= $scope.dealers[i].getActualVolume() * timeDiff) {
-                    cashEarned += $scope.dealers[i].getActualPrice() * $scope.dealers[i].getActualVolume() * timeDiff;
-                    weedSold += $scope.dealers[i].getActualVolume() * timeDiff;
+            for (var i = 0; i < $scope.gameModel.dealers.length; i++) {
+                if ($scope.gameModel.weed + weedGrown - weedSold >= getActualDealerVolume($scope.gameModel.dealers[i]) * timeDiff) {
+                    cashEarned += getActualDealerPrice($scope.gameModel.dealers[i]) * getActualDealerVolume($scope.gameModel.dealers[i]) * timeDiff;
+                    weedSold += getActualDealerVolume($scope.gameModel.dealers[i]) * timeDiff;
                 }
             }
 
-            weed = weed + weedGrown - weedSold;
-            $scope.cash = $scope.cash + cashEarned - cashSpent;
+            $scope.gameModel.weed = $scope.gameModel.weed + weedGrown - weedSold;
+            $scope.gameModel.cash = $scope.gameModel.cash + cashEarned - cashSpent;
 
-            totalWeedGrown += weedGrown;
-            totalCashEarned += cashEarned;
+            $scope.gameModel.totalWeedGrown += weedGrown;
+            $scope.gameModel.totalCashEarned += cashEarned;
             lastUpdate = updateTime;
 
             if (lastSaved < updateTime - 30000) {
                 writeToCookie();
                 lastSaved = updateTime;
             }
-            $scope.$apply();
         }
 
         $document.ready(function () {
             readFromCookie();
-            interval = setInterval(update, 90);
+            $interval(update, 90);
         });
 
     }]);
