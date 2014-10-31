@@ -34,6 +34,7 @@
 
         span.inline-glyph {margin-right:2px; }
 
+        .iconyellow{color:#ffc107;}
         .iconred { color: #e51c23; font-size: 18px; float: left; margin-right:-16px; }
         .dealer-warning { color:#e51c23; font-weight:bold; }
 
@@ -53,6 +54,8 @@
         .upgrade {color:#bf360c;}
         .upgrade-header {color:#ff5722;}
         .btn-upgrade {color:#bf360c;border-color:#ffab91;}
+
+        .form-control{height:auto;color:inherit;}
 
         .strong { font-weight: bold; }
         h1.street {font-family:whoa;font-size:74px;}
@@ -206,9 +209,15 @@
                     <span class="glyphicon icongreen glyphicon-user"></span> Hire dealer <span class="dealer-count strong">{{gameModel.dealers.length + '/' + (1 + gameModel.territoryUpgrades)}}</span>
                 </button>
                 <div class="dealer-ui" ng-repeat="dealer in gameModel.dealers track by $index" data-dealer-seed="{{dealer.seed}}">
-                    <div class="dealer" ng-class="{'open':dealer.selected}" ng-click="selectDealer(dealer)"><strong>{{dealer.name}}</strong><span class="glyphicon" ng-class="dealer.selected ? 'glyphicon-chevron-up' : 'glyphicon-chevron-down'"></span></div>
+                    <div class="dealer" ng-class="{'open':dealer.selected}" ng-click="selectDealer(dealer)"><strong>{{dealer.name}} ({{dealer.drug}})</strong><span class="glyphicon" ng-class="dealer.selected ? 'glyphicon-chevron-up' : 'glyphicon-chevron-down'"></span></div>
                     <div class="dealer-content row" collapse="!dealer.selected">
                         <p class="col-xs-12">Cash earned: <strong>{{dealer.cashEarned|money}}</strong></p>
+                            <p class="col-xs-12 col-sm-5">Currently selling:</p>
+                            <span class="col-xs-12 col-sm-7">
+                                <select class="form-control" ng-model="dealer.drug" tooltip="Select which drug you want this dealer to sell">
+                                    <option ng-repeat="drug in gameModel.drugs track by $index" ng-show="drug.visible">{{drug.name}}</option>
+                                </select>
+                            </span>
                         <p class="col-xs-12">Volume: <span class="volume iconyellow" ng-bind-html="getStars(dealer.volume,5)"></span></p>
                         <p class="col-xs-12">Price: <span class="price iconyellow" ng-bind-html="getStars(dealer.price,5)"></span></p>
                         <div class ="col-xs-12">

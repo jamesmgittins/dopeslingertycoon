@@ -56,6 +56,7 @@ function Dealer(seed) {
     this.name = this.name + ' ' + lastNames[Math.floor(Math.random() * lastNames.length)];
     this.cashEarned = 0;
     this.selected = false;
+    this.drug = "";
 }
 
 function getActualDealerPrice(dealer, drug) { return dealer.price * drug.pricePerGram; }
@@ -156,7 +157,8 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ui.bootstrap'])
         $scope.drugSoldPerSecond = function (drug) {
             var qty = 0;
             for (var j = 0; j < $scope.gameModel.dealers.length; j++) {
-                 qty += getActualDealerVolume($scope.gameModel.dealers[j]);
+                if ($scope.gameModel.dealers[j].drug == drug.name)
+                    qty += getActualDealerVolume($scope.gameModel.dealers[j]);
             }
             return qty;
         }
@@ -228,16 +230,6 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ui.bootstrap'])
             }
         }
 
-        $scope.buyTree = function () {
-            console.log('buyTree');
-            var treeCost = treeBasePrice * Math.pow(treePriceMulti, $scope.gameModel.trees);
-            if ($scope.gameModel.cash > treeCost) {
-                $scope.gameModel.cash = $scope.gameModel.cash - treeCost;
-                $scope.gameModel.trees++;
-                writeToCookie();
-            }
-        }
-
         function update() {
             var updateTime = new Date().getTime();
             var timeDiff = (Math.min(1000, updateTime - lastUpdate)) / 1000;
@@ -253,7 +245,7 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ui.bootstrap'])
                 }
 
                 for (var j = 0; j < $scope.gameModel.dealers.length; j++) {
-                    if (drug.qty >= getActualDealerVolume($scope.gameModel.dealers[j]) * timeDiff) {
+                    if ($scope.gameModel.dealers[j].drug == drug.name && drug.qty >= getActualDealerVolume($scope.gameModel.dealers[j]) * timeDiff) {
                         cashEarned += getActualDealerPrice($scope.gameModel.dealers[j], drug) * getActualDealerVolume($scope.gameModel.dealers[j]) * timeDiff;
                         drug.qty -= getActualDealerVolume($scope.gameModel.dealers[j]) * timeDiff;
                         $scope.gameModel.dealers[j].cashEarned += getActualDealerPrice($scope.gameModel.dealers[j], drug) * getActualDealerVolume($scope.gameModel.dealers[j]) * timeDiff;
