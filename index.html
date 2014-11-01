@@ -42,11 +42,13 @@
         div.progress-bar {background-color:#259b24;background-image:none;}
 
         .icongreen { color: #259b24; font-size: 18px; float: left;  margin-right:-16px; }
-
+        .btn[disabled] {opacity:0.9;}
         .production {color:#0d5302;}
         .production-header {color:#259b24;}
         .btn-production {color:#0d5302;border-color:#72d572;}
 
+        .dealer-content button {margin-bottom:5px;}
+        #hireDealerModal .row > p {min-height:40px;}
         .distribution {color:#311b92;}
         .distribution-header {color:#673ab7;}
         .btn-distribution {color:#311b92;border-color:#b39ddb;}
@@ -216,14 +218,16 @@
                     <div class="dealer" ng-class="{'open':dealer.selected}" ng-click="selectDealer(dealer)"><strong>{{dealer.name}} ({{dealer.drug}})</strong><span class="glyphicon" ng-class="dealer.selected ? 'glyphicon-chevron-up' : 'glyphicon-chevron-down'"></span></div>
                     <div class="dealer-content row" collapse="!dealer.selected">
                         <p class="col-xs-12">Cash earned: <strong>{{dealer.cashEarned|money}}</strong></p>
-                            <p class="col-xs-12 col-sm-5">Currently selling:</p>
-                            <span class="col-xs-12 col-sm-7">
+                            <p class="col-xs-6 col-sm-5">Currently selling:</p>
+                            <span class="col-xs-6 col-sm-7">
                                 <select class="form-control" ng-model="dealer.drug" tooltip="Select which drug you want this dealer to sell">
                                     <option ng-repeat="drug in gameModel.drugs track by $index">{{drug.name}}</option>
                                 </select>
                             </span>
-                        <p class="col-xs-12">Volume: <span class="volume iconyellow" ng-bind-html="getStars(dealer.volume,5)" tooltip="{{dealer.name.split(' ')[0]}} can sell up to {{actualDealerVolume(dealer)|weight}} per second"></span></p>
+                        <p class="col-xs-12">Volume: <span class="volume iconyellow" ng-bind-html="getStars(dealer.volume,5)" tooltip="{{dealer.name.split(' ')[0]}} can sell up to {{actualDealerVolume(dealer,dealer.drug)|weight}} of {{dealer.drug}} per second, as well as {{dealer.sideVolume * actualDealerVolume(dealer,dealer.drug)|weight}} of other drugs"></span></p>
                         <p class="col-xs-12">Price: <span class="price iconyellow" ng-bind-html="getStars(dealer.price,5)" tooltip="{{dealer.name.split(' ')[0]}} sells 1g of {{dealer.drug}} for {{actualDealerPrice(dealer)|money}}"></span></p>
+                        <span class="col-xs-12"><button class="btn btn-default btn-distribution" ng-click="dealerUpgradeModal(dealer)"><span class="glyphicon glyphicon-shopping-cart icongreen"></span>Buy Equipment</button></span>
+                        <p class="col-xs-6 strong" ng-repeat="upgrade in dealer.upgrades" tooltip="{{upgrade.tooltip}}">{{upgrade.name}}</p>
                         <div class ="col-xs-12">
                             <button class="btn btn-default btn-distribution" ng-click="fireDealer(dealer.seed)"><span class="glyphicon iconred glyphicon-user"></span>Fire {{dealer.name.split(' ')[0]}}</button>
                         </div>
@@ -238,13 +242,35 @@
                     <progressbar animate="false" value="cashPercentage(priceOfTerritory())" ng-class="gameModel.cash < priceOfTerritory() ? 'active progress-striped' : 'progress-bar-success'"></progressbar>
                 </div>
                 <div ng-repeat="upgrade in availableUpgrades | orderBy:'price'" tooltip="{{upgrade.tooltip}}" class="upgrade-div">
-                    <button ng-click="purchaseUpgrade(upgrade)" class="btn btn-default btn-upgrade" ng-disabled="gameModel.cash < upgrade.price" type="button"><span class="glyphicon glyphicon-globe icongreen"></span> {{upgrade.name}} (<strong>{{upgrade.price|money}}</strong>)</button>
+                    <button ng-click="purchaseUpgrade(upgrade)" class="btn btn-default btn-upgrade" ng-disabled="gameModel.cash < upgrade.price" type="button">
+                        <span class="glyphicon icongreen" ng-class="{'glyphicon-tint' : upgrade.type == 'DrugUnlock', 'glyphicon-circle-arrow-up' : upgrade.type == 'ProductionUpgrade'}"></span> {{upgrade.name}} (<strong>{{upgrade.price|money}}</strong>)
+                    </button>
                     <progressbar animate="false" value="cashPercentage(upgrade.price)" ng-class="gameModel.cash < upgrade.price ? 'active progress-striped' : 'progress-bar-success'"></progressbar>
                 </div>
             </div>
 
         </div>
 
+    </div>
+
+    <div class="modal fade" id="upgradeDealerModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Dealer equipment</h4>
+                </div>
+                <div class="modal-body row">
+                    <div class="col-xs-12 strong">Current cash: {{gameModel.cash|money}}</div>
+                    <div class="col-xs-12 upgrade-div" ng-repeat="upgrade in availableDealerUpgrades|orderBy:'price'" tooltip="{{upgrade.tooltip}}">
+                        <button ng-click="purchaseDealerUpgrade(upgrade)" class="btn btn-default btn-upgrade" ng-disabled="gameModel.cash < upgrade.price" type="button">
+                            <span class="glyphicon icongreen glyphicon-circle-arrow-up"></span> {{upgrade.name}} (<strong>{{upgrade.price|money}}</strong>)
+                        </button>
+                        <progressbar animate="false" value="cashPercentage(upgrade.price)" ng-class="gameModel.cash < upgrade.price ? 'active progress-striped' : 'progress-bar-success'"></progressbar>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="modal fade" id="hireDealerModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -258,7 +284,7 @@
                     <p class="col-xs-12 dealer-warning" ng-show="gameModel.dealers.length >= gameModel.territoryUpgrades + 1">You already have the maximum number of dealers working for you. Either fire a dealer or expand your territory to hire another.</p>
                     <div class="col-xs-12 col-sm-4" ng-repeat="dealer in hireDealers">
                         <p><span class="distribution strong">{{dealer.name}}</span></p>
-                        <p>Volume: <span class="volume iconyellow" ng-bind-html="getStars(dealer.volume,5)" tooltip="{{dealer.name.split(' ')[0]}} can sell up to {{actualDealerVolume(dealer)|weight}} per second"></span></p>
+                        <p>Volume: <span class="volume iconyellow" ng-bind-html="getStars(dealer.volume,5)" tooltip="{{dealer.name.split(' ')[0]}} can sell up to {{actualDealerVolume(dealer,dealer.drug)|weight}} per second"></span></p>
                         <p>Price: <span class="price iconyellow" ng-bind-html="getStars(dealer.price,5)" tooltip="{{dealer.name.split(' ')[0]}} sells 1g of {{dealer.drug}} for {{actualDealerPrice(dealer)|money}}"></span></p>
                         <button class="btn btn-default btn-distribution" ng-click="hireDealer(dealer.seed)" ng-disabled="gameModel.dealers.length >= gameModel.territoryUpgrades + 1 || dealerHired(dealer.seed)">{{dealerHired(dealer.seed) ? 'Hired' : 'Hire ' + dealer.name.split(' ')[0]}}</button>
                     </div>
