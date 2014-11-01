@@ -13,16 +13,38 @@ var treeUpgradeWeedMulti = 1.2;
 var territoryUpgradePriceMulti = 3.95;
 var territoryUpgradeBasePrice = 2000;
 
-function Drug(name, pricePerGram, visible) {
+function ProductionUpgrade(name, tooltip, price, producer, upVal) {
+    this.type = 'ProductionUpgrade';
+    this.name = name;
+    this.tooltip = tooltip;
+    this.price = price;
+    this.producer = producer;
+    this.upVal = upVal;
+}
+function DrugUnlock (name,tooltip,price,drug) {
+    this.type = 'DrugUnlock';
+    this.name = name;
+    this.tooltip = tooltip;
+    this.price = price;
+    this.drug = drug;
+}
+
+var upgradesMaster = [
+    new ProductionUpgrade('Fertilizer', 'Increases the amount of weed produced by your cannabis plants by 30%!', 2000, 'Cannabis Plant', 1.3),
+    new ProductionUpgrade('Hydroponics', 'Increases the amount of weed produced by your cannabis plants by 50%!', 25000, 'Cannabis Plant', 1.5),
+    new ProductionUpgrade('Recreational Vehicle', 'Increases the amount of meth made by your cooks by 50%!', 80000, 'Meth Cook', 1.5),
+    new ProductionUpgrade('Underground Lab', 'Increases the amount of meth made by your cooks by 50%!', 800000, 'Meth Cook', 1.5) ];
+
+function Drug(name, pricePerGram, costToUnlock) {
     this.name = name;
     this.pricePerGram = pricePerGram;
     this.qty = 0;
-    this.visible = visible;
     this.total = 0;
     this.selected = false;
+    this.costToUnlock = costToUnlock;
 }
 
-var drugsMaster = [new Drug('Weed', 4, true), new Drug('Coke', 80, true), new Drug('Meth', 25, true), new Drug('PCP', 40, false)];
+var drugsMaster = [new Drug('Weed', 4, 0), new Drug('Cocaine', 60, 150000), new Drug('Meth', 10, 10000), new Drug('PCP', 30, 50000)];
 
 function Producer(name, basePrice, drug, priceMulti, prodPerUnit) {
     this.name = name;
@@ -34,9 +56,10 @@ function Producer(name, basePrice, drug, priceMulti, prodPerUnit) {
 }
 
 var productionMaster = [
-    new Producer('Tree', 15, 'Weed', 1.1, 0.1),
-    new Producer('Coke Mule', 1000, 'Coke', 1.2, 0.5),
-    new Producer('Meth Cook', 10000, 'Meth', 1.3, 0.9)];
+    new Producer('Cannabis Plant', 15, 'Weed', 1.1, 0.1),
+    new Producer('Drug Mule', 10000, 'Cocaine', 1.4, 0.3),
+    new Producer('Meth Cook', 5000, 'Meth', 1.25, 0.5),
+    new Producer('Chemical Lab', 80000, 'PCP', 1.2, 0.4)];
 
 function Dealer(seed) {
     this.seed = seed;
@@ -56,14 +79,15 @@ function Dealer(seed) {
     this.name = this.name + ' ' + lastNames[Math.floor(Math.random() * lastNames.length)];
     this.cashEarned = 0;
     this.selected = false;
-    this.drug = "";
+    this.drug = "Weed";
 }
 
 function getActualDealerPrice(dealer, drug) { return dealer.price * drug.pricePerGram; }
 function getActualDealerVolume(dealer) { return dealer.volume * 3; }
 
 function GameModel() {
-    this.drugs = drugsMaster;
+    this.drugs = [drugsMaster[0]];
+    this.upgrades = [];
     this.currencyCode = '$';
     this.cash = 100;
     this.totalCashEarned = 0;
@@ -103,14 +127,78 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ui.bootstrap'])
         var lastUpdate = 0;
         var lastSaved = 0;
         var interval;
+        var cashOneSecond = 0;
+        var timeOneSecond = 0;
 
         $scope.gameModel = new GameModel();
-
+        $scope.cashPerSecond = 0;
         $scope.hireDealers = [];
         $scope.toggleWorkMode = function () { $scope.gameModel.workMode = !$scope.gameModel.workMode; }
         $scope.priceOfTerritory = function () { return territoryUpgradeBasePrice * Math.pow(territoryUpgradePriceMulti, $scope.gameModel.territoryUpgrades); }
         $scope.cashPercentage = function (value) { return Math.min(100, $scope.gameModel.cash / value * 100); }
         $scope.productionPrice = function (production) { return production.basePrice * Math.pow(production.priceMulti, production.qty); }
+        $scope.availableUpgrades = [];
+
+        $scope.getDrugByName = function (name) {
+            for (var i = 0; i < $scope.gameModel.drugs.length; i++) {
+                if ($scope.gameModel.drugs[i].name == name)
+                    return $scope.gameModel.drugs[i];
+            }
+            return null;
+        }
+
+        $scope.actualDealerVolume = function (dealer) { return getActualDealerVolume(dealer); }
+        $scope.actualDealerPrice = function (dealer) { return getActualDealerPrice(dealer, $scope.getDrugByName(dealer.drug));}
+
+        $scope.calculateAvailableUpgrades = function () {
+            $scope.availableUpgrades = [];
+            for (var i = 0; i < drugsMaster.length; i++) {
+                var drugUnlocked = false;
+
+                if ($scope.getDrugByName(drugsMaster[i].name) != null)
+                    drugUnlocked = true;
+
+                if (!drugUnlocked) {
+                    $scope.availableUpgrades.push(new DrugUnlock('Research ' + drugsMaster[i].name, 'Spend money to research production of a new drug; ' + drugsMaster[i].name + '. Your customers will love it!', drugsMaster[i].costToUnlock, drugsMaster[i].name));
+                }
+            }
+            for (var i = 0; i < upgradesMaster.length; i++) {
+                var upgradeUnlocked = false;
+                for (var j = 0; j < $scope.gameModel.upgrades.length; j++) {
+                    if ($scope.gameModel.upgrades[j].name == upgradesMaster[i].name)
+                        upgradeUnlocked = true;
+                }
+                if (!upgradeUnlocked) {
+                    $scope.availableUpgrades.push(upgradesMaster[i]);
+                }
+            }
+        }
+
+        $scope.purchaseUpgrade = function (upgrade) {
+            if ($scope.gameModel.cash < upgrade.price)
+                return;
+
+            switch (upgrade.type) {
+                case 'DrugUnlock':
+                    for (var i = 0; i < drugsMaster.length; i++) {
+                        if (drugsMaster[i].name == upgrade.drug) {
+                            $scope.gameModel.drugs.push(drugsMaster[i]);
+                        }
+                    }
+                    break;
+                case 'ProductionUpgrade':
+                    for (var i = 0; i < $scope.gameModel.production.length; i++) {
+                        if ($scope.gameModel.production[i].name == upgrade.producer) {
+                            $scope.gameModel.production[i].prodPerUnit *= upgrade.upVal;
+                            $scope.gameModel.upgrades.push(upgrade);
+                        }
+                    }
+                    break;
+            }
+            $scope.gameModel.cash -= upgrade.price;
+            $scope.calculateAvailableUpgrades();
+            $scope.writeToCookie();
+        }
 
         $scope.increaseProduction = function (production) {
             if ($scope.gameModel.cash > $scope.productionPrice(production)) {
@@ -193,7 +281,7 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ui.bootstrap'])
         }
 
         $scope.hireDealerModal = function () {
-            var seed = (new Date().getTime() / 120000).toFixed();
+            var seed = (new Date().getTime() / 60000).toFixed();
             $scope.hireDealers = [new Dealer(seed), new Dealer(seed + 25), new Dealer(seed + 2001)];
             $('#hireDealerModal').modal('show');
         }
@@ -257,6 +345,11 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ui.bootstrap'])
             $scope.gameModel.totalCashEarned += cashEarned;
 
             lastUpdate = updateTime;
+            if (updateTime - timeOneSecond >= 1000) {
+                timeOneSecond = updateTime;
+                $scope.cashPerSecond = $scope.gameModel.cash - cashOneSecond;
+                cashOneSecond = $scope.gameModel.cash;
+            }
 
             if (lastSaved < updateTime - 30000) {
                 writeToCookie();
@@ -266,7 +359,8 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ui.bootstrap'])
 
         $document.ready(function () {
             readFromCookie();
-            $interval(update, 90);
+            $scope.calculateAvailableUpgrades();
+            $interval(update, 99);
         });
 
     }]);

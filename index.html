@@ -63,7 +63,7 @@
         @viewport {
             zoom: 1.0;
         }
-
+        div.upgrade-div {padding-top:10px;}
         button.btn.options-button {
             margin-bottom: 10px;
         }
@@ -167,7 +167,7 @@
             </div>
             <div class="col-xs-12 col-sm-9 col-md-10">
                 <h1 class="street" ng-show="!gameModel.workMode"><span class="production-header">Dope</span> <span class="distribution-header">slinger</span> <span class="upgrade-header">tycoon</span></h1>
-                <p ng-show="!gameModel.workMode" class="production"><strong>Buy canabis plants to grow weed. Hire dealers to sell the weed.</strong></p>
+                <p ng-show="!gameModel.workMode"><strong>Buy cannabis plants to grow weed. Hire dealers to sell the weed.</strong></p>
             </div>
 
             <div class="col-xs-12 col-sm-3 col-md-2">
@@ -175,7 +175,11 @@
             </div>
 
             <div class="col-xs-12 col-sm-6">
-                <p class="production strong">Current cash: <span class="current-cash upgrade" tooltip="Total earned {{gameModel.totalCashEarned|money}}">{{gameModel.cash|money}}</span></p>
+                <p class="strong">Current cash: 
+                <span class="current-cash" tooltip="Total earned {{gameModel.totalCashEarned|money}}">{{gameModel.cash|money}}</span> 
+                <span class="glyphicon" ng-class="cashPerSecond > 0 ? 'glyphicon-arrow-up production-header' : 'glypicon-arrow-down upgrade-header'"></span> 
+                <span ng-class="cashPerSecond > 0 ? 'production-header' : 'upgrade-header'">{{cashPerSecond|money}} / sec</span>
+                </p>
             </div>
 
             <div class="col-xs-12 col-sm-6" id="log">
@@ -186,7 +190,7 @@
 
             <div class="col-xs-12 col-sm-4">
                 <h3 class="strong production-header">Production</h3>
-                <div ng-repeat="drug in gameModel.drugs track by $index" ng-show="drug.visible">
+                <div ng-repeat="drug in gameModel.drugs track by $index">
                     <div class="drug" ng-click="selectDrug(drug)" ng-class="{'open' : drug.selected}"><strong>{{drug.name}} {{drug.qty|weight}}</strong>
                         <span class="glyphicon" ng-class="drug.selected ? 'glyphicon-chevron-up' : 'glyphicon-chevron-down'"></span></div>
                     <div class="drug-content row" collapse="!drug.selected">
@@ -215,11 +219,11 @@
                             <p class="col-xs-12 col-sm-5">Currently selling:</p>
                             <span class="col-xs-12 col-sm-7">
                                 <select class="form-control" ng-model="dealer.drug" tooltip="Select which drug you want this dealer to sell">
-                                    <option ng-repeat="drug in gameModel.drugs track by $index" ng-show="drug.visible">{{drug.name}}</option>
+                                    <option ng-repeat="drug in gameModel.drugs track by $index">{{drug.name}}</option>
                                 </select>
                             </span>
-                        <p class="col-xs-12">Volume: <span class="volume iconyellow" ng-bind-html="getStars(dealer.volume,5)"></span></p>
-                        <p class="col-xs-12">Price: <span class="price iconyellow" ng-bind-html="getStars(dealer.price,5)"></span></p>
+                        <p class="col-xs-12">Volume: <span class="volume iconyellow" ng-bind-html="getStars(dealer.volume,5)" tooltip="{{dealer.name.split(' ')[0]}} can sell up to {{actualDealerVolume(dealer)|weight}} per second"></span></p>
+                        <p class="col-xs-12">Price: <span class="price iconyellow" ng-bind-html="getStars(dealer.price,5)" tooltip="{{dealer.name.split(' ')[0]}} sells 1g of {{dealer.drug}} for {{actualDealerPrice(dealer)|money}}"></span></p>
                         <div class ="col-xs-12">
                             <button class="btn btn-default btn-distribution" ng-click="fireDealer(dealer.seed)"><span class="glyphicon iconred glyphicon-user"></span>Fire {{dealer.name.split(' ')[0]}}</button>
                         </div>
@@ -232,6 +236,10 @@
                 <div tooltip="Expand your territory, allowing you to hire an additional dealer">
                     <button ng-click="expandTerritory()" class="btn btn-default btn-upgrade" ng-disabled="gameModel.cash < priceOfTerritory()" type="button"><span class="glyphicon glyphicon-globe icongreen"></span> Expand territory (<strong>{{priceOfTerritory()|money}}</strong>)</button>
                     <progressbar animate="false" value="cashPercentage(priceOfTerritory())" ng-class="gameModel.cash < priceOfTerritory() ? 'active progress-striped' : 'progress-bar-success'"></progressbar>
+                </div>
+                <div ng-repeat="upgrade in availableUpgrades | orderBy:'price'" tooltip="{{upgrade.tooltip}}" class="upgrade-div">
+                    <button ng-click="purchaseUpgrade(upgrade)" class="btn btn-default btn-upgrade" ng-disabled="gameModel.cash < upgrade.price" type="button"><span class="glyphicon glyphicon-globe icongreen"></span> {{upgrade.name}} (<strong>{{upgrade.price|money}}</strong>)</button>
+                    <progressbar animate="false" value="cashPercentage(upgrade.price)" ng-class="gameModel.cash < upgrade.price ? 'active progress-striped' : 'progress-bar-success'"></progressbar>
                 </div>
             </div>
 
@@ -250,9 +258,9 @@
                     <p class="col-xs-12 dealer-warning" ng-show="gameModel.dealers.length >= gameModel.territoryUpgrades + 1">You already have the maximum number of dealers working for you. Either fire a dealer or expand your territory to hire another.</p>
                     <div class="col-xs-12 col-sm-4" ng-repeat="dealer in hireDealers">
                         <p><span class="distribution strong">{{dealer.name}}</span></p>
-                        <p>Volume: <span class="volume iconyellow" ng-bind-html="getStars(dealer.volume,5)"></span></p>
-                        <p>Price: <span class="price iconyellow" ng-bind-html="getStars(dealer.price,5)"></span></p>
-                        <button class="btn btn-default btn-distribution" ng-click="hireDealer(dealer.seed)" ng-disabled="gameModel.dealers.length >= gameModel.territoryUpgrades + 1 || dealerHired(dealer.seed)">Hire dealer</button>
+                        <p>Volume: <span class="volume iconyellow" ng-bind-html="getStars(dealer.volume,5)" tooltip="{{dealer.name.split(' ')[0]}} can sell up to {{actualDealerVolume(dealer)|weight}} per second"></span></p>
+                        <p>Price: <span class="price iconyellow" ng-bind-html="getStars(dealer.price,5)" tooltip="{{dealer.name.split(' ')[0]}} sells 1g of {{dealer.drug}} for {{actualDealerPrice(dealer)|money}}"></span></p>
+                        <button class="btn btn-default btn-distribution" ng-click="hireDealer(dealer.seed)" ng-disabled="gameModel.dealers.length >= gameModel.territoryUpgrades + 1 || dealerHired(dealer.seed)">{{dealerHired(dealer.seed) ? 'Hired' : 'Hire ' + dealer.name.split(' ')[0]}}</button>
                     </div>
                 </div>
             </div>
