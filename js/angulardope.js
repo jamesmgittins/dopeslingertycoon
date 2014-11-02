@@ -351,6 +351,7 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ui.bootstrap'])
             upgradeDealer.price *= upgrade.priceMod;
             upgradeDealer.sideVolume += upgrade.secondaryMod;
             $scope.calculateAvailableDealerUpgrades(upgradeDealer);
+            $scope.writeToCookie();
         }
 
         $scope.hireDealerModal = function () {
