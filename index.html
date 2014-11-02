@@ -154,7 +154,7 @@
                 <div class="modal-body row">
                     <p class="col-xs-12 dealer-warning" ng-show="gameModel.dealers.length >= gameModel.territoryUpgrades + 1">You already have the maximum number of dealers working for you. Either fire a dealer or expand your territory to hire another.</p>
                     <div class="col-xs-12 col-sm-4" ng-repeat="dealer in hireDealers">
-                        <p><span class="distribution strong">{{dealer.name}}</span></p>
+                        <p class="dealer-name"><span class="distribution strong">{{dealer.name}}</span></p>
                         <p>Volume: <span class="volume iconyellow" ng-bind-html="getStars(dealer.volume,5)" tooltip="{{dealer.name.split(' ')[0]}} can sell up to {{actualDealerVolume(dealer,dealer.drug)|weight}} per second"></span></p>
                         <p>Price: <span class="price iconyellow" ng-bind-html="getStars(dealer.price,5)" tooltip="{{dealer.name.split(' ')[0]}} sells 1g of {{dealer.drug}} for {{actualDealerPrice(dealer)|money}}"></span></p>
                         <button class="btn btn-default btn-distribution" ng-click="hireDealer(dealer.seed)" ng-disabled="gameModel.dealers.length >= gameModel.territoryUpgrades + 1 || dealerHired(dealer.seed)">{{dealerHired(dealer.seed) ? 'Hired' : 'Hire ' + dealer.name.split(' ')[0]}}</button>

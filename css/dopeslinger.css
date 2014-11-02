@@ -70,7 +70,7 @@ div.progress-bar {
     margin-bottom: 8px;
 }
 
-#hireDealerModal .row > p {
+#hireDealerModal p.dealer-name {
     min-height: 40px;
 }
 

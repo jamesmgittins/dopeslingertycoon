@@ -27,7 +27,7 @@ var dealerUpgrades = [
     new DealerUpgrade('Bicycle', 'The cheapest and most basic form of personal transportation. Allows the dealer to sell an extra 10% volume', 600, 1.1, 1, 0),
     new DealerUpgrade('iPhone 6 Plus', 'A state of the art smartphone. Allows the dealer to sell a small amount of other drugs on the side', 900, 1, 1, 0.1),
     new DealerUpgrade('Motorbike', 'One of the fastest ways to get around the urban jungle. Allows the dealer to sell an extra 10% volume', 12000, 1.1, 1, 0),
-    new DealerUpgrade('Glock 9mm', 'A small but deadly firearm, nobody will mess with you if you have this. Allows the dealer to sell drugs for 10% more money', 2500, 1, 1.1, 0)
+    new DealerUpgrade('Glock 17 9mm', 'A small but deadly firearm, nobody will mess with you if you have this. Allows the dealer to sell drugs for 10% more money', 2500, 1, 1.1, 0)
 ];
 
 function ProductionUpgrade(name, tooltip, price, producer, upVal, drug) {
