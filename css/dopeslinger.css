@@ -70,8 +70,13 @@ div.progress-bar {
     margin-bottom: 8px;
 }
 
+#optionsModal button {
+    margin-bottom:10px;
+}
+
 #hireDealerModal p.dealer-name {
     min-height: 40px;
+    margin-top:20px;
 }
 
 .distribution {
