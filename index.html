@@ -9,6 +9,7 @@
     <meta name="author" content="jamesgittins.com">
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="css/dopeslinger.css">
     <script src="js/jquery.min.js"></script>
     <script src="js/angular.min.js"></script>
     <script src="js/angular-sanitize.min.js"></script>
@@ -23,136 +24,6 @@
             window.location.reload();
         }
     </script>
-    <style>
-
-        @font-face {
-            font-family: whoa;
-            src: url(fonts/UrbanJungleDEMO.otf);
-        }
-        .nav, .pagination, .carousel, .panel-title a { cursor: pointer; }
-        body { padding-bottom:20px; }
-
-        span.inline-glyph {margin-right:2px; }
-
-        .iconyellow{color:#ffc107;}
-        .iconred { color: #e51c23; font-size: 18px; float: left; margin-right:-16px; }
-        .dealer-warning { color:#e51c23; font-weight:bold; }
-
-        .progress { margin: 0; height:5px;border-radius:0; }
-        div.progress-bar {background-color:#259b24;background-image:none;}
-
-        .icongreen { color: #259b24; font-size: 18px; float: left;  margin-right:-16px; }
-        .btn[disabled] {opacity:0.9;}
-        .production {color:#0d5302;}
-        .production-header {color:#259b24;}
-        .btn-production {color:#0d5302;border-color:#72d572;}
-
-        .dealer-content button {margin-bottom:5px;}
-        #hireDealerModal .row > p {min-height:40px;}
-        .distribution {color:#311b92;}
-        .distribution-header {color:#673ab7;}
-        .btn-distribution {color:#311b92;border-color:#b39ddb;}
-
-        .upgrade {color:#bf360c;}
-        .upgrade-header {color:#ff5722;}
-        .btn-upgrade {color:#bf360c;border-color:#ffab91;}
-
-        .form-control{height:auto;color:inherit;}
-
-        .strong { font-weight: bold; }
-        h1.street {font-family:whoa;font-size:74px;}
-        span.current-cash {font-size:20px;}
-        @viewport {
-            zoom: 1.0;
-        }
-        div.upgrade-div {padding-top:10px;}
-        button.btn.options-button {
-            margin-bottom: 10px;
-        }
-
-        button.btn {
-            width: 100%;
-            border-radius:0;
-        }
-        span.qty {
-            float:left;
-            font-size:18px;
-            font-weight:bold;
-            margin-right:-18px;
-        }
-
-        div.dealer-content,
-        div.dealer {
-            border:1px solid #673ab7;
-            color:#311b92;
-        }
-        div.dealer.open {
-            background-color:#673ab7;
-        }
-
-        div.drug-content,
-        div.drug {
-            border:1px solid #259b24;
-            color:#0d5302;
-        }
-
-        div.drug.open {
-            background-color:#259b24;
-        }
-
-        div.dealer-content,
-        div.drug-content {
-            margin:0 0 5px;
-            max-height:9999px;
-            border-top:none;
-            padding:12px 0;
-        }
-
-        div.dealer-content button > span.glyphicon,
-        div.drug-content button > span.glyphicon {
-            margin-right:-18px;
-        }
-
-        div.dealer,
-        div.drug {
-            margin:10px 0 0;
-            padding:6px 12px;
-            text-align:center;
-            cursor:pointer;
-        }
-
-        div.dealer > span.glyphicon,
-        div.drug > span.glyphicon {
-            float:right;
-            display:none;
-            font-size: 18px;
-            margin-left:-18px;
-        }
-
-        div.dealer:hover > span.glyphicon,
-        div.drug:hover > span.glyphicon {
-            display:inline;
-        }
-
-        div.dealer.open,
-        div.drug.open {
-            color:white;
-        }
-
-        .weed {
-            color: #00A000;
-        }
-
-        label {
-            float: left;
-            margin-top: 20px;
-        }
-
-        .checkbox {
-            float: left;
-            margin: 20px 0 0 10px !important;
-        }
-    </style>
 </head>
 <body ng-controller="DopeController">
     <div class="container">
