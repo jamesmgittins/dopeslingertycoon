@@ -23,7 +23,6 @@ function DealerUpgrade(name, tooltip, price, volumeMod, priceMod, secondaryMod) 
 }
 
 var dealerUpgrades = [
-    new DealerUpgrade('Nokia 3210', 'A cheap but obsolete mobile phone. Allows the dealer to sell a small amount of other drugs on the side', 75, 1, 1, 0.1),
     new DealerUpgrade('Baseball bat', 'Handy in a street fight and helps to scare away the competition. Allows the dealer to sell drugs for 10% more money', 150, 1, 1.1, 0),
     new DealerUpgrade('Bicycle', 'The cheapest and most basic form of personal transportation. Allows the dealer to sell an extra 10% volume', 600, 1.1, 1, 0),
     new DealerUpgrade('iPhone 6 Plus', 'A state of the art smartphone. Allows the dealer to sell a small amount of other drugs on the side', 900, 1, 1, 0.1),

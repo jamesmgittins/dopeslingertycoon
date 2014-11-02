@@ -67,7 +67,7 @@ div.progress-bar {
 }
 
 .dealer-content button {
-    margin-bottom: 5px;
+    margin-bottom: 8px;
 }
 
 #hireDealerModal .row > p {
@@ -168,11 +168,6 @@ div.drug-content {
     max-height: 9999px;
     border-top: none;
     padding: 12px 0;
-}
-
-div.dealer-content button > span.glyphicon,
-div.drug-content button > span.glyphicon {
-    margin-right: -18px;
 }
 
 div.dealer,
