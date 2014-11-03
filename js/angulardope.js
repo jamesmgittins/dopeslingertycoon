@@ -10,7 +10,7 @@ var treeUpgradeBasePrice = 1000;
 var treeUpgradePriceMulti = 1.95;
 var treeUpgradeWeedMulti = 1.2;
 
-var territoryUpgradePriceMulti = 3.2;
+var territoryUpgradePriceMulti = 3.1;
 var territoryUpgradeBasePrice = 2000;
 
 function DealerUpgrade(name, tooltip, price, volumeMod, priceMod, secondaryMod) {
@@ -27,7 +27,7 @@ var dealerUpgrades = [
     new DealerUpgrade('Bicycle', 'The cheapest and most basic form of personal transportation. Allows the dealer to sell an extra 10% volume', 600, 1.1, 1, 0),
     new DealerUpgrade('iPhone 6 Plus', 'A state of the art smartphone. Allows the dealer to sell a small amount of other drugs on the side', 900, 1, 1, 0.1),
     new DealerUpgrade('Superbike', 'One of the fastest ways to get around the urban jungle. Allows the dealer to sell an extra 20% volume', 25000, 1.2, 1, 0),
-    new DealerUpgrade('Glock 17 9mm', 'A small but deadly firearm, nobody will mess with you if you have this. Allows the dealer to sell drugs for 10% more money', 5000, 1, 1.1, 0),
+    new DealerUpgrade('Glock 17 9mm', 'A small but deadly firearm, nobody will mess with you if you have this. Allows the dealer to sell drugs for 20% more money', 5000, 1, 1.2, 0),
     new DealerUpgrade('Personal Assistant', 'A personal assistant to take your calls. Allows the dealer to sell even more drugs on the side', 85000, 1, 1, 0.2),
     new DealerUpgrade('Armed Gang', 'A gang of tooled up homies to help eliminate the competition. Allows the dealer to sell drugs for 20% more money', 150000, 1, 1.2, 0),
     new DealerUpgrade('Ferrari 458 Italia', 'A fine Italian supercar. Allows the dealer to sell an extra 30% volume', 575000, 1.3, 1, 0),
@@ -54,18 +54,20 @@ function DrugUnlock (name,tooltip,price,drug) {
 var productionUpgradesMaster = [
     new ProductionUpgrade('Fertilizer', 'Nutrient rich fertilizer, increases the amount of weed produced by your cannabis plants by 30%!', 500, 'Cannabis Plant', 1.3, 'Weed'),
     new ProductionUpgrade('Hydroponics', 'High tech agriculture system, increases the amount of weed produced by your cannabis plants by 50%!', 25000, 'Cannabis Plant', 1.5, 'Weed'),
-    new ProductionUpgrade('Lighting system', 'An automatically timed lighting system, increases the amount of shrooms produced by your mushroom farms by 50%!', 5000, 'Mushroom Farm', 1.5, 'Magic Mushrooms'),
+    new ProductionUpgrade('Auto Hygrometer', 'An automatically controlled humidity system, increases the amount of shrooms produced by your mushroom farms by 50%!', 5000, 'Mushroom Farm', 1.5, 'Magic Mushrooms'),
     new ProductionUpgrade('Irrigation system', 'An computer controlled irrigation system, increases the amount of shrooms produced by your mushroom farms by 50%!', 55000, 'Mushroom Farm', 1.5, 'Magic Mushrooms'),
     new ProductionUpgrade('Recreational Vehicle', 'Increases the amount of meth made by your cooks by 50%!', 60000, 'Meth Cook', 1.5, 'Meth'),
     new ProductionUpgrade('Underground Lab', 'Increases the amount of meth made by your cooks by 50%!', 230000, 'Meth Cook', 1.5, 'Meth'),
-    new ProductionUpgrade('College education', 'Increases the amount of LSD made by your lab technicians by 50%!', 120000, 'Lab Technician', 1.5, 'Acid'),
-    new ProductionUpgrade('Digital Distillation', 'Increases the amount of LSD made by your lab technicians by 50%!', 250000, 'Lab Technician', 1.5, 'Acid'),
+    new ProductionUpgrade('College education', 'Increases the amount of acid made by your lab technicians by 50%!', 120000, 'Lab Technician', 1.5, 'Acid'),
+    new ProductionUpgrade('Digital Distillation', 'Increases the amount of acid made by your lab technicians by 50%!', 250000, 'Lab Technician', 1.5, 'Acid'),
     new ProductionUpgrade('Mass Spectrometer', 'Increases the amount of PCP made by your chemical labs by 70%!', 950000, 'Chemical Lab', 1.7, 'PCP'),
     new ProductionUpgrade('Haber process research', 'Increases the amount of PCP made by your chemical labs by 50%!', 190000, 'Chemical Lab', 1.5, 'PCP'),
     new ProductionUpgrade('Polytunnel complex', 'Increases the amount of heroin made by your opium farms by 50%!', 210000, 'Opium Farm', 1.5, 'Heroin'),
     new ProductionUpgrade('Cropdusting', 'Increases the amount of heroin made by your opium farms by 50%!', 750000, 'Opium Farm', 1.5, 'Heroin'),
-    new ProductionUpgrade('Plastic surgery disguise', 'Increases the amount of cocaine smuggled by your drug mules farms by 30%!', 350000, 'Drug Mule', 1.3, 'Cocaine'),
-    new ProductionUpgrade('Cartel deal', 'Increases the amount of cocaine smuggled by your drug mules farms by 80%!', 1500000, 'Drug Mule', 1.8, 'Cocaine')];
+    new ProductionUpgrade('Research Facility', 'Increases the amount of MDMA made by your chemistry professors by 40%!', 1000000, 'Chemistry Professor', 1.4, 'MDMA'),
+    new ProductionUpgrade('PhD Students', 'A small army of PhD students to assist the professors in their important work. Increases the amount of MDMA made by your chemistry professors by 60%!', 250000, 'Chemistry Professor', 1.6, 'MDMA'),
+    new ProductionUpgrade('Plastic surgery disguise', 'Increases the amount of cocaine smuggled by your drug mules by 30%!', 350000, 'Drug Mule', 1.3, 'Cocaine'),
+    new ProductionUpgrade('Cartel deal', 'Increases the amount of cocaine smuggled by your drug mules by 80%!', 1500000, 'Drug Mule', 1.8, 'Cocaine')];
 
 function Drug(name, pricePerGram, costToUnlock) {
     this.name = name;
@@ -74,16 +76,18 @@ function Drug(name, pricePerGram, costToUnlock) {
     this.total = 0;
     this.selected = false;
     this.costToUnlock = costToUnlock;
+    this.totalCash = 0;
 }
 
 var drugsMaster = [
-    new Drug('Weed', 4, 0),
+    new Drug('Weed', 4.2, 0),
     new Drug('Magic Mushrooms', 6, 1500),
-    new Drug('Meth', 10, 10000),
+    new Drug('Meth', 10, 6000),
     new Drug('Acid', 20, 20000),
-    new Drug('PCP', 30, 50000),
-    new Drug('Heroin', 45, 100000),
-    new Drug('Cocaine', 60, 150000)];
+    new Drug('PCP', 30, 60000),
+    new Drug('Heroin', 40, 100000),
+    new Drug('MDMA', 50, 180000),
+    new Drug('Cocaine', 60, 250000)];
 
 function Producer(name, basePrice, drug, priceMulti, prodPerUnit) {
     this.name = name;
@@ -96,12 +100,13 @@ function Producer(name, basePrice, drug, priceMulti, prodPerUnit) {
 
 var productionMaster = [
     new Producer('Cannabis Plant', 15, 'Weed', 1.1, 0.1),
-    new Producer('Mushroom Farm', 150, 'Magic Mushrooms', 1.2, 0.2),
+    new Producer('Mushroom Farm', 150, 'Magic Mushrooms', 1.15, 0.25),
     new Producer('Meth Cook', 1000, 'Meth', 1.2, 0.5),
-    new Producer('Lab Technician', 3000, 'Acid', 1.2, 0.5),
-    new Producer('Chemical Lab', 8000, 'PCP', 1.25, 0.4),
-    new Producer('Opium Farm', 12000, 'Heroin', 1.3, 0.5),
-    new Producer('Drug Mule', 18000, 'Cocaine', 1.4, 0.3)];
+    new Producer('Lab Technician', 3000, 'Acid', 1.22, 0.5),
+    new Producer('Chemical Lab', 8000, 'PCP', 1.24, 0.4),
+    new Producer('Opium Farm', 12000, 'Heroin', 1.26, 0.5),
+    new Producer('Chemistry Professor', 15000, 'MDMA', 1.28, 0.4),
+    new Producer('Drug Mule', 18000, 'Cocaine', 1.3, 0.3)];
 
 function Dealer(seed) {
     this.seed = seed;
@@ -124,6 +129,8 @@ function Dealer(seed) {
     this.selected = false;
     this.drug = "Weed";
     this.upgrades = [];
+    this.cashOneSecondAgo = 0;
+    this.cashPerSecond = 0;
 }
 
 function getActualDealerPrice(dealer, drug) { return dealer.price * drug.pricePerGram; }
@@ -179,6 +186,8 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ui.bootstrap'])
         var cashOneSecond = 0;
         var timeOneSecond = 0;
 
+        $scope.log = [];
+
         $scope.gameModel = new GameModel();
         $scope.cashPerSecond = 0;
         $scope.hireDealers = [];
@@ -197,7 +206,8 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ui.bootstrap'])
         }
 
         $scope.actualDealerVolume = function (dealer, drug) { return getActualDealerVolume(dealer, drug); }
-        $scope.actualDealerPrice = function (dealer) { return getActualDealerPrice(dealer, $scope.getDrugByName(dealer.drug));}
+        $scope.actualDealerPrice = function (dealer) { return getActualDealerPrice(dealer, $scope.getDrugByName(dealer.drug)); }
+        $scope.drugStreetPrice = function (drug) { return drug.pricePerGram; }
 
         $scope.calculateAvailableUpgrades = function () {
             $scope.availableUpgrades = [];
@@ -208,7 +218,7 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ui.bootstrap'])
                     drugUnlocked = true;
 
                 if (!drugUnlocked && (i > 0 && $scope.getDrugByName(drugsMaster[i - 1].name) != null) && $scope.gameModel.totalCashEarned > drugsMaster[i].costToUnlock) {
-                    $scope.availableUpgrades.push(new DrugUnlock('Research ' + drugsMaster[i].name, 'Spend money to research production of a new drug; ' + drugsMaster[i].name + '. Your customers will love it!', drugsMaster[i].costToUnlock, drugsMaster[i].name));
+                    $scope.availableUpgrades.push(new DrugUnlock('Research ' + drugsMaster[i].name, 'Spend money to research production of a new drug, ' + drugsMaster[i].name + '. Your customers will love it!', drugsMaster[i].costToUnlock, drugsMaster[i].name));
                 }
             }
             for (var i = 0; i < productionUpgradesMaster.length; i++) {
@@ -246,7 +256,7 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ui.bootstrap'])
             }
             $scope.gameModel.cash -= upgrade.price;
             $scope.calculateAvailableUpgrades();
-            $scope.writeToCookie();
+            writeToCookie();
         }
 
         $scope.increaseProduction = function (production) {
@@ -362,7 +372,7 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ui.bootstrap'])
             upgradeDealer.price *= upgrade.priceMod;
             upgradeDealer.sideVolume += upgrade.secondaryMod;
             $scope.calculateAvailableDealerUpgrades(upgradeDealer);
-            $scope.writeToCookie();
+            writeToCookie();
         }
 
         $scope.hireDealerModal = function () {
@@ -375,6 +385,7 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ui.bootstrap'])
             $('#hireDealerModal').modal('hide');
             if ($scope.gameModel.dealers.length < 1 + $scope.gameModel.territoryUpgrades && !$scope.dealerHired(seed)) {
                 $scope.gameModel.dealers.push(new Dealer(seed));
+                writeToCookie();
             } else {
                 $timeout(function () {
                     $window.alert('You already have the maximum number of dealers working for you. Either fire a dealer or expand your territory to hire another.');
@@ -383,14 +394,16 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ui.bootstrap'])
         }
 
         $scope.fireDealer = function (seed) {
-            var newDealerArray = [];
-            for (var i = 0; i < $scope.gameModel.dealers.length; i++) {
-                if ($scope.gameModel.dealers[i].seed != seed) {
-                    newDealerArray.push($scope.gameModel.dealers[i]);
+            if ($window.confirm("Are you sure you want to fire this dealer?")) {
+                var newDealerArray = [];
+                for (var i = 0; i < $scope.gameModel.dealers.length; i++) {
+                    if ($scope.gameModel.dealers[i].seed != seed) {
+                        newDealerArray.push($scope.gameModel.dealers[i]);
+                    }
                 }
-            }
-            $scope.gameModel.dealers = newDealerArray;
-            writeToCookie();
+                $scope.gameModel.dealers = newDealerArray;
+                writeToCookie();
+            }   
         }
 
 
@@ -442,6 +455,11 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ui.bootstrap'])
                 timeOneSecond = updateTime;
                 $scope.cashPerSecond = $scope.gameModel.cash - cashOneSecond;
                 cashOneSecond = $scope.gameModel.cash;
+
+                for (var i = 0; i < $scope.gameModel.dealers.length; i++) {
+                    $scope.gameModel.dealers[i].cashPerSecond = $scope.gameModel.dealers[i].cashEarned - $scope.gameModel.dealers[i].cashOneSecondAgo;
+                    $scope.gameModel.dealers[i].cashOneSecondAgo = $scope.gameModel.dealers[i].cashEarned;
+                }
             }
 
             if (lastSaved < updateTime - 30000) {

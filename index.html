@@ -17,7 +17,6 @@
     <script src="js/ui-bootstrap-tpls-0.11.2.min.js"></script>
     <script src="js/seedrandom.min.js"></script>
     <script src="js/angulardope.js"></script>
-    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
     <script>
         resetGame = function () {
             localStorage.clear();
@@ -29,11 +28,12 @@
     <div class="container">
         <div class="row">
             <div class="col-xs-12 hidden-xs text-center">
-                <!-- dopeslinger -->
+                <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+                <!-- Dope slinger tycoon -->
                 <ins class="adsbygoogle"
                      style="display:inline-block;width:728px;height:90px"
                      data-ad-client="ca-pub-5746977543491330"
-                     data-ad-slot="1058480603"></ins>
+                     data-ad-slot="1786190604"></ins>
                 <script>
                     (adsbygoogle = window.adsbygoogle || []).push({});
                 </script>
@@ -55,8 +55,8 @@
                 </p>
             </div>
 
-            <div class="col-xs-12 col-sm-6" id="log">
-
+            <div class="col-xs-12 col-sm-6">
+                <p class="log" ng-repeat="entry in log|orderBy:'time'">{{entry.time.toTimeString().split(' ')[0]}}: {{entry.msg}}</p>
             </div>
 
             <div class="clearfix"></div>
@@ -67,6 +67,7 @@
                     <div class="drug" ng-click="selectDrug(drug)" ng-class="{'open' : drug.selected}"><strong>{{drug.name}} {{drug.qty|weight}}</strong>
                         <span class="glyphicon" ng-class="drug.selected ? 'glyphicon-chevron-up' : 'glyphicon-chevron-down'"></span></div>
                     <div class="drug-content row" collapse="!drug.selected">
+                        <p class="col-xs-12">Average street price - <b>{{drugStreetPrice(drug)|money}}</b> per gram</p>
                         <p class="col-xs-6" tooltip="You are producing {{drugMadePerSecond(drug)|weight}} of {{drug.name.toLowerCase()}} per second"><span class="glyphicon glyphicon-arrow-up inline-glyph icongreen"></span>{{drugMadePerSecond(drug)|weight}} / sec</p>
                         <p class="col-xs-6" tooltip="Your dealers are able to sell {{drugSoldPerSecond(drug)|weight}} of {{drug.name.toLowerCase()}} per second"><span class="glyphicon glyphicon-arrow-down inline-glyph iconred"></span>{{drugSoldPerSecond(drug)|weight}} / sec</p>
                         <div class="col-xs-12" ng-repeat="producer in producersForDrug(drug)" tooltip="Buy a {{producer.name.toLowerCase()}} to increase your {{drug.name.toLowerCase()}} production by {{producer.prodPerUnit|weight}} per second">
@@ -88,15 +89,16 @@
                 <div class="dealer-ui" ng-repeat="dealer in gameModel.dealers track by $index" data-dealer-seed="{{dealer.seed}}">
                     <div class="dealer" ng-class="{'open':dealer.selected}" ng-click="selectDealer(dealer)"><strong>{{dealer.name}} ({{dealer.drug}})</strong><span class="glyphicon" ng-class="dealer.selected ? 'glyphicon-chevron-up' : 'glyphicon-chevron-down'"></span></div>
                     <div class="dealer-content row" collapse="!dealer.selected">
-                        <p class="col-xs-12">Cash earned: <strong>{{dealer.cashEarned|money}}</strong></p>
-                            <p class="col-xs-6 col-sm-5">Currently selling:</p>
-                            <span class="col-xs-6 col-sm-7">
+                        <p class="col-xs-6">Total: <strong>{{dealer.cashEarned|money}}</strong></p>
+                        <p class="col-xs-6"><strong>{{dealer.cashPerSecond|money}} / sec</strong></p>
+                            <p class="col-xs-5 col-sm-4">Selling:</p>
+                            <span class="col-xs-7 col-sm-8">
                                 <select class="form-control" ng-model="dealer.drug" tooltip="Select which drug you want this dealer to sell">
                                     <option ng-repeat="drug in gameModel.drugs track by $index">{{drug.name}}</option>
                                 </select>
                             </span>
                         <p class="col-xs-12">Volume: <span class="volume iconyellow" ng-bind-html="getStars(dealer.volume,5)" tooltip="{{dealer.name.split(' ')[0]}} can sell up to {{actualDealerVolume(dealer,dealer.drug)|weight}} of {{dealer.drug}} per second, as well as {{dealer.sideVolume * actualDealerVolume(dealer,dealer.drug)|weight}} of other drugs"></span></p>
-                        <p class="col-xs-12">Price: <span class="price iconyellow" ng-bind-html="getStars(dealer.price,5)" tooltip="{{dealer.name.split(' ')[0]}} sells 1g of {{dealer.drug}} for {{actualDealerPrice(dealer)|money}}"></span></p>
+                        <p class="col-xs-12">Margin: <span class="price iconyellow" ng-bind-html="getStars(dealer.price,5)" tooltip="{{dealer.name.split(' ')[0]}} sells 1g of {{dealer.drug}} for {{actualDealerPrice(dealer)|money}}"></span></p>
                         <span class="col-xs-12"><button class="btn btn-default btn-distribution" ng-click="dealerUpgradeModal(dealer)"><span class="glyphicon glyphicon-shopping-cart icongreen"></span>Buy Equipment</button></span>
                         <p class="col-xs-6 strong" ng-repeat="upgrade in dealer.upgrades" tooltip="{{upgrade.tooltip}}">{{upgrade.name}}</p>
                         <div class ="col-xs-12">
@@ -156,7 +158,7 @@
                     <div class="col-xs-12 col-sm-4" ng-repeat="dealer in hireDealers">
                         <p class="dealer-name"><span class="distribution strong">{{dealer.name}}</span></p>
                         <p>Volume: <span class="volume iconyellow" ng-bind-html="getStars(dealer.volume,5)" tooltip="{{dealer.name.split(' ')[0]}} can sell up to {{actualDealerVolume(dealer,dealer.drug)|weight}} per second"></span></p>
-                        <p>Price: <span class="price iconyellow" ng-bind-html="getStars(dealer.price,5)" tooltip="{{dealer.name.split(' ')[0]}} sells 1g of {{dealer.drug}} for {{actualDealerPrice(dealer)|money}}"></span></p>
+                        <p>Margin: <span class="price iconyellow" ng-bind-html="getStars(dealer.price,5)" tooltip="{{dealer.name.split(' ')[0]}} sells 1g of {{dealer.drug}} for {{actualDealerPrice(dealer)|money}}"></span></p>
                         <button class="btn btn-default btn-distribution" ng-click="hireDealer(dealer.seed)" ng-disabled="gameModel.dealers.length >= gameModel.territoryUpgrades + 1 || dealerHired(dealer.seed)">{{dealerHired(dealer.seed) ? 'Hired' : 'Hire ' + dealer.name.split(' ')[0]}}</button>
                     </div>
                 </div>

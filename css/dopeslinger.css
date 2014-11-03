@@ -53,9 +53,26 @@ div.progress-bar {
     opacity: 0.9;
 }
 
-.production {
-    color: #0d5302;
-}
+.production {color: #0d5302;}
+
+body.work-mode .production,
+body.work-mode .production-header,
+body.work-mode .distribution,
+body.work-mode .distribution-header,
+body.work-mode .upgrade,
+body.work-mode .upgrade-header,
+body.work-mode .btn-distribution,
+body.work-mode .btn-production,
+body.work-mode .btn-upgrade,
+body.work-mode div.dealer-content,
+body.work-mode div.dealer,
+body.work-mode div.drug-content,
+body.work-mode div.drug {color:black;border-color:#bbb;}
+
+body.work-mode div.drug.open,
+body.work-mode div.dealer.open,
+body.work-mode div.progress-bar {background-color: #bbb;}
+ 
 
 .production-header {
     color: #259b24;
@@ -108,6 +125,7 @@ div.progress-bar {
 .form-control {
     height: auto;
     color: inherit;
+    padding:3px;
 }
 
 .strong {
