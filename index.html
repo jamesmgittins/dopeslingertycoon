@@ -41,7 +41,6 @@
             </div>
             <div class="col-xs-12 col-sm-9 col-md-10">
                 <h1 class="street" ng-show="!gameModel.workMode"><span class="production-header">Dope</span> <span class="distribution-header">slinger</span> <span class="upgrade-header">tycoon</span></h1>
-                <p ng-show="!gameModel.workMode"><strong>Buy cannabis plants to grow weed. Hire dealers to sell the weed.</strong></p>
             </div>
 
             <div class="col-xs-12 col-sm-3 col-md-2">
@@ -49,6 +48,7 @@
             </div>
 
             <div class="col-xs-12 col-sm-6">
+                <p ng-show="!gameModel.workMode"><strong>Buy cannabis plants to grow weed. Hire dealers to sell the weed.</strong></p>
                 <p class="strong">Current cash: 
                 <span class="current-cash" tooltip="Total earned {{gameModel.totalCashEarned|money}}">{{gameModel.cash|money}}</span> 
                 <span class="glyphicon" ng-class="cashPerSecond > 0 ? 'glyphicon-arrow-up production-header' : 'glypicon-arrow-down upgrade-header'"></span> 
