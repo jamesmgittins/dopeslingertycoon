@@ -161,7 +161,7 @@ function GameModel() {
     this.totalCashEarned = 0;
     this.treeUpgrades = 0;
     this.dealers = [];
-    this.production = productionMaster
+    this.production = [productionMaster[0]];
     this.territoryUpgrades = 0;
     this.workMode = false;
     this.lastDealerRefresh = 0;
@@ -298,6 +298,11 @@ angular.module('dopeslingerApp', ['ngSanitize'
                     for (var i = 0; i < drugsMaster.length; i++) {
                         if (drugsMaster[i].name == upgrade.drug) {
                             $scope.gameModel.drugs.push(drugsMaster[i]);
+                        }
+                    }
+                    for (var i = 0; i < productionMaster.length; i++) {
+                        if (productionMaster[i].drug == upgrade.drug) {
+                            $scope.gameModel.production.push(productionMaster[i]);
                         }
                     }
                     break;
