@@ -548,7 +548,7 @@ angular.module('dopeslingerApp', ['ngSanitize'
             }
 
             if (lastSaved < updateTime - 30000) {
-                if (Math.random() > 0.8 && !$scope.gameModel.buff) {
+                if (Math.random() > 0.9 && !$scope.gameModel.buff) {
                     var drug = $scope.gameModel.drugs[Math.floor(Math.random() * $scope.gameModel.drugs.length)];
                     var percentage = 2 + (Math.random() * 3);
                     var time = 60 + (Math.random() * 100);
