@@ -11,10 +11,11 @@
     <link rel="stylesheet" href="css/bootstrap-theme.min.css">
     <link rel="stylesheet" href="css/dopeslinger.css">
     <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
     <script src="js/angular.min.js"></script>
     <script src="js/angular-sanitize.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
     <script src="js/ui-bootstrap-tpls-0.11.2.min.js"></script>
+    <!--<script src="js/angular-animate.min.js"></script>-->
     <script src="js/seedrandom.min.js"></script>
     <script src="js/angulardope.js"></script>
     <script>
@@ -56,9 +57,9 @@
             </div>
 
             <div class="col-xs-12 col-sm-6">
-                <p class="log" ng-repeat="entry in log|orderBy:'time'">{{entry.time.toTimeString().split(' ')[0]}}: {{entry.msg}}</p>
+                <p class="distribution strong">{{buffMsg}}</p>
             </div>
-
+            
             <div class="clearfix"></div>
 
             <div class="col-xs-12 col-sm-4">
@@ -154,7 +155,9 @@
                     <h4 class="modal-title" id="myModalLabel">Hire dealer</h4>
                 </div>
                 <div class="modal-body row">
-                    <p class="col-xs-12 dealer-warning" ng-show="gameModel.dealers.length >= gameModel.territoryUpgrades + 1">You already have the maximum number of dealers working for you. Either fire a dealer or expand your territory to hire another.</p>
+                    <div class="col-xs-12 col-sm-4" tooltip="Show 3 new dealers (once per 60 seconds)"><button class="btn btn-default btn-distribution new-dealer-btn" ng-click="refreshDealers()" ng-disabled="secondsToDealerRefresh > 0">New dealers <span ng-show="secondsToDealerRefresh > 0">({{secondsToDealerRefresh}})</span></button></div>
+                    <p class="col-xs-12 col-sm-8 dealer-warning" ng-show="gameModel.dealers.length >= gameModel.territoryUpgrades + 1">You already have the maximum number of dealers working for you. Either fire a dealer or expand your territory to hire another.</p>
+                    <div class="clearfix"></div>
                     <div class="col-xs-12 col-sm-4" ng-repeat="dealer in hireDealers">
                         <p class="dealer-name"><span class="distribution strong">{{dealer.name}}</span></p>
                         <p>Volume: <span class="volume iconyellow" ng-bind-html="getStars(dealer.volume,5)" tooltip="{{dealer.name.split(' ')[0]}} can sell up to {{actualDealerVolume(dealer,dealer.drug)|weight}} per second"></span></p>

@@ -29,6 +29,10 @@ span.inline-glyph {
 .dealer-warning {
     color: #e51c23;
     font-weight: bold;
+    margin-top:10px;
+}
+.new-dealer-btn {
+    margin-top:15px;
 }
 
 .progress {
@@ -191,6 +195,12 @@ div.drug-content {
     max-height: 9999px;
     border-top: none;
     padding: 12px 0;
+    /*display:none;*/
+}
+
+div.dealer-content.content-open,
+div.drug-content.content-open {
+    display:inherit;
 }
 
 div.dealer,
