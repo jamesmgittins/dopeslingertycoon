@@ -71,7 +71,7 @@
                         <p class="col-xs-12">Average street price - <b>{{drugStreetPrice(drug)|money}}</b> per gram</p>
                         <p class="col-xs-6" tooltip="You are producing {{drugMadePerSecond(drug)|weight}} of {{drug.name.toLowerCase()}} per second"><span class="glyphicon glyphicon-arrow-up inline-glyph icongreen"></span>{{drugMadePerSecond(drug)|weight}} / sec</p>
                         <p class="col-xs-6" tooltip="Your dealers are able to sell {{drugSoldPerSecond(drug)|weight}} of {{drug.name.toLowerCase()}} per second"><span class="glyphicon glyphicon-arrow-down inline-glyph iconred"></span>{{drugSoldPerSecond(drug)|weight}} / sec</p>
-                        <div class="col-xs-12" ng-repeat="producer in producersForDrug(drug)" tooltip="Buy a {{producer.name.toLowerCase()}} to increase your {{drug.name.toLowerCase()}} production by {{producer.prodPerUnit|weight}} per second">
+                        <div class="col-xs-12" ng-repeat="producer in producersForDrug(drug)" tooltip="Buy {{producer.name == 'Opium Farm' ? 'an' : 'a'}} {{producer.name.toLowerCase()}} to increase your {{drug.name.toLowerCase()}} production by {{producer.prodPerUnit|weight}} per second">
                             <button class="btn btn-default btn-production" ng-click="increaseProduction(producer)" ng-disabled="gameModel.cash < productionPrice(producer)">
                                 <span class="qty">{{producer.qty}}</span>{{producer.name}} (<strong>{{productionPrice(producer)|money}}</strong>)
                             </button>
@@ -103,7 +103,7 @@
                         <span class="col-xs-12"><button class="btn btn-default btn-distribution" ng-click="dealerUpgradeModal(dealer)"><span class="glyphicon glyphicon-shopping-cart icongreen"></span>Buy Equipment</button></span>
                         <p class="col-xs-6 strong" ng-repeat="upgrade in dealer.upgrades" tooltip="{{upgrade.tooltip}}">{{upgrade.name}}</p>
                         <div class ="col-xs-12">
-                            <button class="btn btn-default btn-distribution" ng-click="fireDealer(dealer.seed)"><span class="glyphicon iconred glyphicon-user"></span>Fire {{dealer.name.split(' ')[0]}}</button>
+                            <button class="btn btn-default btn-distribution" ng-click="fireDealerModal(dealer)"><span class="glyphicon iconred glyphicon-user"></span>Fire {{dealer.name.split(' ')[0]}}</button>
                         </div>
                     </div>
                 </div>
@@ -125,6 +125,30 @@
 
         </div>
 
+    </div>
+
+    <div class="modal fade" id="fireDealerModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Fire {{dealerToFire.name.split(' ')[0]}}?</h4>
+                </div>
+                <div class="modal-body row">
+                    <div class="col-xs-12 text-center pb-10"><i>&quot;But I've got {{dealerToFire.kids}} kids to feed!&quot;</i></div>
+                    <div class="col-xs-6 pr-10">
+                        <button ng-click="fireDealerConfirm()" class="btn btn-default btn-distribution" type="button">
+                            <span class="glyphicon iconred glyphicon-user"></span> Fire
+                        </button>
+                    </div>
+                    <div class="col-xs-6 pl-10">
+                        <button ng-click="fireDealerCancel()" class="btn btn-default btn-distribution" type="button">
+                            <span class="glyphicon icongreen glyphicon-user"></span> Keep
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="modal fade" id="upgradeDealerModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">

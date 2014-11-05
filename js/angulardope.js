@@ -466,18 +466,26 @@ angular.module('dopeslingerApp', ['ngSanitize'
                 });
             }
         }
+        
+        $scope.fireDealerModal = function (dealer) {
+            $scope.dealerToFire = dealer;
+            $scope.dealerToFire.kids = (2 + Math.random() * 6).toFixed();
+            $('#fireDealerModal').modal('show');
+        }
 
-        $scope.fireDealer = function (seed) {
-            if ($window.confirm("Are you sure you want to fire this dealer?")) {
-                var newDealerArray = [];
-                for (var i = 0; i < $scope.gameModel.dealers.length; i++) {
-                    if ($scope.gameModel.dealers[i].seed != seed) {
-                        newDealerArray.push($scope.gameModel.dealers[i]);
-                    }
+        $scope.fireDealerConfirm = function () {
+            var newDealerArray = [];
+            for (var i = 0; i < $scope.gameModel.dealers.length; i++) {
+                if ($scope.gameModel.dealers[i].seed != $scope.dealerToFire.seed) {
+                    newDealerArray.push($scope.gameModel.dealers[i]);
                 }
-                $scope.gameModel.dealers = newDealerArray;
-                writeToCookie();
-            }   
+            }
+            $scope.gameModel.dealers = newDealerArray;
+            writeToCookie();
+            $('#fireDealerModal').modal('hide');
+        }
+        $scope.fireDealerCancel = function () {
+            $('#fireDealerModal').modal('hide');
         }
 
 
@@ -552,7 +560,7 @@ angular.module('dopeslingerApp', ['ngSanitize'
                     var drug = $scope.gameModel.drugs[Math.floor(Math.random() * $scope.gameModel.drugs.length)];
                     var percentage = 2 + (Math.random() * 3);
                     var time = 60 + (Math.random() * 100);
-                    $scope.gameModel.buff = {drugname: drug.name, modifier: percentage, expires: new Date().getTime() + (time * 1000), msg: "One of your rivals has been busted by the cops. The lack of competition is causing " + drug.name + " to sell at " + (percentage * 100).toFixed() + "% of the normal street price for the next {0} seconds!" };
+                    $scope.gameModel.buff = {drugname: drug.name, modifier: percentage, expires: new Date().getTime() + (time * 1000), msg: "One of your rivals has been busted by the cops. The lack of competition is causing " + drug.name + " to sell for " + (percentage * 100).toFixed() + "% of the normal street price for the next {0} seconds!" };
                 }
                 writeToCookie();
                 lastSaved = updateTime;
