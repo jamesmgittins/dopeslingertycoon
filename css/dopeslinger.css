@@ -1,4 +1,13 @@
-﻿@font-face {
+﻿@media all and (min-width:768px) {
+    div.container {width:100%;}
+}
+@media all and (min-width:992px) {
+    div.container {width:970px;}
+}
+@media all and (min-width:1200px) {
+    div.container {width:1170px;}
+}
+@font-face {
     font-family: whoa;
     src: url(../fonts/UrbanJungleDEMO.otf);
 }
