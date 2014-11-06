@@ -2,7 +2,7 @@
     div.container {width:100%;}
 }
 @media all and (min-width:992px) {
-    div.container {width:970px;}
+    div.container {width:990px;}
 }
 @media all and (min-width:1200px) {
     div.container {width:1170px;}

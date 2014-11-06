@@ -64,19 +64,32 @@ function DrugUnlock (name,tooltip,price,drug) {
 
 var productionUpgradesMaster = [
     new ProductionUpgrade('Fertilizer', 'Nutrient rich fertilizer, increases the amount of weed produced by your cannabis plants by 30%!', 500, 'Cannabis Plant', 1.3, 'Weed'),
-    new ProductionUpgrade('Hydroponics', 'High tech agriculture system, increases the amount of weed produced by your cannabis plants by 50%!', 25000, 'Cannabis Plant', 1.5, 'Weed'),
+    new ProductionUpgrade('Hydroponics', 'High tech agriculture system, increases the amount of weed produced by your cannabis plants by 50%!', 15000, 'Cannabis Plant', 1.5, 'Weed'),
+
     new ProductionUpgrade('Auto Hygrometer', 'An automatically controlled humidity system, increases the amount of shrooms produced by your mushroom farms by 50%!', 5000, 'Mushroom Farm', 1.5, 'Magic Mushrooms'),
-    new ProductionUpgrade('Irrigation system', 'An computer controlled irrigation system, increases the amount of shrooms produced by your mushroom farms by 50%!', 55000, 'Mushroom Farm', 1.5, 'Magic Mushrooms'),
-    new ProductionUpgrade('Recreational Vehicle', 'Increases the amount of meth made by your cooks by 50%!', 60000, 'Meth Cook', 1.5, 'Meth'),
-    new ProductionUpgrade('Underground Lab', 'Increases the amount of meth made by your cooks by 50%!', 230000, 'Meth Cook', 1.5, 'Meth'),
+    new ProductionUpgrade('Irrigation system', 'An computer controlled irrigation system, increases the amount of shrooms produced by your mushroom farms by 50%!', 25000, 'Mushroom Farm', 1.5, 'Magic Mushrooms'),
+
+    new ProductionUpgrade('Recreational Vehicle', 'Increases the amount of meth made by your cooks by 50%!', 40000, 'Meth Cook', 1.5, 'Meth'),
+    new ProductionUpgrade('Underground Lab', 'Increases the amount of meth made by your cooks by 50%!', 130000, 'Meth Cook', 1.5, 'Meth'),
+
+    new ProductionUpgrade('Corrupt Chemist', 'Increases the amount of speed produced by your chefs by 60%!', 75000, 'Base Chef', 1.4, 'Speed'),
+    new ProductionUpgrade('Criminal Pharmacy', 'Increases the amount of speed produced by your chefs by 50%!', 190000, 'Base Chef', 1.5, 'Speed'),
+
     new ProductionUpgrade('College education', 'Increases the amount of acid made by your lab technicians by 50%!', 120000, 'Lab Technician', 1.5, 'Acid'),
     new ProductionUpgrade('Digital Distillation', 'Increases the amount of acid made by your lab technicians by 50%!', 250000, 'Lab Technician', 1.5, 'Acid'),
+
+    new ProductionUpgrade('Gang protection', 'Increases the amount of crack made by your crack dens by 50%!', 145000, 'Crack Den', 1.5, 'Crack'),
+    new ProductionUpgrade('Police Payoff', 'Get the feds off your back to increase the amount of crack made by your crack dens by 45%!', 280000, 'Crack Den', 1.45, 'Crack'),
+
     new ProductionUpgrade('Mass Spectrometer', 'Increases the amount of PCP made by your chemical labs by 70%!', 950000, 'Chemical Lab', 1.7, 'PCP'),
     new ProductionUpgrade('Haber process research', 'Increases the amount of PCP made by your chemical labs by 50%!', 190000, 'Chemical Lab', 1.5, 'PCP'),
+
     new ProductionUpgrade('Polytunnel complex', 'Increases the amount of heroin made by your opium farms by 50%!', 210000, 'Opium Farm', 1.5, 'Heroin'),
     new ProductionUpgrade('Cropdusting', 'Increases the amount of heroin made by your opium farms by 50%!', 750000, 'Opium Farm', 1.5, 'Heroin'),
+
     new ProductionUpgrade('Research Facility', 'Increases the amount of MDMA made by your chemistry professors by 40%!', 1000000, 'Chemistry Professor', 1.4, 'MDMA'),
     new ProductionUpgrade('PhD Students', 'A small army of PhD students to assist the professors in their important work. Increases the amount of MDMA made by your chemistry professors by 60%!', 250000, 'Chemistry Professor', 1.6, 'MDMA'),
+
     new ProductionUpgrade('Plastic surgery disguise', 'Increases the amount of cocaine smuggled by your drug mules by 30%!', 350000, 'Drug Mule', 1.3, 'Cocaine'),
     new ProductionUpgrade('Cartel deal', 'Increases the amount of cocaine smuggled by your drug mules by 80%!', 1500000, 'Drug Mule', 1.8, 'Cocaine')];
 
@@ -94,11 +107,13 @@ var drugsMaster = [
     new Drug('Weed', 4.2, 0),
     new Drug('Magic Mushrooms', 6, 1500),
     new Drug('Meth', 10, 6000),
+    new Drug('Speed', 15, 12000),
     new Drug('Acid', 20, 20000),
-    new Drug('PCP', 30, 60000),
-    new Drug('Heroin', 40, 100000),
-    new Drug('MDMA', 50, 180000),
-    new Drug('Cocaine', 60, 250000)];
+    new Drug('Crack', 30, 50000),
+    new Drug('PCP', 40, 80000),
+    new Drug('Heroin', 50, 120000),
+    new Drug('MDMA', 60, 180000),
+    new Drug('Cocaine', 70, 250000)];
 
 function Producer(name, basePrice, drug, priceMulti, prodPerUnit) {
     this.name = name;
@@ -110,14 +125,16 @@ function Producer(name, basePrice, drug, priceMulti, prodPerUnit) {
 }
 
 var productionMaster = [
-    new Producer('Cannabis Plant', 15, 'Weed', 1.1, 0.1),
+    new Producer('Cannabis Plant', 15, 'Weed', 1.12, 0.15),
     new Producer('Mushroom Farm', 150, 'Magic Mushrooms', 1.15, 0.25),
     new Producer('Meth Cook', 1000, 'Meth', 1.2, 0.5),
-    new Producer('Lab Technician', 3000, 'Acid', 1.22, 0.5),
-    new Producer('Chemical Lab', 8000, 'PCP', 1.24, 0.4),
-    new Producer('Opium Farm', 12000, 'Heroin', 1.26, 0.5),
-    new Producer('Chemistry Professor', 15000, 'MDMA', 1.28, 0.4),
-    new Producer('Drug Mule', 18000, 'Cocaine', 1.3, 0.3)];
+    new Producer('Base Chef', 2500, 'Speed', 1.21, 0.4),
+    new Producer('Lab Technician', 5000, 'Acid', 1.22, 0.5),
+    new Producer('Crack Den', 10000, 'Crack', 1.23, 0.5),
+    new Producer('Chemical Lab', 20000, 'PCP', 1.24, 0.4),
+    new Producer('Opium Farm', 30000, 'Heroin', 1.25, 0.5),
+    new Producer('Chemistry Professor', 40000, 'MDMA', 1.26, 0.4),
+    new Producer('Drug Mule', 50000, 'Cocaine', 1.27, 0.3)];
 
 function Dealer(seed) {
     this.seed = seed;
@@ -572,7 +589,7 @@ angular.module('dopeslingerApp', ['ngSanitize'
         $document.ready(function () {
             readFromCookie();
             $scope.calculateAvailableUpgrades();
-            $interval(update, 99);
+            $interval(update, 100);
         });
 
     }]);

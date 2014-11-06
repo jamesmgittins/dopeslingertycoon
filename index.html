@@ -69,7 +69,7 @@
                     <div class="drug" ng-click="selectDrug(drug)" ng-class="{'open' : drug.selected}"><strong>{{drug.name}} {{drug.qty|weight}}</strong>
                         <span class="glyphicon" ng-class="drug.selected ? 'glyphicon-chevron-up' : 'glyphicon-chevron-down'"></span></div>
                     <div class="drug-content row" collapse="!drug.selected">
-                        <p class="col-xs-12">Average street price - <b>{{drugStreetPrice(drug)|money}}</b> per gram</p>
+                        <p class="col-xs-12">Average street price <b>{{drugStreetPrice(drug)|money}}</b> per gram</p>
                         <p class="col-xs-6" tooltip="You are producing {{drugMadePerSecond(drug)|weight}} of {{drug.name.toLowerCase()}} per second"><span class="glyphicon glyphicon-arrow-up inline-glyph icongreen"></span>{{drugMadePerSecond(drug)|weight}} / sec</p>
                         <p class="col-xs-6" tooltip="Your dealers are able to sell {{drugSoldPerSecond(drug)|weight}} of {{drug.name.toLowerCase()}} per second"><span class="glyphicon glyphicon-arrow-down inline-glyph iconred"></span>{{drugSoldPerSecond(drug)|weight}} / sec</p>
                         <div class="col-xs-12" ng-repeat="producer in producersForDrug(drug)" tooltip="Buy {{producer.name == 'Opium Farm' ? 'an' : 'a'}} {{producer.name.toLowerCase()}} to increase your {{drug.name.toLowerCase()}} production by {{producer.prodPerUnit|weight}} per second">
