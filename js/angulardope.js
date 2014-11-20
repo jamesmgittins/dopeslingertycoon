@@ -45,7 +45,7 @@ var dealerUpgrades = [
     new DealerUpgrade('AW119 Ke Koala', 'A personal helicopter for transporting you and your homies! Allows the dealer to sell an extra 60% volume', 1890000, 1.6, 1, 0)
 ];
 
-var silkRoadUpgrade = {type:'SilkRoad',name:'Develop Silk Road',tooltip:'Develop the Silk Road dark web site to allow you to bulk sell drugs in units of 1kg',price:1411592};
+var silkRoadUpgrade = {type:'SilkRoad',name:'Develop Silk Road',tooltip:'Develop the Silk Road dark web site to allow you to bulk sell drugs in units of 1kg',price:141159};
 
 function ProductionUpgrade(name, tooltip, price, producer, upVal, drug) {
     this.type = 'ProductionUpgrade';
@@ -336,7 +336,7 @@ angular.module('dopeslingerApp', ['ngSanitize'
                     $scope.availableUpgrades.push(productionUpgradesMaster[i]);
                 }
             }
-            if ($scope.gameModel.totalCashEarned > 2000000 && !$scope.gameModel.silkRoadUnlocked)
+            if ($scope.gameModel.totalCashEarned > 200000 && !$scope.gameModel.silkRoadUnlocked)
                 $scope.availableUpgrades.push(silkRoadUpgrade);
         }
 
