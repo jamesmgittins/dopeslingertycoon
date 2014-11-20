@@ -9,7 +9,7 @@
 }
 @font-face {
     font-family: whoa;
-    src: url(../fonts/UrbanJungleDEMO.otf) format('embedded-opentype');
+    src: url(../fonts/UrbanJungleDEMO.otf);
 }
 
 .nav, .pagination, .carousel, .panel-title a {
