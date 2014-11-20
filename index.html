@@ -82,6 +82,9 @@
                         <span class="glyphicon" ng-class="drug.selected ? 'glyphicon-chevron-up' : 'glyphicon-chevron-down'"></span></div>
                     <div class="drug-content row" collapse="!drug.selected">
                         <p class="col-xs-12">Average street price <b>{{drugStreetPrice(drug)|money}}</b> per gram</p>
+                        <div class="col-xs-12 mb-10" tooltip="Sell 1kg of {{drug.name}} on the silk road for 90% of the current street price" ng-show="gameModel.silkRoadUnlocked">
+                            <button class="btn btn-default btn-production" ng-disabled="drug.qty < 1000" ng-click="sellOnSilkRoad(drug)"><span class="glyphicon glyphicon-cloud-upload inline-glyph icongreen"></span>Sell 1kg (<b>{{drugStreetPrice(drug) * 900|money}}</b>)</button>
+                        </div>
                         <p class="col-xs-6" tooltip="You are producing {{drugMadePerSecond(drug)|weight}} of {{drug.name.toLowerCase()}} per second"><span class="glyphicon glyphicon-arrow-up inline-glyph icongreen"></span>{{drugMadePerSecond(drug)|weight}} / sec</p>
                         <p class="col-xs-6" tooltip="Your dealers are able to sell {{drugSoldPerSecond(drug)|weight}} of {{drug.name.toLowerCase()}} per second"><span class="glyphicon glyphicon-arrow-down inline-glyph iconred"></span>{{drugSoldPerSecond(drug)|weight}} / sec</p>
                         <div class="col-xs-12" ng-repeat="producer in producersForDrug(drug)" tooltip="Buy {{producer.name == 'Opium Farm' ? 'an' : 'a'}} {{producer.name.toLowerCase()}} to increase your {{drug.name.toLowerCase()}} production by {{producer.prodPerUnit|weight}} per second">
@@ -130,7 +133,7 @@
                 </div>
                 <div ng-repeat="upgrade in availableUpgrades | orderBy:'price'" tooltip="{{upgrade.tooltip}}" class="upgrade-div">
                     <button ng-click="purchaseUpgrade(upgrade)" class="btn btn-default btn-upgrade" ng-disabled="gameModel.cash < upgrade.price" type="button">
-                        <span class="glyphicon icongreen" ng-class="{'glyphicon-tint' : upgrade.type == 'DrugUnlock', 'glyphicon-circle-arrow-up' : upgrade.type == 'ProductionUpgrade'}"></span> {{upgrade.name}} (<strong>{{upgrade.price|money}}</strong>)
+                        <span class="glyphicon icongreen" ng-class="{'glyphicon-tint' : upgrade.type == 'DrugUnlock', 'glyphicon-circle-arrow-up' : upgrade.type == 'ProductionUpgrade', 'glyphicon-cloud' : upgrade.type=='SilkRoad'}"></span> {{upgrade.name}} (<strong>{{upgrade.price|money}}</strong>)
                     </button>
                     <progressbar animate="false" value="cashPercentage(upgrade.price)" ng-class="gameModel.cash < upgrade.price ? 'active progress-striped' : 'progress-bar-success'"></progressbar>
                 </div>

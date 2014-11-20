@@ -45,6 +45,8 @@ var dealerUpgrades = [
     new DealerUpgrade('AW119 Ke Koala', 'A personal helicopter for transporting you and your homies! Allows the dealer to sell an extra 60% volume', 1890000, 1.6, 1, 0)
 ];
 
+var silkRoadUpgrade = {type:'SilkRoad',name:'Develop Silk Road',tooltip:'Develop the Silk Road dark web site to allow you to bulk sell drugs in units of 1kg',price:1411592};
+
 function ProductionUpgrade(name, tooltip, price, producer, upVal, drug) {
     this.type = 'ProductionUpgrade';
     this.name = name;
@@ -126,15 +128,15 @@ function Producer(name, basePrice, drug, priceMulti, prodPerUnit) {
 }
 
 var productionMaster = [
-    new Producer('Cannabis Plant', 15, 'Weed', 1.12, 0.15),
-    new Producer('Mushroom Farm', 150, 'Magic Mushrooms', 1.15, 0.25),
+    new Producer('Cannabis Plant', 15, 'Weed', 1.12, 0.2),
+    new Producer('Mushroom Farm', 150, 'Magic Mushrooms', 1.15, 0.3),
     new Producer('Meth Cook', 1000, 'Meth', 1.2, 0.5),
     new Producer('Base Chef', 2500, 'Speed', 1.21, 0.4),
     new Producer('Lab Technician', 5000, 'Acid', 1.22, 0.5),
     new Producer('Crack Den', 10000, 'Crack', 1.23, 0.5),
     new Producer('Chemical Lab', 20000, 'PCP', 1.24, 0.4),
     new Producer('Opium Farm', 30000, 'Heroin', 1.25, 0.5),
-    new Producer('Chemistry Professor', 40000, 'MDMA', 1.26, 0.4),
+    new Producer('Chemistry Professor', 40000, 'MDMA', 1.26, 0.45),
     new Producer('Drug Mule', 50000, 'Cocaine', 1.27, 0.3)];
 
 function Dealer(seed) {
@@ -183,6 +185,7 @@ function GameModel() {
     this.territoryUpgrades = 0;
     this.workMode = false;
     this.lastDealerRefresh = 0;
+    this.silkRoadUnlocked = false;
 }
 
 angular.module('dopeslingerApp', ['ngSanitize'
@@ -216,7 +219,7 @@ angular.module('dopeslingerApp', ['ngSanitize'
     //})
     .filter('weight', function () {
         return function (input) {
-            if (input > 1000)
+            if (input >= 1000)
                 return (input / 1000).toFixed(2) + 'kg';
 
             return input.toFixed(2) + "g";
@@ -225,13 +228,13 @@ angular.module('dopeslingerApp', ['ngSanitize'
     .filter('money', function () {
         return function (input) {
             var symbol = '$';
-            if (input > 1000000000000)
+            if (input >= 1000000000000)
                 return symbol + (input / 1000000000000).toFixed(2) + 'T';
-            if (input > 1000000000)
+            if (input >= 1000000000)
                 return symbol + (input / 1000000000).toFixed(2) + 'B';
-            if (input > 1000000)
+            if (input >= 1000000)
                 return symbol + (input / 1000000).toFixed(2) + 'M';
-            if (input > 1000)
+            if (input >= 1000)
                 return symbol + (input / 1000).toFixed(2) + 'K';
 
             return symbol + input.toFixed(2);
@@ -262,6 +265,15 @@ angular.module('dopeslingerApp', ['ngSanitize'
                     return $scope.gameModel.drugs[i];
             }
             return null;
+        }
+
+        $scope.sellOnSilkRoad = function (drug) {
+            if (drug.qty > 1000) {
+                drug.qty -= 1000;
+                var cashEarned = $scope.drugStreetPrice(drug) * 900;
+                $scope.gameModel.cash += cashEarned;
+                $scope.gameModel.totalCashEarned += cashEarned;
+            }
         }
 
         $scope.actualDealerVolume = function (dealer, drug) { return getActualDealerVolume(dealer, drug); }
@@ -324,6 +336,8 @@ angular.module('dopeslingerApp', ['ngSanitize'
                     $scope.availableUpgrades.push(productionUpgradesMaster[i]);
                 }
             }
+            if ($scope.gameModel.totalCashEarned > 2000000 && !$scope.gameModel.silkRoadUnlocked)
+                $scope.availableUpgrades.push(silkRoadUpgrade);
         }
 
         $scope.purchaseUpgrade = function (upgrade) {
@@ -331,6 +345,9 @@ angular.module('dopeslingerApp', ['ngSanitize'
                 return;
 
             switch (upgrade.type) {
+                case 'SilkRoad':
+                    $scope.gameModel.silkRoadUnlocked = true;
+                    break;
                 case 'DrugUnlock':
                     for (var i = 0; i < drugsMaster.length; i++) {
                         if (drugsMaster[i].name == upgrade.drug) {
@@ -577,7 +594,7 @@ angular.module('dopeslingerApp', ['ngSanitize'
                 }
             }
 
-            $scope.gameModel.cash = $scope.gameModel.cash + cashEarned;
+            $scope.gameModel.cash += cashEarned;
             $scope.gameModel.totalCashEarned += cashEarned;
 
             lastUpdate = updateTime;

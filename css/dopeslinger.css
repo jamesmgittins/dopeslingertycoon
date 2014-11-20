@@ -9,13 +9,14 @@
 }
 @font-face {
     font-family: whoa;
-    src: url(../fonts/UrbanJungleDEMO.otf);
+    src: url(../fonts/UrbanJungleDEMO.otf) format('embedded-opentype');
 }
 
 .nav, .pagination, .carousel, .panel-title a {
     cursor: pointer;
 }
 
+.mb-10 { margin-bottom: 10px; }
 .pb-10 { padding-bottom: 10px; }
 .pl-10 { padding-left:10px; }
 .pr-10 { padding-right:10px; }
