@@ -133,7 +133,7 @@
                 </div>
                 <div ng-repeat="upgrade in availableUpgrades | orderBy:'price'" tooltip="{{upgrade.tooltip}}" class="upgrade-div">
                     <button ng-click="purchaseUpgrade(upgrade)" class="btn btn-default btn-upgrade" ng-disabled="gameModel.cash < upgrade.price" type="button">
-                        <span class="glyphicon icongreen" ng-class="{'glyphicon-tint' : upgrade.type == 'DrugUnlock', 'glyphicon-circle-arrow-up' : upgrade.type == 'ProductionUpgrade', 'glyphicon-cloud' : upgrade.type=='SilkRoad'}"></span> {{upgrade.name}} (<strong>{{upgrade.price|money}}</strong>)
+                        <span class="glyphicon icongreen" ng-class="upgrade.glyph"></span> {{upgrade.name}} (<strong>{{upgrade.price|money}}</strong>)
                     </button>
                     <progressbar animate="false" value="cashPercentage(upgrade.price)" ng-class="gameModel.cash < upgrade.price ? 'active progress-striped' : 'progress-bar-success'"></progressbar>
                 </div>

@@ -45,7 +45,7 @@ var dealerUpgrades = [
     new DealerUpgrade('AW119 Ke Koala', 'A personal helicopter for transporting you and your homies! Allows the dealer to sell an extra 60% volume', 1890000, 1.6, 1, 0)
 ];
 
-var silkRoadUpgrade = {type:'SilkRoad',name:'Develop Silk Road',tooltip:'Develop the Silk Road dark web site to allow you to bulk sell drugs in units of 1kg',price:141159};
+var silkRoadUpgrade = {type:'SilkRoad',name:'Develop Silk Road',tooltip:'Develop the Silk Road dark web site to allow you to bulk sell drugs in units of 1kg',price:141592,glyph:'glyphicon-cloud'};
 
 function ProductionUpgrade(name, tooltip, price, producer, upVal, drug) {
     this.type = 'ProductionUpgrade';
@@ -55,6 +55,7 @@ function ProductionUpgrade(name, tooltip, price, producer, upVal, drug) {
     this.producer = producer;
     this.upVal = upVal;
     this.drug = drug;
+    this.glyph = 'glyphicon-circle-arrow-up';
 }
 function DrugUnlock (name,tooltip,price,drug) {
     this.type = 'DrugUnlock';
@@ -62,11 +63,12 @@ function DrugUnlock (name,tooltip,price,drug) {
     this.tooltip = tooltip;
     this.price = price;
     this.drug = drug;
+    this.glyph = 'glyphicon-tint';
 }
 
 var productionUpgradesMaster = [
     new ProductionUpgrade('Fertilizer', 'Nutrient rich fertilizer, increases the amount of weed produced by your cannabis plants by 30%!', 500, 'Cannabis Plant', 1.3, 'Weed'),
-    new ProductionUpgrade('Hydroponics', 'High tech agriculture system, increases the amount of weed produced by your cannabis plants by 50%!', 15000, 'Cannabis Plant', 1.5, 'Weed'),
+    new ProductionUpgrade('Hydroponics', 'High tech agriculture system, increases the amount of weed produced by your cannabis plants by 50%!', 6500, 'Cannabis Plant', 1.5, 'Weed'),
 
     new ProductionUpgrade('Auto Hygrometer', 'An automatically controlled humidity system, increases the amount of shrooms produced by your mushroom farms by 50%!', 5000, 'Mushroom Farm', 1.5, 'Magic Mushrooms'),
     new ProductionUpgrade('Irrigation system', 'An computer controlled irrigation system, increases the amount of shrooms produced by your mushroom farms by 50%!', 25000, 'Mushroom Farm', 1.5, 'Magic Mushrooms'),
@@ -108,12 +110,12 @@ function Drug(name, pricePerGram, costToUnlock) {
 
 var drugsMaster = [
     new Drug('Weed', 4.2, 0),
-    new Drug('Magic Mushrooms', 6, 1500),
-    new Drug('Meth', 10, 6000),
-    new Drug('Speed', 15, 12000),
-    new Drug('Acid', 20, 20000),
-    new Drug('Crack', 30, 50000),
-    new Drug('PCP', 40, 80000),
+    new Drug('Magic Mushrooms', 6, 2000),
+    new Drug('Meth', 10, 7000),
+    new Drug('Speed', 15, 20000),
+    new Drug('Acid', 20, 40000),
+    new Drug('Crack', 30, 75000),
+    new Drug('PCP', 40, 90000),
     new Drug('Heroin', 50, 120000),
     new Drug('MDMA', 60, 180000),
     new Drug('Cocaine', 70, 250000)];
@@ -326,17 +328,17 @@ angular.module('dopeslingerApp', ['ngSanitize'
                 if ($scope.getDrugByName(drugsMaster[i].name) != null)
                     drugUnlocked = true;
 
-                if (!drugUnlocked && (i > 0 && $scope.getDrugByName(drugsMaster[i - 1].name) != null) && $scope.gameModel.totalCashEarned > drugsMaster[i].costToUnlock) {
+                if (!drugUnlocked && (i > 0 && $scope.getDrugByName(drugsMaster[i - 1].name) != null) && $scope.gameModel.totalCashEarned > (drugsMaster[i].costToUnlock * 1.5)) {
                     $scope.availableUpgrades.push(new DrugUnlock('Research ' + drugsMaster[i].name, 'Spend money to research production of a new drug, ' + drugsMaster[i].name + '. Your customers will love it!', drugsMaster[i].costToUnlock, drugsMaster[i].name));
                 }
             }
             for (var i = 0; i < productionUpgradesMaster.length; i++) {
 
-                if (!$scope.upgradeUnlocked(productionUpgradesMaster[i]) && $scope.getDrugByName(productionUpgradesMaster[i].drug) != null && $scope.gameModel.totalCashEarned > productionUpgradesMaster[i].price && $scope.otherUpgradesForThisDrugUnlocked(productionUpgradesMaster[i])) {
+                if (!$scope.upgradeUnlocked(productionUpgradesMaster[i]) && $scope.getDrugByName(productionUpgradesMaster[i].drug) != null && $scope.gameModel.totalCashEarned > (productionUpgradesMaster[i].price * 1.5) && $scope.otherUpgradesForThisDrugUnlocked(productionUpgradesMaster[i])) {
                     $scope.availableUpgrades.push(productionUpgradesMaster[i]);
                 }
             }
-            if ($scope.gameModel.totalCashEarned > 200000 && !$scope.gameModel.silkRoadUnlocked)
+            if ($scope.gameModel.totalCashEarned > (silkRoadUpgrade.price * 1.5) && !$scope.gameModel.silkRoadUnlocked)
                 $scope.availableUpgrades.push(silkRoadUpgrade);
         }
 
