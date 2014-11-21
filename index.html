@@ -40,7 +40,7 @@
 <body ng-controller="DopeController" ng-class="{'work-mode' : gameModel.workMode}">
     <div class="container">
         <div class="row">
-            <div class="col-xs-12 hidden-xs text-center">
+            <div class="col-xs-12 hidden-xs text-center advert">
                 <script type="text/javascript">
     (function () {
         if (window.CHITIKA === undefined) { window.CHITIKA = { 'units': [] }; };
@@ -222,6 +222,9 @@
                     </div>
                     <div class="col-xs-12 col-sm-6">
                         <button ng-click="toggleWorkMode()" class="btn btn-default"><span class="glyphicon glyphicon-filter iconred"></span> Toggle work mode</button>
+                    </div>
+                    <div class="col-xs-12 col-sm-6">
+                        <button class="btn btn-default" onclick="$('div.advert').hide();"><span class="glyphicon glyphicon-filter iconred"></span> Hide ads</button>
                     </div>
                 </div>
             </div>
