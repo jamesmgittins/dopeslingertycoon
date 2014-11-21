@@ -188,6 +188,7 @@ function GameModel() {
     this.workMode = false;
     this.lastDealerRefresh = 0;
     this.silkRoadUnlocked = false;
+    this.autoSilk = false;
 }
 
 angular.module('dopeslingerApp', ['ngSanitize'
@@ -318,6 +319,13 @@ angular.module('dopeslingerApp', ['ngSanitize'
                 }
             }
             return true;
+        }
+
+        $scope.toggleAutoSilk = function () {
+            if ($scope.gameModel.autoSilk)
+                $scope.gameModel.autoSilk = false;
+            else
+                $scope.gameModel.autoSilk = true;
         }
 
         $scope.calculateAvailableUpgrades = function () {
@@ -573,6 +581,12 @@ angular.module('dopeslingerApp', ['ngSanitize'
                         
             for (var i = 0; i < $scope.gameModel.drugs.length; i++) {
                 var drug = $scope.gameModel.drugs[i];
+
+                if ($scope.gameModel.autoSilk && drug.qty > 1000) {
+                    drug.qty -= 1000;
+                    cashEarned += $scope.drugStreetPrice(drug) * 900;
+                }
+
                 var producers = $scope.producersForDrug(drug);
                 for (var j = 0; j < producers.length; j++) {
                     drug.qty += producers[j].qty * producers[j].prodPerUnit * timeDiff;
