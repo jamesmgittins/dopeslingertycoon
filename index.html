@@ -110,8 +110,12 @@
                 </div>
 				
                 <div ng-repeat="drug in gameModel.drugs track by $index">
-                    <div class="drug" ng-click="selectDrug(drug)" ng-class="{'open' : drug.selected}"><strong>{{drug.name}} {{drug.qty|weight}}</strong>
-                        <span class="glyphicon" ng-class="drug.selected ? 'glyphicon-chevron-up' : 'glyphicon-chevron-down'"></span></div>
+                    
+                    <div class="drug" ng-click="selectDrug(drug)" ng-class="{'open' : drug.selected}">
+                        <strong>{{drug.name}} {{drug.qty|weight}}</strong>
+                        <span class="glyphicon" ng-class="drug.selected ? 'glyphicon-chevron-up' : 'glyphicon-chevron-down'"></span>
+                    </div>
+
                     <div class="drug-content row" ng-class="{'content-open':drug.selected}">
                         <p class="col-xs-12">Average street price <b>{{drugStreetPrice(drug)|money}}</b> per gram</p>
                         <div class="col-xs-12 btn-group mb-10" ng-show="gameModel.silkRoadUnlocked">
@@ -186,12 +190,12 @@
                                <option ng-repeat="drug in gameModel.drugs track by $index">{{drug.name}}</option>
                            </select>
                         </span>
-						<div class="col-xs-12"><span class="jg-tooltip-btn strong" onclick="toggleTooltip(this)">Volume: <span class="volume iconyellow" ng-bind-html="getStars(dealer.originalVolume,5)"></span></span></div>
+						<div class="col-xs-12"><span class="jg-tooltip-btn strong" onclick="toggleTooltip(this)">Volume: <span class="volume iconyellow" ng-bind-html="getStars(dealer.originalVolume,5)"></span> <span class="pl-10 glyphicon glyphicon-info-sign"></span></span></div>
 						<div class="col-xs-12 mb-5" style="display:none;">
 							<p class="jg-tooltip left-tip">{{dealer.name.split(' ')[0]}} can sell up to {{actualDealerVolume(dealer,dealer.drug)|weight}} of {{dealer.drug}} per second, as well as {{dealer.sideVolume * actualDealerVolume(dealer,dealer.drug)|weight}} of other drugs</p>
 						</div>
 						
-						<div class="col-xs-12 mt-10"><span class="jg-tooltip-btn strong" onclick="toggleTooltip(this)">Margin: <span class="price iconyellow" ng-bind-html="getStars(dealer.originalPrice,5)"></span></span></div>
+						<div class="col-xs-12 mt-10"><span class="jg-tooltip-btn strong" onclick="toggleTooltip(this)">Margin: <span class="price iconyellow" ng-bind-html="getStars(dealer.originalPrice,5)"></span> <span class="pl-10 glyphicon glyphicon-info-sign"></span></span></div>
 						<div class="col-xs-12" style="display:none;">
 							<p class="jg-tooltip left-tip">{{dealer.name.split(' ')[0]}} sells 1g of {{dealer.drug}} for {{actualDealerPrice(dealer)|money}}</p>
 						</div>

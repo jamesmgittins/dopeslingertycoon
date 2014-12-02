@@ -209,7 +209,7 @@ p.jg-tooltip-btn {
 .jg-tooltip-btn {
 	cursor:pointer;
 	margin-right:0;
-	padding:6px;
+	padding:4px 6px 6px;
 	border-radius:4px 4px 0 0 !important;
 }
 .btn-group .btn {
@@ -275,12 +275,21 @@ div.drug {
     cursor: pointer;
 }
 
-div.dealer > span.glyphicon,
-div.drug > span.glyphicon {
+div.dealer > span.glyphicon-chevron-up,
+div.dealer > span.glyphicon-chevron-down,
+div.drug > span.glyphicon-chevron-up,
+div.drug > span.glyphicon-chevron-down {
     float: right;
     display: none;
     font-size: 18px;
     margin-left: -18px;
+}
+
+.jg-tooltip-btn .glyphicon-info-sign {
+    visibility:hidden;
+}
+.jg-tooltip-btn:hover .glyphicon-info-sign {
+    visibility:visible;
 }
 
 div.dealer:hover > span.glyphicon,

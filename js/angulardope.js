@@ -674,7 +674,7 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ngAnimate','jg.progressbar'])
         $document.ready(function () {
             readFromCookie();
             $scope.calculateAvailableUpgrades();
-            $interval(update, 250);
+            $interval(update, 200);
         });
 
     }]);
