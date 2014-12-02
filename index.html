@@ -100,7 +100,7 @@
 						<button ng-click="purchaseUpgrade(upgrade)" style="width:85%;" class="btn btn-default btn-production" ng-disabled="gameModel.cash < upgrade.price" type="button">
     	                    <span class="glyphicon icongreen" ng-class="upgrade.glyph"></span> {{upgrade.name}} (<strong>{{upgrade.price|money}}</strong>)
 	                    </button>
-						<button class="btn btn-default btn-production text-center" style="width:15%;" onclick="toggleTooltip(this);">
+						<button class="btn btn-default btn-production text-center" style="width:15%;padding:6px 0;" onclick="toggleTooltip(this);">
 							<span class="glyphicon icongreen glyphicon-info-sign" style="width:100%;"></span>
 						</button>
 					</div>
