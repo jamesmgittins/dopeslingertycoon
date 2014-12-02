@@ -21,25 +21,26 @@ var treeUpgradeWeedMulti = 1.2;
 var territoryUpgradePriceMulti = 3.1;
 var territoryUpgradeBasePrice = 2000;
 
-function DealerUpgrade(name, tooltip, price, volumeMod, priceMod, secondaryMod) {
+function DealerUpgrade(name, tooltip, price, volumeMod, priceMod, secondaryMod, synopsis) {
     this.name = name;
     this.tooltip = tooltip;
     this.price = price;
     this.volumeMod = volumeMod;
     this.priceMod = priceMod;
     this.secondaryMod = secondaryMod;
+	this.synopsis = synopsis;
 }
 
 var dealerUpgrades = [
-    new DealerUpgrade('Baseball bat', 'Handy in a street fight and helps to scare away the competition. Allows the dealer to sell drugs for 10% more money', 150, 1, 1.1, 0),
-    new DealerUpgrade('Bicycle', 'The cheapest and most basic form of personal transportation. Allows the dealer to sell an extra 10% volume', 600, 1.1, 1, 0),
-    new DealerUpgrade('iPhone 6 Plus', 'A state of the art smartphone. Allows the dealer to sell a small amount of other drugs on the side', 900, 1, 1, 0.1),
-    new DealerUpgrade('Superbike', 'One of the fastest ways to get around the urban jungle. Allows the dealer to sell an extra 20% volume', 25000, 1.2, 1, 0),
-    new DealerUpgrade('Glock 17 9mm', 'A small but deadly firearm, nobody will mess with you if you have this. Allows the dealer to sell drugs for 20% more money', 5000, 1, 1.2, 0),
-    new DealerUpgrade('Personal Assistant', 'A personal assistant to take your calls. Allows the dealer to sell even more drugs on the side', 85000, 1, 1, 0.2),
-    new DealerUpgrade('Armed Gang', 'A gang of tooled up homies to help eliminate the competition. Allows the dealer to sell drugs for 20% more money', 150000, 1, 1.2, 0),
-    new DealerUpgrade('Ferrari 458 Italia', 'A fine Italian supercar. Allows the dealer to sell an extra 30% volume', 575000, 1.3, 1, 0),
-    new DealerUpgrade('AW119 Ke Koala', 'A personal helicopter for transporting you and your homies! Allows the dealer to sell an extra 60% volume', 1890000, 1.6, 1, 0)
+    new DealerUpgrade('Baseball bat', 'Handy in a street fight and helps to scare away the competition. Allows the dealer to sell drugs for 10% more money', 150, 1, 1.1, 0, '+10% margin'),
+    new DealerUpgrade('Bicycle', 'The cheapest and most basic form of personal transportation. Allows the dealer to sell an extra 10% volume', 600, 1.1, 1, 0, '+10% volume'),
+    new DealerUpgrade('iPhone 6 Plus', 'A state of the art smartphone. Allows the dealer to sell a small amount of other drugs on the side', 900, 1, 1, 0.1, '+10% secondary sales'),
+    new DealerUpgrade('Superbike', 'One of the fastest ways to get around the urban jungle. Allows the dealer to sell an extra 20% volume', 25000, 1.2, 1, 0, '+20% volume'),
+    new DealerUpgrade('Glock 17 9mm', 'A small but deadly firearm, nobody will mess with you if you have this. Allows the dealer to sell drugs for 20% more money', 5000, 1, 1.2, 0, '+20% margin'),
+    new DealerUpgrade('Personal Assistant', 'A personal assistant to take your calls. Allows the dealer to sell even more drugs on the side', 85000, 1, 1, 0.2, '+20% secondary sales'),
+    new DealerUpgrade('Armed Gang', 'A gang of tooled up homies to help eliminate the competition. Allows the dealer to sell drugs for 20% more money', 150000, 1, 1.2, 0, '+20% margin'),
+    new DealerUpgrade('Ferrari 458 Italia', 'A fine Italian supercar. Allows the dealer to sell an extra 30% volume', 575000, 1.3, 1, 0, '+30% volume'),
+    new DealerUpgrade('AW119 Ke Koala', 'A personal helicopter for transporting you and your homies! Allows the dealer to sell an extra 60% volume', 1890000, 1.6, 1, 0, '+60% volume')
 ];
 
 var silkRoadUpgrade = {type:'SilkRoad',name:'Develop Silk Road',tooltip:'Develop the Silk Road dark web site to allow you to bulk sell drugs in units of 1kg',price:141592,glyph:'glyphicon-cloud'};
@@ -143,6 +144,10 @@ function Dealer(seed) {
     Math.seedrandom(seed);
     this.volume = Math.random() + 0.5;
     this.price = Math.random() + 0.5;
+	
+	this.originalVolume = this.volume;
+	this.originalPrice = this.price;
+	
     this.sideVolume = 0;
 
     this.male = true;
@@ -188,34 +193,33 @@ function GameModel() {
     this.autoSilk = false;
 }
 
-angular.module('dopeslingerApp', ['ngSanitize', 'ui.bootstrap'
-    //,'ngAnimate'
-])
-    //.animation('.content-open', function () {
-    //    return {
-    //        enter: function (element, done) {
-    //            //run the animation here and call done when the animation is complete
-    //            return function (cancelled) {
-    //                //this (optional) function will be called when the animation
-    //                //completes or when the animation is cancelled (the cancelled
-    //                //flag will be set to true if cancelled).
-    //            };
-    //        },
-    //        beforeAddClass: function (element, className, done) {
-    //            element.css('display', 'none');
-    //            done();
-    //        },
-    //        //animation that can be triggered after the class is added
-    //        addClass: function (element, className, done) {
-    //            element.slideDown(done);
-    //        },
+angular.module('dopeslingerApp', ['ngSanitize', 'ngAnimate','jg.progressbar'])
+    .animation('.content-open', function () {
+        return {
+            enter: function (element, done) {
+                //run the animation here and call done when the animation is complete
+                return function (cancelled) {
+                    //this (optional) function will be called when the animation
+                    //completes or when the animation is cancelled (the cancelled
+                    //flag will be set to true if cancelled).
+                };
+            },
+            beforeAddClass: function (element, className, done) {
+                element.css('display', 'none');
+                done();
+            },
+            //animation that can be triggered after the class is added
+            addClass: function (element, className, done) {
+                element.slideDown(done);
+				$(window).trigger('resize');
+            },
 
-    //        //animation that can be triggered after the class is added
-    //        beforeRemoveClass: function (element, className, done) {
-    //            element.slideUp(done);
-    //        }
-    //    }
-    //})
+            //animation that can be triggered after the class is added
+            beforeRemoveClass: function (element, className, done) {
+                element.slideUp(done);
+            }
+        };
+    })
     .filter('weight', function () {
         return function (input) {
             if (input >= 1000)
@@ -323,9 +327,21 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ui.bootstrap'
             else
                 $scope.gameModel.autoSilk = true;
         };
+		
+		$scope.getUpgradesForDrug = function(drug) {
+			var upgradesForDrug = [];
+			for (var i=0; i<$scope.availableUpgrades.length;i++){
+				if ($scope.availableUpgrades[i].drug == drug.name)
+					upgradesForDrug.push($scope.availableUpgrades[i]);
+			}
+			return upgradesForDrug;
+		};
 
         $scope.calculateAvailableUpgrades = function () {
             $scope.availableUpgrades = [];
+            $scope.drugResearch = [];
+			$scope.dealerResearch = [];
+			
             for (var i = 0; i < drugsMaster.length; i++) {
                 var drugUnlocked = false;
 
@@ -333,7 +349,7 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ui.bootstrap'
                     drugUnlocked = true;
 
                 if (!drugUnlocked && (i > 0 && $scope.getDrugByName(drugsMaster[i - 1].name) !== null) && $scope.gameModel.totalCashEarned > (drugsMaster[i].costToUnlock * 1.5)) {
-                    $scope.availableUpgrades.push(new DrugUnlock('Research ' + drugsMaster[i].name, 'Spend money to research production of a new drug, ' + drugsMaster[i].name + '. Your customers will love it!', drugsMaster[i].costToUnlock, drugsMaster[i].name));
+                    $scope.drugResearch.push(new DrugUnlock('Research ' + drugsMaster[i].name, 'Spend money to research production of a new drug, ' + drugsMaster[i].name + '. Your customers will love it!', drugsMaster[i].costToUnlock, drugsMaster[i].name));
                 }
             }
             for (i = 0; i < productionUpgradesMaster.length; i++) {
@@ -343,7 +359,9 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ui.bootstrap'
                 }
             }
             if ($scope.gameModel.totalCashEarned > (silkRoadUpgrade.price * 1.5) && !$scope.gameModel.silkRoadUnlocked)
-                $scope.availableUpgrades.push(silkRoadUpgrade);
+                $scope.dealerResearch.push(silkRoadUpgrade);
+			
+			$timeout(function(){$(window).trigger('resize');},0);
         };
 
         $scope.purchaseUpgrade = function (upgrade) {
@@ -464,6 +482,21 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ui.bootstrap'
         $scope.dealerUpgradeModal = function (dealer) {
             
             $scope.calculateAvailableDealerUpgrades(dealer);
+			$('#upgradeDealerModal').on('shown.bs.modal', function (e) {
+				var height = 0;
+
+				$('#upgradeDealerModal .height-match').each(function(){
+					$(this).height('auto');
+					
+					if ($(this).height() > height)
+						height = $(this).height();
+				});
+				
+				$('#upgradeDealerModal .height-match').each(function(){
+					if (height > $(this).height())
+						$(this).find('button').css('margin-top',(height - $(this).height()) + 'px');
+				});
+			});
             $('#upgradeDealerModal').modal('show');
         };
 
@@ -641,7 +674,7 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ui.bootstrap'
         $document.ready(function () {
             readFromCookie();
             $scope.calculateAvailableUpgrades();
-            $interval(update, 100);
+            $interval(update, 250);
         });
 
     }]);
