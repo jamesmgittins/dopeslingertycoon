@@ -266,6 +266,14 @@ div.dealer-content.content-open,
 div.drug-content.content-open {
     display:inherit;
 }
+#cash-wrap {
+	height:60px;
+}
+#current-cash {
+	z-index:50;
+	padding-bottom:5px;
+	background: none repeat scroll 0 0 #ffffff;
+}
 
 div.dealer,
 div.drug {
