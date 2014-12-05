@@ -104,6 +104,7 @@ function Drug(name, pricePerGram, costToUnlock) {
     this.selected = false;
     this.costToUnlock = costToUnlock;
     this.totalCash = 0;
+	this.drugUnlock = new DrugUnlock('Research ' + this.name, 'Spend money to research production of a new drug, ' + this.name + '. Your customers will love it!', this.costToUnlock, this.name);
 }
 
 var drugsMaster = [
@@ -256,11 +257,12 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ngAnimate','jg.progressbar'])
         $scope.gameModel = new GameModel();
         $scope.cashPerSecond = 0;
         $scope.hireDealers = [];
-        $scope.toggleWorkMode = function () { $scope.gameModel.workMode = !$scope.gameModel.workMode; };
+        $scope.toggleWorkMode = function () { $scope.gameModel.workMode = !$scope.gameModel.workMode;};
         $scope.priceOfTerritory = function () { return territoryUpgradeBasePrice * Math.pow(territoryUpgradePriceMulti, $scope.gameModel.territoryUpgrades); };
         $scope.cashPercentage = function (value) { return Math.min(100, $scope.gameModel.cash / value * 100); };
         $scope.productionPrice = function (production) { return production.basePrice * Math.pow(production.priceMulti, production.qty); };
         $scope.availableUpgrades = [];
+		$scope.dealerSort = 'drug';
 
         $scope.getDrugByName = function (name) {
             for (var i = 0; i < $scope.gameModel.drugs.length; i++) {
@@ -349,7 +351,7 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ngAnimate','jg.progressbar'])
                     drugUnlocked = true;
 
                 if (!drugUnlocked && (i > 0 && $scope.getDrugByName(drugsMaster[i - 1].name) !== null) && $scope.gameModel.totalCashEarned > (drugsMaster[i].costToUnlock * 1.5)) {
-                    $scope.drugResearch.push(new DrugUnlock('Research ' + drugsMaster[i].name, 'Spend money to research production of a new drug, ' + drugsMaster[i].name + '. Your customers will love it!', drugsMaster[i].costToUnlock, drugsMaster[i].name));
+                    $scope.drugResearch.push(drugsMaster[i].drugUnlock);
                 }
             }
             for (i = 0; i < productionUpgradesMaster.length; i++) {
@@ -486,8 +488,7 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ngAnimate','jg.progressbar'])
 				var height = 0;
 
 				$('#upgradeDealerModal .height-match').each(function(){
-					$(this).height('auto');
-					
+
 					if ($(this).height() > height)
 						height = $(this).height();
 				});
@@ -597,6 +598,8 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ngAnimate','jg.progressbar'])
             var timeDiff = (Math.min(1000, Math.max(updateTime - lastUpdate,0))) / 1000;
 
             var cashEarned = 0;
+			
+			var dealers = $scope.gameModel.dealers.concat().sort(function(a,b){return b.price - a.price;});
 
             if ($scope.gameModel.buff && $scope.gameModel.buff.expires <= updateTime) {
                 $scope.gameModel.buff = undefined;
@@ -625,19 +628,19 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ngAnimate','jg.progressbar'])
                     drug.total += producers[j].qty * producers[j].prodPerUnit * timeDiff;
                 }
 
-                for (j = 0; j < $scope.gameModel.dealers.length; j++) {
-                    if ($scope.gameModel.dealers[j].drug == drug.name && drug.qty >= getActualDealerVolume($scope.gameModel.dealers[j], drug) * timeDiff) {
-                        cashEarned += $scope.actualDealerPrice($scope.gameModel.dealers[j], drug) * getActualDealerVolume($scope.gameModel.dealers[j], drug) * timeDiff;
-                        drug.qty -= getActualDealerVolume($scope.gameModel.dealers[j], drug) * timeDiff;
-                        $scope.gameModel.dealers[j].cashEarned += $scope.actualDealerPrice($scope.gameModel.dealers[j], drug) * getActualDealerVolume($scope.gameModel.dealers[j], drug) * timeDiff;
+                for (j = 0; j < dealers.length; j++) {
+                    if (dealers[j].drug == drug.name && drug.qty >= getActualDealerVolume(dealers[j], drug) * timeDiff) {
+                        cashEarned += $scope.actualDealerPrice(dealers[j], drug) * getActualDealerVolume(dealers[j], drug) * timeDiff;
+                        drug.qty -= getActualDealerVolume(dealers[j], drug) * timeDiff;
+                        dealers[j].cashEarned += $scope.actualDealerPrice(dealers[j], drug) * getActualDealerVolume(dealers[j], drug) * timeDiff;
                     }
                 }
 
-                for (j = 0; j < $scope.gameModel.dealers.length; j++) {
-                    if ($scope.gameModel.dealers[j].drug != drug.name && drug.qty >= getActualDealerVolume($scope.gameModel.dealers[j], drug) * timeDiff) {
-                        cashEarned += $scope.actualDealerPrice($scope.gameModel.dealers[j], drug) * getActualDealerVolume($scope.gameModel.dealers[j], drug) * timeDiff;
-                        drug.qty -= getActualDealerVolume($scope.gameModel.dealers[j], drug) * timeDiff;
-                        $scope.gameModel.dealers[j].cashEarned += $scope.actualDealerPrice($scope.gameModel.dealers[j], drug) * getActualDealerVolume($scope.gameModel.dealers[j], drug) * timeDiff;
+                for (j = 0; j < dealers.length; j++) {
+                    if (dealers[j].drug != drug.name && drug.qty >= getActualDealerVolume(dealers[j], drug) * timeDiff) {
+                        cashEarned += $scope.actualDealerPrice(dealers[j], drug) * getActualDealerVolume(dealers[j], drug) * timeDiff;
+                        drug.qty -= getActualDealerVolume(dealers[j], drug) * timeDiff;
+                        dealers[j].cashEarned += $scope.actualDealerPrice(dealers[j], drug) * getActualDealerVolume(dealers[j], drug) * timeDiff;
                     }
                 }
             }
@@ -651,9 +654,9 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ngAnimate','jg.progressbar'])
                 $scope.cashPerSecond = $scope.gameModel.cash - cashOneSecond;
                 cashOneSecond = $scope.gameModel.cash;
 
-                for (i = 0; i < $scope.gameModel.dealers.length; i++) {
-                    $scope.gameModel.dealers[i].cashPerSecond = $scope.gameModel.dealers[i].cashEarned - $scope.gameModel.dealers[i].cashOneSecondAgo;
-                    $scope.gameModel.dealers[i].cashOneSecondAgo = $scope.gameModel.dealers[i].cashEarned;
+                for (i = 0; i < dealers.length; i++) {
+                    dealers[i].cashPerSecond = dealers[i].cashEarned - dealers[i].cashOneSecondAgo;
+                    dealers[i].cashOneSecondAgo = dealers[i].cashEarned;
                 }
             }
 
@@ -672,6 +675,7 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ngAnimate','jg.progressbar'])
         }
 
         $document.ready(function () {
+			scrollMenu();
             readFromCookie();
             $scope.calculateAvailableUpgrades();
             $interval(update, 200);
