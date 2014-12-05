@@ -164,6 +164,7 @@ function Dealer(seed) {
     this.cashEarned = 0;
     this.selected = false;
     this.drug = "Weed";
+	this.drugIndex = 0;
     this.upgrades = [];
     this.cashOneSecondAgo = 0;
     this.cashPerSecond = 0;
@@ -195,6 +196,46 @@ function GameModel() {
 }
 
 angular.module('dopeslingerApp', ['ngSanitize', 'ngAnimate','jg.progressbar'])
+	.animation('.dealer-hire-anim', function() {
+		return { 
+			enter : function(element, done) {
+	    	    element.hide().slideDown(1000,done);
+	        },
+			leave: function (element, done) {
+				element.slideUp(1000,done);
+			}
+  		};
+	})
+	.animation('.dealer-upgrade-anim', function() {
+		return { 
+			enter : function(element, done) {
+	    	    element.hide().fadeIn(done);
+	        },
+			leave: function (element, done) {
+				element.fadeOut(done);
+			}
+  		};
+	})
+	.animation('.drug-anim', function() {
+		return { 
+			enter : function(element, done) {
+	    	    element.hide().fadeIn(done);
+	        },
+			leave: function (element, done) {
+				element.fadeOut(done);
+			}
+  		};
+	})
+	.animation('.research-anim', function() {
+		return { 
+			enter : function(element, done) {
+	    	    element.hide().fadeIn(done);
+	        },
+			leave: function (element, done) {
+				element.fadeOut(done);
+			}
+  		};
+	})
     .animation('.content-open', function () {
         return {
             enter: function (element, done) {
@@ -262,7 +303,7 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ngAnimate','jg.progressbar'])
         $scope.cashPercentage = function (value) { return Math.min(100, $scope.gameModel.cash / value * 100); };
         $scope.productionPrice = function (production) { return production.basePrice * Math.pow(production.priceMulti, production.qty); };
         $scope.availableUpgrades = [];
-		$scope.dealerSort = 'drug';
+		$scope.dealerSort = 'drugIndex';
 
         $scope.getDrugByName = function (name) {
             for (var i = 0; i < $scope.gameModel.drugs.length; i++) {
@@ -299,7 +340,17 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ngAnimate','jg.progressbar'])
 
             return drug.pricePerGram;
         };
-
+		
+		$scope.updateDealerDrugIndex = function(){
+			for (var i=0; i< $scope.gameModel.drugs.length; i++) {
+				for (var j=0; j < $scope.gameModel.dealers.length; j++) {
+					if ($scope.gameModel.dealers[j].drug == $scope.gameModel.drugs[i].name) {
+						$scope.gameModel.dealers[j].drugIndex = i;
+					}
+				}
+			}
+		};
+		
         $scope.upgradeUnlocked = function (upgrade) {
             var upgradeUnlocked = false;
             for (var j = 0; j < $scope.gameModel.upgrades.length; j++) {
@@ -529,6 +580,7 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ngAnimate','jg.progressbar'])
             writeToCookie();
         };
 
+		var dealerRefreshRate = 60000;
         $scope.secondsToDealerRefresh = 0;
 
         $scope.refreshDealers = function () {
@@ -536,7 +588,7 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ngAnimate','jg.progressbar'])
                 $scope.gameModel.lastDealerRefresh = 0;
 
             var currentTime = new Date().getTime();
-            if (currentTime > $scope.gameModel.lastDealerRefresh + 60000) {
+            if (currentTime > $scope.gameModel.lastDealerRefresh + dealerRefreshRate) {
                 $scope.gameModel.lastDealerRefresh = currentTime;
             }
             $scope.hireDealers = [new Dealer($scope.gameModel.lastDealerRefresh), new Dealer($scope.gameModel.lastDealerRefresh - 25000), new Dealer($scope.gameModel.lastDealerRefresh - 45000)];
@@ -569,15 +621,14 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ngAnimate','jg.progressbar'])
         };
 
         $scope.fireDealerConfirm = function () {
-            var newDealerArray = [];
             for (var i = 0; i < $scope.gameModel.dealers.length; i++) {
-                if ($scope.gameModel.dealers[i].seed != $scope.dealerToFire.seed) {
-                    newDealerArray.push($scope.gameModel.dealers[i]);
+                if ($scope.gameModel.dealers[i].seed == $scope.dealerToFire.seed) {
+                    $scope.gameModel.dealers.splice(i,1);
+		            writeToCookie();
+        		    $('#fireDealerModal').modal('hide');
+					return;
                 }
             }
-            $scope.gameModel.dealers = newDealerArray;
-            writeToCookie();
-            $('#fireDealerModal').modal('hide');
         };
 		
         $scope.fireDealerCancel = function () {
@@ -607,7 +658,7 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ngAnimate','jg.progressbar'])
             }
 
             if ($scope.gameModel.lastDealerRefresh)
-                $scope.secondsToDealerRefresh = (($scope.gameModel.lastDealerRefresh + 60000 - updateTime) / 1000).toFixed();
+                $scope.secondsToDealerRefresh = (($scope.gameModel.lastDealerRefresh + dealerRefreshRate - updateTime) / 1000).toFixed();
 
             if ($scope.gameModel.buff)
                 $scope.buffMsg = $scope.gameModel.buff.msg.format((($scope.gameModel.buff.expires - updateTime) / 1000).toFixed());
@@ -678,6 +729,7 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ngAnimate','jg.progressbar'])
 			scrollMenu();
             readFromCookie();
             $scope.calculateAvailableUpgrades();
+			$scope.updateDealerDrugIndex();
             $interval(update, 200);
         });
 

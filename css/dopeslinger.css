@@ -328,23 +328,3 @@ label {
     float: left;
     margin: 20px 0 0 10px !important;
 }
-
-.ng-enter {
-  -webkit-transition: 2s;
-  transition: 2s;
-  opacity: 0;
-}
-
-.ng-enter-active {
-  opacity: 1;
-}
-
-.ng-leave {
-  -webkit-transition: 1s;
-  transition: 1s;
-  opacity: 1;
-}
-
-.ng-leave-active {
-  opacity: 0;
-}
