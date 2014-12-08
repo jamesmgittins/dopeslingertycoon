@@ -64,6 +64,20 @@ function DrugUnlock (name,tooltip,price,drug) {
     this.glyph = 'glyphicon-tint';
 }
 
+function formatMoney(input) {
+	var symbol = '$';
+	if (input >= 1000000000000)
+		return symbol + (input / 1000000000000).toFixed(2) + 'T';
+	if (input >= 1000000000)
+		return symbol + (input / 1000000000).toFixed(2) + 'B';
+	if (input >= 1000000)
+		return symbol + (input / 1000000).toFixed(2) + 'M';
+	if (input >= 1000)
+		return symbol + (input / 1000).toFixed(2) + 'K';
+
+	return symbol + input.toFixed(2);
+}
+
 var productionUpgradesMaster = [
     new ProductionUpgrade('Fertilizer', 'Nutrient rich fertilizer, increases the amount of weed produced by your cannabis plants by 30%!', 500, 'Cannabis Plant', 1.3, 'Weed'),
     new ProductionUpgrade('Hydroponics', 'High tech agriculture system, increases the amount of weed produced by your cannabis plants by 50%!', 6500, 'Cannabis Plant', 1.5, 'Weed'),
@@ -101,7 +115,7 @@ function Drug(name, pricePerGram, costToUnlock) {
     this.pricePerGram = pricePerGram;
     this.qty = 0;
     this.total = 0;
-    this.selected = false;
+    this.selected = true;
     this.costToUnlock = costToUnlock;
     this.totalCash = 0;
 	this.drugUnlock = new DrugUnlock('Research ' + this.name, 'Spend money to research production of a new drug, ' + this.name + '. Your customers will love it!', this.costToUnlock, this.name);
@@ -162,7 +176,7 @@ function Dealer(seed) {
     }
     this.name = this.name + ' ' + lastNames[Math.floor(Math.random() * lastNames.length)];
     this.cashEarned = 0;
-    this.selected = false;
+    this.selected = true;
     this.drug = "Weed";
 	this.drugIndex = 0;
     this.upgrades = [];
@@ -173,6 +187,7 @@ function Dealer(seed) {
 function getActualDealerPrice(dealer, drug) { return dealer.price * drug.pricePerGram; }
 
 function getActualDealerVolume(dealer, drug) {
+	if (dealer.arrested) return 0;
     if (drug == dealer.drug || drug.name == dealer.drug)
         return dealer.volume * 3;
     else
@@ -271,21 +286,9 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ngAnimate','jg.progressbar'])
         };
     })
     .filter('money', function () {
-        return function (input) {
-            var symbol = '$';
-            if (input >= 1000000000000)
-                return symbol + (input / 1000000000000).toFixed(2) + 'T';
-            if (input >= 1000000000)
-                return symbol + (input / 1000000000).toFixed(2) + 'B';
-            if (input >= 1000000)
-                return symbol + (input / 1000000).toFixed(2) + 'M';
-            if (input >= 1000)
-                return symbol + (input / 1000).toFixed(2) + 'K';
-
-            return symbol + input.toFixed(2);
-        };
+        return formatMoney;
     })
-    .controller('DopeController', ['$scope', '$document', '$window', '$sce', '$interval', '$timeout', function ($scope, $document, $window, $sce, $interval, $timeout) {
+    .controller('DopeController', ['$scope', '$document', '$window', '$sce', '$interval', '$timeout', '$animate', function ($scope, $document, $window, $sce, $interval, $timeout, $animate) {
 
         var lastUpdate = 0;
         var lastSaved = 0;
@@ -323,6 +326,7 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ngAnimate','jg.progressbar'])
         };
 
         $scope.actualDealerVolume = function (dealer, drug) { return getActualDealerVolume(dealer, drug); };
+		
         $scope.actualDealerPrice = function (dealer, drug) {
             if (drug === undefined) {
                 drug = $scope.getDrugByName(dealer.drug);
@@ -448,7 +452,7 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ngAnimate','jg.progressbar'])
                     break;
             }
             $scope.gameModel.cash -= upgrade.price;
-            $scope.calculateAvailableUpgrades();
+			$scope.calculateAvailableUpgrades();
             writeToCookie();
         };
 
@@ -596,8 +600,11 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ngAnimate','jg.progressbar'])
         };
 
         $scope.hireDealerModal = function () {
-            if ($scope.hireDealers.length === 0)
-                $scope.refreshDealers();
+            if ($scope.hireDealers.length === 0) {
+				$scope.refreshDealers();
+				$animate.enabled(false);
+				$timeout(function(){$animate.enabled(true);},1000);
+			}
 
             $('#hireDealerModal').modal('show');
         };
@@ -619,10 +626,21 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ngAnimate','jg.progressbar'])
             $scope.dealerToFire.kids = (2 + Math.random() * 6).toFixed();
             $('#fireDealerModal').modal('show');
         };
+		
+		$scope.payBail = function(dealer) {
+			if ($scope.gameModel.arrested && $scope.gameModel.cash >= $scope.gameModel.arrested.bail) {
+				$scope.gameModel.cash -= $scope.gameModel.arrested.bail;
+				dealer.arrested = false;
+				$scope.gameModel.arrested = false;
+			}
+		};
 
         $scope.fireDealerConfirm = function () {
             for (var i = 0; i < $scope.gameModel.dealers.length; i++) {
                 if ($scope.gameModel.dealers[i].seed == $scope.dealerToFire.seed) {
+					if ($scope.gameModel.dealers[i].arrested) {
+						$scope.gameModel.arrested = false;
+					}
                     $scope.gameModel.dealers.splice(i,1);
 		            writeToCookie();
         		    $('#fireDealerModal').modal('hide');
@@ -712,11 +730,18 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ngAnimate','jg.progressbar'])
             }
 
             if (lastSaved < updateTime - 30000) {
+				if (Math.random() > 0.95 && !$scope.gameModel.arrested && $scope.gameModel.totalCashEarned > 30000) {
+					var dealerToArrest = $scope.gameModel.dealers[Math.floor(Math.random() * $scope.gameModel.dealers.length)];
+					var bailValue = dealerToArrest.cashPerSecond * 100;
+					dealerToArrest.arrested = true;
+					$scope.gameModel.arrested = {dealer:dealerToArrest,bail:bailValue};
+					$scope.gameModel.arrestMessage = dealerToArrest.name + ' has been arrested by the cops! Bail has been set at ' + formatMoney(bailValue) + '.';
+				}
                 if (Math.random() > 0.9 && !$scope.gameModel.buff) {
                     var buffDrug = $scope.gameModel.drugs[Math.floor(Math.random() * $scope.gameModel.drugs.length)];
-                    var percentage = 2 + (Math.random() * 3);
-                    var time = 60 + (Math.random() * 100);
-                    $scope.gameModel.buff = {drugname: buffDrug.name, modifier: percentage, expires: new Date().getTime() + (time * 1000), msg: "One of your rivals has been busted by the cops. The lack of competition is causing " + buffDrug.name + " to sell for " + (percentage * 100).toFixed() + "% of the normal street price for the next {0} seconds!" };
+   	                var percentage = 2 + (Math.random() * 3);
+       	            var time = 60 + (Math.random() * 100);
+           	        $scope.gameModel.buff = {drugname: buffDrug.name, modifier: percentage, expires: new Date().getTime() + (time * 1000), msg: "One of your rivals has been busted by the cops. The lack of competition is causing " + buffDrug.name + " to sell for " + (percentage * 100).toFixed() + "% of the normal street price for the next {0} seconds!" };						
                 }
                 writeToCookie();
                 lastSaved = updateTime;

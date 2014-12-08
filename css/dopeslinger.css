@@ -16,6 +16,8 @@
     cursor: pointer;
 }
 
+.ml-10 {margin-left:10px;}
+.mr-10 {margin-right:10px;}
 .mb-2 {margin-bottom:2px;}
 .mb-5 {margin-bottom:5px;}
 .mb-10 { margin-bottom: 10px; }
@@ -267,7 +269,7 @@ div.drug-content.content-open {
     display:inherit;
 }
 #cash-wrap {
-	height:60px;
+	height:80px;
 }
 #current-cash {
 	z-index:50;

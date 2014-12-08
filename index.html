@@ -116,7 +116,8 @@
             </div>
 
             <div class="col-xs-12 col-sm-6">
-                <p class="distribution strong">{{buffMsg}}</p>
+                <p class="distribution strong" ng-show="gameModel.buff">{{buffMsg}}</p>
+				<p class="distribution strong" ng-show="gameModel.arrested">{{gameModel.arrestMessage}}</p>
             </div>
             
             <div class="clearfix"></div>
@@ -228,9 +229,16 @@
 				</div>
 
                 <div class="dealer-ui dealer-anim" ng-repeat="dealer in gameModel.dealers | orderBy:dealerSort:dealerSortReverse track by $index">
-                    <div class="dealer" ng-class="{'open':dealer.selected}" ng-click="selectDealer(dealer)"><strong>{{dealer.name}} ({{dealer.drug}})</strong><span class="glyphicon" ng-class="dealer.selected ? 'glyphicon-chevron-up' : 'glyphicon-chevron-down'"></span></div>
-                    <div class="dealer-content row" ng-class="{'content-open':dealer.selected}">
+                    <div class="dealer" ng-class="{'open':dealer.selected}" ng-click="selectDealer(dealer)">
+						<span class="glyphicon glyphicon-exclamation-sign" ng-show="dealer.arrested"></span>
+						<strong>{{dealer.name}} ({{dealer.drug}})</strong><span class="glyphicon" ng-class="dealer.selected ? 'glyphicon-chevron-up' : 'glyphicon-chevron-down'"></span></div>
+	                    <div class="dealer-content row" ng-class="{'content-open':dealer.selected}">
+						
+						<div class="alert alert-danger ml-10 mr-10 mb-10 text-center" role="alert" ng-show="dealer.arrested">ARRESTED</div>
+						<span class="col-xs-12 mb-5" ng-show="dealer.arrested"><button class="btn btn-default" ng-click="payBail(dealer)" ng-disabled="gameModel.cash < gameModel.arrested.bail"><span class="glyphicon glyphicon-usd icongreen"></span>Pay Bail <b>{{gameModel.arrested.bail | money}}</b></button></span>
+						
                         <p class="col-xs-6" style="padding-left:21px;padding-right:0;">Total: <strong>{{dealer.cashEarned|money}}</strong></p>
+						
                         <p class="col-xs-6"><strong>{{dealer.cashPerSecond|money}} / sec</strong></p>
 						<div class="clearfix"></div>
 						
