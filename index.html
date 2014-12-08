@@ -117,7 +117,7 @@
 
             <div class="col-xs-12 col-sm-6">
                 <p class="distribution strong" ng-show="gameModel.buff">{{buffMsg}}</p>
-				<p class="distribution strong" ng-show="gameModel.arrested">{{gameModel.arrestMessage}}</p>
+				<p class="distribution strong" ng-repeat="dealer in gameModel.dealers" ng-show="dealer.arrested">{{dealer.arrestMessage}}</p>
             </div>
             
             <div class="clearfix"></div>
@@ -231,11 +231,12 @@
                 <div class="dealer-ui dealer-anim" ng-repeat="dealer in gameModel.dealers | orderBy:dealerSort:dealerSortReverse track by $index">
                     <div class="dealer" ng-class="{'open':dealer.selected}" ng-click="selectDealer(dealer)">
 						<span class="glyphicon glyphicon-exclamation-sign" ng-show="dealer.arrested"></span>
+						<span class="glyphicon glyphicon-tower pull-left" ng-show="dealer.type == 'Prestige'" style="font-size:18px;margin-right:-10px;"></span>
 						<strong>{{dealer.name}} ({{dealer.drug}})</strong><span class="glyphicon" ng-class="dealer.selected ? 'glyphicon-chevron-up' : 'glyphicon-chevron-down'"></span></div>
 	                    <div class="dealer-content row" ng-class="{'content-open':dealer.selected}">
 						
 						<div class="alert alert-danger ml-10 mr-10 mb-10 text-center" role="alert" ng-show="dealer.arrested">ARRESTED</div>
-						<span class="col-xs-12 mb-5" ng-show="dealer.arrested"><button class="btn btn-default" ng-click="payBail(dealer)" ng-disabled="gameModel.cash < gameModel.arrested.bail"><span class="glyphicon glyphicon-usd icongreen"></span>Pay Bail <b>{{gameModel.arrested.bail | money}}</b></button></span>
+						<span class="col-xs-12 mb-5" ng-show="dealer.arrested"><button class="btn btn-default" ng-click="payBail(dealer)" ng-disabled="gameModel.cash < dealer.bail"><span class="glyphicon glyphicon-usd icongreen"></span>Pay Bail <b>{{dealer.bail | money}}</b></button></span>
 						
                         <p class="col-xs-6" style="padding-left:21px;padding-right:0;">Total: <strong>{{dealer.cashEarned|money}}</strong></p>
 						
@@ -291,6 +292,36 @@
 		</div>
     </div>
 
+	<div class="modal fade" id="prestigeDealerModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Recruit a dealer captain</h4>
+                </div>
+                <div class="modal-body row">
+					<div class="col-xs-12 pb-10"><p>Recruit a dealer captain for {{prestigeDealerPrice | money}}</p><p class="strong">This will reset your current game progress but give you access to a captain dealer with perfect attributes and persistant upgrades.</p></div>
+					<div class="col-xs-12">
+						<div class="input-group">
+							<span class="input-group-addon">Dealer name</span>
+							<input type="text" class="form-control" ng-model="prestigeDealerName" placeholder=" enter a name">
+						</div>
+					</div>
+                    <div class="col-xs-6 pr-10 mt-20">
+                        <button ng-click="prestigeDealerConfirm()" class="btn btn-default btn-distribution" type="button">
+                            <span class="glyphicon icongreen glyphicon-user"></span> Okay
+                        </button>
+                    </div>
+                    <div class="col-xs-6 pl-10 mt-20">
+                        <button ng-click="prestigeDealerCancel()" class="btn btn-default btn-distribution" type="button">
+                            <span class="glyphicon iconred glyphicon-user"></span> Cancel
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+	
     <div class="modal fade" id="fireDealerModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-sm">
             <div class="modal-content">
@@ -324,13 +355,14 @@
                 </div>
                 <div class="modal-body row">
                     <div class="col-xs-12 strong mb-20">Current cash: {{gameModel.cash|money}}</div>
+					<div class="col-xs-12 strong mb-20" ng-show="upgradeDealer().type == 'Prestige'">Upgrades are more expensive for your captain dealers, but they will persist through game resets!</div>
                     <div class="col-xs-12 col-sm-4 mb-20 height-match dealer-upgrade-anim" ng-repeat="upgrade in availableDealerUpgrades|orderBy:'price'">
 						<p class="strong">{{upgrade.name}}</p>
 						<p>{{upgrade.tooltip}}</p>
-						<button ng-click="purchaseDealerUpgrade(upgrade)" class="btn btn-default btn-distribution" ng-disabled="gameModel.cash < upgrade.price" type="button">
-   		                    <span class="glyphicon icongreen glyphicon-shopping-cart"></span> Buy (<strong>{{upgrade.price|money}}</strong>)
+						<button ng-click="purchaseDealerUpgrade(upgrade)" class="btn btn-default btn-distribution" ng-disabled="gameModel.cash < upgrade.realPrice" type="button">
+   		                    <span class="glyphicon icongreen glyphicon-shopping-cart"></span> Buy (<strong>{{upgrade.realPrice|money}}</strong>)
         	            </button>
-        	            <progressbar animate="false" value="cashPercentage(upgrade.price)" ng-class="gameModel.cash < upgrade.price ? 'active progress-striped' : 'progress-bar-success'"></progressbar>
+        	            <progressbar animate="false" value="cashPercentage(upgrade.realPrice)" ng-class="gameModel.cash < upgrade.realPrice ? 'active progress-striped' : 'progress-bar-success'"></progressbar>
                     </div>
                 </div>
             </div>
@@ -348,13 +380,13 @@
                     <div class="col-xs-12 col-sm-4"><button class="btn btn-default btn-distribution new-dealer-btn" ng-click="refreshDealers()" ng-disabled="secondsToDealerRefresh > 0">New dealers <span ng-show="secondsToDealerRefresh > 0">({{secondsToDealerRefresh}})</span></button></div>
                     <p class="col-xs-12 col-sm-8 dealer-warning" ng-show="gameModel.dealers.length >= gameModel.territoryUpgrades + 1">You already have the maximum number of dealers working for you. Either fire a dealer or expand your territory to hire another.</p>
                     <div class="clearfix"></div>
-                    <div class="col-xs-12 col-sm-4 dealer-hire-anim" ng-repeat="dealer in hireDealers" ng-animate="'list'">
-                        <p class="dealer-name"><span class="distribution strong">{{dealer.name}}</span></p>
+                    <div class="col-xs-12 col-sm-4 dealer-hire-anim" ng-repeat="dealer in hireDealers track by $index" ng-animate="'list'">
+                        <p class="dealer-name"><span class="glyphicon glyphicon-tower" ng-show="dealer.type == 'Prestige'"></span> <span class="distribution strong">{{dealer.name}}</span></p>
                         <p class="strong">Volume: <span class="volume iconyellow" ng-bind-html="getStars(dealer.originalVolume,5)"></span></p>
                         <p class="strong">Margin: <span class="price iconyellow" ng-bind-html="getStars(dealer.originalPrice,5)"></span></p>
 						<p>Sells {{actualDealerVolume(dealer,dealer.drug)|weight}} per second</p>
 						<p>Sells 1g of {{dealer.drug}} for {{actualDealerPrice(dealer)|money}}</p>
-                        <button class="btn btn-default btn-distribution" ng-click="hireDealer(dealer.seed)" ng-disabled="gameModel.dealers.length >= gameModel.territoryUpgrades + 1 || dealerHired(dealer.seed)">{{dealerHired(dealer.seed) ? 'Hired' : 'Hire ' + dealer.name.split(' ')[0]}}</button>
+                        <button class="btn btn-default btn-distribution" ng-click="hireDealer(dealer)" ng-disabled="gameModel.dealers.length >= gameModel.territoryUpgrades + 1 || dealerHired(dealer.seed)">{{dealerHired(dealer.seed) ? 'Hired' : 'Hire ' + dealer.name.split(' ')[0]}}</button>
                     </div>
                 </div>
             </div>
