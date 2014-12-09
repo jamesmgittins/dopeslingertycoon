@@ -203,7 +203,7 @@
 						<button ng-click="purchaseUpgrade(upgrade)" style="width:85%;" class="btn btn-default btn-distribution" ng-disabled="gameModel.cash < upgrade.price" type="button">
     	                    <span class="glyphicon icongreen" ng-class="upgrade.glyph"></span> {{upgrade.name}} (<strong>{{upgrade.price|money}}</strong>)
 	                    </button>
-						<button class="btn btn-default btn-distribution text-center" style="width:15%;" onclick="toggleTooltip(this);">
+						<button class="btn btn-default btn-distribution text-center pl-0 pr-0" style="width:15%;" onclick="toggleTooltip(this);">
 							<span class="glyphicon icongreen glyphicon-info-sign" style="width:100%;"></span>
 						</button>
 					</div>
@@ -216,10 +216,11 @@
 					<button ng-click="hireDealerModal()" style="width:85%;" class="btn btn-default" type="button" id="hire-dealer-button" tooltip="Hire another dealer">
                     	<span class="glyphicon icongreen glyphicon-user"></span> Hire dealer <span class="dealer-count strong">{{gameModel.dealers.length + '/' + (1 + gameModel.territoryUpgrades)}}</span>
                 	</button>
-					<button type="button" class="btn btn-default dropdown-toggle text-center" data-toggle="dropdown" aria-expanded="false" style="width:15%;">
+					<button type="button" class="btn btn-default dropdown-toggle text-center pl-0 pr-0" data-toggle="dropdown" aria-expanded="false" style="width:15%;">
 						<span class="icongreen noadjust glyphicon glyphicon-sort-by-alphabet"></span><span class="caret"></span>
 					</button>
 					<ul class="dropdown-menu" role="menu" style="right:0;left:auto;">
+						<li><a href="#" ng-click="dealerSort = 'none';dealerSortReverse = false;">None <span class="glyphicon glyphicon-ok" ng-show="dealerSort == 'none'"></span></a></li>
 						<li><a href="#" ng-click="dealerSort = 'drugIndex';dealerSortReverse = false;updateDealerDrugIndex();">Drug <span class="glyphicon glyphicon-ok" ng-show="dealerSort == 'drugIndex'"></span></a></li>
 						<li><a href="#" ng-click="dealerSort = 'name';dealerSortReverse = false;">Name <span class="glyphicon glyphicon-ok" ng-show="dealerSort == 'name'"></span></a></li>
 						<li><a href="#" ng-click="dealerSort = 'cashEarned';dealerSortReverse = true;">Cash Earned <span class="glyphicon glyphicon-ok" ng-show="dealerSort == 'cashEarned'"></span></a></li>
@@ -282,7 +283,7 @@
 					<button ng-click="expandTerritory()" style="width:85%;" class="btn btn-default btn-muscle" ng-disabled="gameModel.cash < priceOfTerritory()" type="button">
 	                    <span class="glyphicon icongreen glyphicon-globe"></span> Expand territory (<strong>{{priceOfTerritory()|money}}</strong>)
     	            </button>
-					<button class="btn btn-default btn-muscle text-center" style="width:15%;" onclick="toggleTooltip(this);">
+					<button class="btn btn-default btn-muscle text-center pl-0 pr-0" style="width:15%;" onclick="toggleTooltip(this);">
 						<span class="glyphicon icongreen glyphicon-info-sign" style="width:100%;"></span>
 					</button>
 				</div>
