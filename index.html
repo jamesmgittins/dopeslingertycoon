@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html ng-app="dopeslingerApp">
 <head>
     <title>Dope Slinger Tycoon</title>
@@ -97,6 +97,18 @@
 <body ng-controller="DopeController" ng-class="{'work-mode' : gameModel.workMode}" ng-animate-children>
     <div class="container">
         <div class="row">
+            <div class="col-xs-12 hidden-xs text-center advert">
+                <script type="text/javascript">
+                    (function () {
+                        if (window.CHITIKA === undefined) { window.CHITIKA = { 'units': [] }; };
+                        var unit = { "calltype": "async[2]", "publisher": "jgittins", "width": 550, "height": 120, "sid": "Chitika Default" };
+                        var placement_id = window.CHITIKA.units.length;
+                        window.CHITIKA.units.push(unit);
+                        document.write('<div id="chitikaAdBlock-' + placement_id + '"></div>');
+                    }());
+                </script>
+                <script type="text/javascript" src="//cdn.chitika.net/getads.js" async></script>
+            </div>
             <div class="col-xs-12 col-sm-9 col-md-10">
                 <h1 class="street" ng-class="{'hidden' : gameModel.workMode}"><span class="production-header">Dope</span> <span class="distribution-header">slinger</span> <span class="muscle-header">tycoon</span></h1>
             </div>
