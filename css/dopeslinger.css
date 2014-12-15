@@ -16,11 +16,21 @@
     cursor: pointer;
 }
 
+.ml-10 {margin-left:10px;}
+.mr-10 {margin-right:10px;}
+.mb-2 {margin-bottom:2px;}
+.mb-5 {margin-bottom:5px;}
 .mb-10 { margin-bottom: 10px; }
+.mb-20 {margin-bottom:20px;}
+.mt-5 {margin-top:5px;}
+.mt-10 {margin-top:10px;}
+.mt-20 {margin-top:20px;}
 .pb-10 { padding-bottom: 10px; }
 .pl-10 { padding-left:10px; }
 .pr-10 { padding-right:10px; }
 .pt-10 { padding-top:10px; }
+.pl-0 {padding-left:0;}
+.pr-0 {padding-right:0;}
 
 body {
     padding: 20px 0;
@@ -38,7 +48,6 @@ span.inline-glyph {
     color: #e51c23;
     font-size: 18px;
     float: left;
-    margin-right: -16px;
 }
 
 .dealer-warning {
@@ -65,7 +74,9 @@ div.progress-bar {
     color: #259b24;
     font-size: 18px;
     float: left;
-    margin-right: -16px;
+}
+.noadjust {
+	margin-right:0;
 }
 
 .btn[disabled] {
@@ -78,11 +89,12 @@ body.work-mode .production,
 body.work-mode .production-header,
 body.work-mode .distribution,
 body.work-mode .distribution-header,
-body.work-mode .upgrade,
-body.work-mode .upgrade-header,
+body.work-mode .muscle,
+body.work-mode .muscle-header,
 body.work-mode .btn-distribution,
+body.work-mode .distribution .btn-default,
 body.work-mode .btn-production,
-body.work-mode .btn-upgrade,
+body.work-mode .btn-muscle,
 body.work-mode div.dealer-content,
 body.work-mode div.dealer,
 body.work-mode div.drug-content,
@@ -90,7 +102,10 @@ body.work-mode div.drug {color:black;border-color:#bbb;}
 
 body.work-mode div.drug.open,
 body.work-mode div.dealer.open,
-body.work-mode div.progress-bar {background-color: #bbb;}
+body.work-mode div.progress-bar,
+body.work-mode p.jg-tooltip,
+body.work-mode div.jg-tooltip,
+body.work-mode span.jg-tooltip{background-color: #bbb;}
  
 
 .production-header {
@@ -123,20 +138,21 @@ body.work-mode div.progress-bar {background-color: #bbb;}
     color: #673ab7;
 }
 
-.btn-distribution {
+.btn-distribution,
+.distribution .btn-default {
     color: #311b92;
     border-color: #b39ddb;
 }
 
-.upgrade {
+.muscle {
     color: #bf360c;
 }
 
-.upgrade-header {
+.muscle-header {
     color: #ff5722;
 }
 
-.btn-upgrade {
+.btn-muscle {
     color: #bf360c;
     border-color: #ffab91;
 }
@@ -175,13 +191,14 @@ button.btn.options-button {
 button.btn {
     width: 100%;
     border-radius: 0;
+	overflow:hidden;
+	white-space:normal;
 }
 
 span.qty {
     float: left;
     font-size: 18px;
     font-weight: bold;
-    margin-right: -18px;
 }
 
 div.dealer-content,
@@ -189,9 +206,42 @@ div.dealer {
     border: 1px solid #673ab7;
     color: #311b92;
 }
+p.jg-tooltip-btn {
+	margin-bottom:0;
+}
+.jg-tooltip-btn {
+	cursor:pointer;
+	margin-right:0;
+	padding:4px 6px 6px;
+	border-radius:4px 4px 0 0 !important;
+}
+.btn-group .btn {
+	margin-left:0 !important;
+}
+div.jg-tooltip,
+p.jg-tooltip,
+span.jg-tooltip{
+	padding:4px 6px 6px;
+	color:white;
+	margin-bottom:0;
+}
 
-div.dealer.open {
+.jg-tooltip.left-tip {
+		border-radius:0 4px 4px 4px;
+}
+.jg-tooltip.right-tip {
+		border-radius:4px 0 4px 4px;
+}
+
+div.dealer.open,
+.distribution p.jg-tooltip,
+.distribution span.jg-tooltip{
     background-color: #673ab7;
+}
+
+.muscle p.jg-tooltip,
+.muscle span.jg-tooltip {
+	background-color: #bf360c;
 }
 
 div.drug-content,
@@ -200,7 +250,9 @@ div.drug {
     color: #0d5302;
 }
 
-div.drug.open {
+div.drug.open,
+.production p.jg-tooltip,
+.production span.jg-tooltip{
     background-color: #259b24;
 }
 
@@ -210,12 +262,20 @@ div.drug-content {
     max-height: 9999px;
     border-top: none;
     padding: 12px 0;
-    /*display:none;*/
+    display:none;
 }
 
 div.dealer-content.content-open,
 div.drug-content.content-open {
     display:inherit;
+}
+#cash-wrap {
+	height:80px;
+}
+#current-cash {
+	z-index:50;
+	padding-bottom:5px;
+	background: none repeat scroll 0 0 #ffffff;
 }
 
 div.dealer,
@@ -226,12 +286,21 @@ div.drug {
     cursor: pointer;
 }
 
-div.dealer > span.glyphicon,
-div.drug > span.glyphicon {
+div.dealer > span.glyphicon-chevron-up,
+div.dealer > span.glyphicon-chevron-down,
+div.drug > span.glyphicon-chevron-up,
+div.drug > span.glyphicon-chevron-down {
     float: right;
     display: none;
     font-size: 18px;
     margin-left: -18px;
+}
+
+.jg-tooltip-btn .glyphicon-info-sign {
+    visibility:hidden;
+}
+.jg-tooltip-btn:hover .glyphicon-info-sign {
+    visibility:visible;
 }
 
 div.dealer:hover > span.glyphicon,
@@ -239,8 +308,13 @@ div.drug:hover > span.glyphicon {
     display: inline;
 }
 
+p.distribution-tooltip {
+	padding:2px 15px 5px;
+}
+
 div.dealer.open,
-div.drug.open {
+div.drug.open,
+p.distribution-tooltip {
     color: white;
 }
 

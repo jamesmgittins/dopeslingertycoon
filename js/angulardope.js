@@ -21,28 +21,30 @@ var treeUpgradeWeedMulti = 1.2;
 var territoryUpgradePriceMulti = 3.1;
 var territoryUpgradeBasePrice = 2000;
 
-function DealerUpgrade(name, tooltip, price, volumeMod, priceMod, secondaryMod) {
+function DealerUpgrade(name, tooltip, price, volumeMod, priceMod, secondaryMod, synopsis) {
     this.name = name;
     this.tooltip = tooltip;
     this.price = price;
     this.volumeMod = volumeMod;
     this.priceMod = priceMod;
     this.secondaryMod = secondaryMod;
+	this.synopsis = synopsis;
 }
 
 var dealerUpgrades = [
-    new DealerUpgrade('Baseball bat', 'Handy in a street fight and helps to scare away the competition. Allows the dealer to sell drugs for 10% more money', 150, 1, 1.1, 0),
-    new DealerUpgrade('Bicycle', 'The cheapest and most basic form of personal transportation. Allows the dealer to sell an extra 10% volume', 600, 1.1, 1, 0),
-    new DealerUpgrade('iPhone 6 Plus', 'A state of the art smartphone. Allows the dealer to sell a small amount of other drugs on the side', 900, 1, 1, 0.1),
-    new DealerUpgrade('Superbike', 'One of the fastest ways to get around the urban jungle. Allows the dealer to sell an extra 20% volume', 25000, 1.2, 1, 0),
-    new DealerUpgrade('Glock 17 9mm', 'A small but deadly firearm, nobody will mess with you if you have this. Allows the dealer to sell drugs for 20% more money', 5000, 1, 1.2, 0),
-    new DealerUpgrade('Personal Assistant', 'A personal assistant to take your calls. Allows the dealer to sell even more drugs on the side', 85000, 1, 1, 0.2),
-    new DealerUpgrade('Armed Gang', 'A gang of tooled up homies to help eliminate the competition. Allows the dealer to sell drugs for 20% more money', 150000, 1, 1.2, 0),
-    new DealerUpgrade('Ferrari 458 Italia', 'A fine Italian supercar. Allows the dealer to sell an extra 30% volume', 575000, 1.3, 1, 0),
-    new DealerUpgrade('AW119 Ke Koala', 'A personal helicopter for transporting you and your homies! Allows the dealer to sell an extra 60% volume', 1890000, 1.6, 1, 0)
+    new DealerUpgrade('Baseball bat', 'Handy in a street fight and helps to scare away the competition. Allows the dealer to sell drugs for 10% more money', 150, 1, 1.1, 0, '+10% margin'),
+    new DealerUpgrade('Bicycle', 'The cheapest and most basic form of personal transportation. Allows the dealer to sell an extra 10% volume', 600, 1.1, 1, 0, '+10% volume'),
+    new DealerUpgrade('iPhone 6 Plus', 'A state of the art smartphone. Allows the dealer to sell a small amount of other drugs on the side', 900, 1, 1, 0.1, '+10% secondary sales'),
+    new DealerUpgrade('Superbike', 'One of the fastest ways to get around the urban jungle. Allows the dealer to sell an extra 20% volume', 25000, 1.2, 1, 0, '+20% volume'),
+    new DealerUpgrade('Glock 17 9mm', 'A small but deadly firearm, nobody will mess with you if you have this. Allows the dealer to sell drugs for 20% more money', 5000, 1, 1.2, 0, '+20% margin'),
+    new DealerUpgrade('Personal Assistant', 'A personal assistant to take your calls. Allows the dealer to sell even more drugs on the side', 85000, 1, 1, 0.2, '+20% secondary sales'),
+    new DealerUpgrade('Armed Gang', 'A gang of tooled up homies to help eliminate the competition. Allows the dealer to sell drugs for 20% more money', 150000, 1, 1.2, 0, '+20% margin'),
+    new DealerUpgrade('Ferrari 458 Italia', 'A fine Italian supercar. Allows the dealer to sell an extra 30% volume', 575000, 1.3, 1, 0, '+30% volume'),
+    new DealerUpgrade('AW119 Ke Koala', 'A personal helicopter for transporting you and your homies! Allows the dealer to sell an extra 60% volume', 1890000, 1.6, 1, 0, '+60% volume')
 ];
 
 var silkRoadUpgrade = {type:'SilkRoad',name:'Develop Silk Road',tooltip:'Develop the Silk Road dark web site to allow you to bulk sell drugs in units of 1kg',price:141592,glyph:'glyphicon-cloud'};
+var prestigeDealerUpgrade = {type:'PrestigeDealer',name:'Dealer Captain',tooltip:'Recruit a dealer captain with perfect attributes. This will reset your progress!',price:5000000,glyph:'glyphicon-tower'};
 
 function ProductionUpgrade(name, tooltip, price, producer, upVal, drug) {
     this.type = 'ProductionUpgrade';
@@ -61,6 +63,21 @@ function DrugUnlock (name,tooltip,price,drug) {
     this.price = price;
     this.drug = drug;
     this.glyph = 'glyphicon-tint';
+}
+
+function formatMoney(input) {
+	if (!input) input = 0;
+	var symbol = '$';
+	if (input >= 1000000000000)
+		return symbol + (input / 1000000000000).toFixed(2) + 'T';
+	if (input >= 1000000000)
+		return symbol + (input / 1000000000).toFixed(2) + 'B';
+	if (input >= 1000000)
+		return symbol + (input / 1000000).toFixed(2) + 'M';
+	if (input >= 1000)
+		return symbol + (input / 1000).toFixed(2) + 'K';
+
+	return symbol + input.toFixed(2);
 }
 
 var productionUpgradesMaster = [
@@ -100,9 +117,10 @@ function Drug(name, pricePerGram, costToUnlock) {
     this.pricePerGram = pricePerGram;
     this.qty = 0;
     this.total = 0;
-    this.selected = false;
+    this.selected = true;
     this.costToUnlock = costToUnlock;
     this.totalCash = 0;
+	this.drugUnlock = new DrugUnlock('Research ' + this.name, 'Spend money to research production of a new drug, ' + this.name + '. Your customers will love it!', this.costToUnlock, this.name);
 }
 
 var drugsMaster = [
@@ -138,11 +156,16 @@ var productionMaster = [
     new Producer('Chemistry Professor', 40000, 'MDMA', 1.26, 0.45),
     new Producer('Drug Mule', 50000, 'Cocaine', 1.27, 0.3)];
 
+
 function Dealer(seed) {
     this.seed = seed;
     Math.seedrandom(seed);
     this.volume = Math.random() + 0.5;
     this.price = Math.random() + 0.5;
+	
+	this.originalVolume = this.volume;
+	this.originalPrice = this.price;
+	
     this.sideVolume = 0;
 
     this.male = true;
@@ -156,8 +179,9 @@ function Dealer(seed) {
     }
     this.name = this.name + ' ' + lastNames[Math.floor(Math.random() * lastNames.length)];
     this.cashEarned = 0;
-    this.selected = false;
+    this.selected = true;
     this.drug = "Weed";
+	this.drugIndex = 0;
     this.upgrades = [];
     this.cashOneSecondAgo = 0;
     this.cashPerSecond = 0;
@@ -166,6 +190,7 @@ function Dealer(seed) {
 function getActualDealerPrice(dealer, drug) { return dealer.price * drug.pricePerGram; }
 
 function getActualDealerVolume(dealer, drug) {
+	if (dealer.arrested) return 0;
     if (drug == dealer.drug || drug.name == dealer.drug)
         return dealer.volume * 3;
     else
@@ -188,34 +213,63 @@ function GameModel() {
     this.autoSilk = false;
 }
 
-angular.module('dopeslingerApp', ['ngSanitize', 'ui.bootstrap'
-    //,'ngAnimate'
-])
-    //.animation('.content-open', function () {
-    //    return {
-    //        enter: function (element, done) {
-    //            //run the animation here and call done when the animation is complete
-    //            return function (cancelled) {
-    //                //this (optional) function will be called when the animation
-    //                //completes or when the animation is cancelled (the cancelled
-    //                //flag will be set to true if cancelled).
-    //            };
-    //        },
-    //        beforeAddClass: function (element, className, done) {
-    //            element.css('display', 'none');
-    //            done();
-    //        },
-    //        //animation that can be triggered after the class is added
-    //        addClass: function (element, className, done) {
-    //            element.slideDown(done);
-    //        },
+angular.module('dopeslingerApp', ['ngSanitize', 'ngAnimate','jg.progressbar'])
+	.animation('.dealer-hire-anim', function() {
+		return { 
+			enter : function(element, done) {
+	    	    element.hide().slideDown(1000,done);
+	        },
+			leave: function (element, done) {
+				element.slideUp(1000,done);
+			}
+  		};
+	})
+	.animation('.drug-anim', function() {
+		return { 
+			enter : function(element, done) {
+	    	    element.hide().fadeIn(done);
+	        },
+			leave: function (element, done) {
+				element.fadeOut(done);
+			}
+  		};
+	})
+	.animation('.research-anim', function() {
+		return { 
+			enter : function(element, done) {
+	    	    element.hide().fadeIn(done);
+	        },
+			leave: function (element, done) {
+				element.fadeOut(done);
+			}
+  		};
+	})
+    .animation('.content-open', function () {
+        return {
+            enter: function (element, done) {
+                //run the animation here and call done when the animation is complete
+                return function (cancelled) {
+                    //this (optional) function will be called when the animation
+                    //completes or when the animation is cancelled (the cancelled
+                    //flag will be set to true if cancelled).
+                };
+            },
+            beforeAddClass: function (element, className, done) {
+                element.css('display', 'none');
+                done();
+            },
+            //animation that can be triggered after the class is added
+            addClass: function (element, className, done) {
+                element.slideDown(done);
+				$(window).trigger('resize');
+            },
 
-    //        //animation that can be triggered after the class is added
-    //        beforeRemoveClass: function (element, className, done) {
-    //            element.slideUp(done);
-    //        }
-    //    }
-    //})
+            //animation that can be triggered after the class is added
+            beforeRemoveClass: function (element, className, done) {
+                element.slideUp(done);
+            }
+        };
+    })
     .filter('weight', function () {
         return function (input) {
             if (input >= 1000)
@@ -225,21 +279,9 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ui.bootstrap'
         };
     })
     .filter('money', function () {
-        return function (input) {
-            var symbol = '$';
-            if (input >= 1000000000000)
-                return symbol + (input / 1000000000000).toFixed(2) + 'T';
-            if (input >= 1000000000)
-                return symbol + (input / 1000000000).toFixed(2) + 'B';
-            if (input >= 1000000)
-                return symbol + (input / 1000000).toFixed(2) + 'M';
-            if (input >= 1000)
-                return symbol + (input / 1000).toFixed(2) + 'K';
-
-            return symbol + input.toFixed(2);
-        };
+        return formatMoney;
     })
-    .controller('DopeController', ['$scope', '$document', '$window', '$sce', '$interval', '$timeout', function ($scope, $document, $window, $sce, $interval, $timeout) {
+    .controller('DopeController', ['$scope', '$document', '$window', '$sce', '$interval', '$timeout', '$animate', function ($scope, $document, $window, $sce, $interval, $timeout, $animate) {
 
         var lastUpdate = 0;
         var lastSaved = 0;
@@ -250,13 +292,15 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ui.bootstrap'
         $scope.log = [];
 
         $scope.gameModel = new GameModel();
+		$scope.prestigeDealers = [];
         $scope.cashPerSecond = 0;
         $scope.hireDealers = [];
-        $scope.toggleWorkMode = function () { $scope.gameModel.workMode = !$scope.gameModel.workMode; };
+        $scope.toggleWorkMode = function () { $scope.gameModel.workMode = !$scope.gameModel.workMode;};
         $scope.priceOfTerritory = function () { return territoryUpgradeBasePrice * Math.pow(territoryUpgradePriceMulti, $scope.gameModel.territoryUpgrades); };
         $scope.cashPercentage = function (value) { return Math.min(100, $scope.gameModel.cash / value * 100); };
         $scope.productionPrice = function (production) { return production.basePrice * Math.pow(production.priceMulti, production.qty); };
         $scope.availableUpgrades = [];
+		$scope.dealerSort = 'none';
 
         $scope.getDrugByName = function (name) {
             for (var i = 0; i < $scope.gameModel.drugs.length; i++) {
@@ -276,15 +320,13 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ui.bootstrap'
         };
 
         $scope.actualDealerVolume = function (dealer, drug) { return getActualDealerVolume(dealer, drug); };
+		
         $scope.actualDealerPrice = function (dealer, drug) {
             if (drug === undefined) {
                 drug = $scope.getDrugByName(dealer.drug);
             }
-
-            if ($scope.gameModel.buff && $scope.gameModel.buff.drugname == drug.name)
-                return dealer.price * drug.pricePerGram * $scope.gameModel.buff.modifier;
-                
-            return dealer.price * drug.pricePerGram;
+			
+            return dealer.price * $scope.drugStreetPrice(drug);
         };
 
         $scope.drugStreetPrice = function (drug) {
@@ -293,7 +335,17 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ui.bootstrap'
 
             return drug.pricePerGram;
         };
-
+		
+		$scope.updateDealerDrugIndex = function(){
+			for (var i=0; i< $scope.gameModel.drugs.length; i++) {
+				for (var j=0; j < $scope.gameModel.dealers.length; j++) {
+					if ($scope.gameModel.dealers[j].drug == $scope.gameModel.drugs[i].name) {
+						$scope.gameModel.dealers[j].drugIndex = i;
+					}
+				}
+			}
+		};
+		
         $scope.upgradeUnlocked = function (upgrade) {
             var upgradeUnlocked = false;
             for (var j = 0; j < $scope.gameModel.upgrades.length; j++) {
@@ -323,9 +375,21 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ui.bootstrap'
             else
                 $scope.gameModel.autoSilk = true;
         };
+		
+		$scope.getUpgradesForDrug = function(drug) {
+			var upgradesForDrug = [];
+			for (var i=0; i<$scope.availableUpgrades.length;i++){
+				if ($scope.availableUpgrades[i].drug == drug.name)
+					upgradesForDrug.push($scope.availableUpgrades[i]);
+			}
+			return upgradesForDrug;
+		};
 
         $scope.calculateAvailableUpgrades = function () {
             $scope.availableUpgrades = [];
+            $scope.drugResearch = [];
+			$scope.dealerResearch = [];
+			
             for (var i = 0; i < drugsMaster.length; i++) {
                 var drugUnlocked = false;
 
@@ -333,7 +397,7 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ui.bootstrap'
                     drugUnlocked = true;
 
                 if (!drugUnlocked && (i > 0 && $scope.getDrugByName(drugsMaster[i - 1].name) !== null) && $scope.gameModel.totalCashEarned > (drugsMaster[i].costToUnlock * 1.5)) {
-                    $scope.availableUpgrades.push(new DrugUnlock('Research ' + drugsMaster[i].name, 'Spend money to research production of a new drug, ' + drugsMaster[i].name + '. Your customers will love it!', drugsMaster[i].costToUnlock, drugsMaster[i].name));
+                    $scope.drugResearch.push(drugsMaster[i].drugUnlock);
                 }
             }
             for (i = 0; i < productionUpgradesMaster.length; i++) {
@@ -343,7 +407,12 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ui.bootstrap'
                 }
             }
             if ($scope.gameModel.totalCashEarned > (silkRoadUpgrade.price * 1.5) && !$scope.gameModel.silkRoadUnlocked)
-                $scope.availableUpgrades.push(silkRoadUpgrade);
+                $scope.dealerResearch.push(silkRoadUpgrade);
+			
+			if ($scope.gameModel.totalCashEarned > (prestigeDealerUpgrade.price * 1.5))
+                $scope.dealerResearch.push(prestigeDealerUpgrade);
+			
+			$timeout(function(){$(window).trigger('resize');},0);
         };
 
         $scope.purchaseUpgrade = function (upgrade) {
@@ -352,6 +421,10 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ui.bootstrap'
 
 			var i = 0;
             switch (upgrade.type) {
+				case 'PrestigeDealer':
+					$scope.prestigeDealerPrice = prestigeDealerUpgrade.price;
+					$('#prestigeDealerModal').modal('show');
+					return;
                 case 'SilkRoad':
                     $scope.gameModel.silkRoadUnlocked = true;
                     break;
@@ -377,7 +450,7 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ui.bootstrap'
                     break;
             }
             $scope.gameModel.cash -= upgrade.price;
-            $scope.calculateAvailableUpgrades();
+			$scope.calculateAvailableUpgrades();
             writeToCookie();
         };
 
@@ -403,6 +476,7 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ui.bootstrap'
                 return;
             }
             if (localStorage.getItem("gameModel") !== null) $scope.gameModel = JSON.parse(localStorage.getItem("gameModel"));
+			if (localStorage.getItem("prestigeDealers") !== null) $scope.prestigeDealers = JSON.parse(localStorage.getItem("prestigeDealers"));
         }
 
         function writeToCookie() {
@@ -410,6 +484,7 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ui.bootstrap'
                 return;
             }
             localStorage.setItem("gameModel", JSON.stringify($scope.gameModel));
+			localStorage.setItem("prestigeDealers", JSON.stringify($scope.prestigeDealers));
         }
 
         $scope.drugMadePerSecond = function(drug) {
@@ -430,7 +505,7 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ui.bootstrap'
         };
 
         $scope.resetGame = function () {
-            localStorage.clear();
+			localStorage.removeItem('gameModel');
             window.location.reload();
         };
 
@@ -464,8 +539,25 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ui.bootstrap'
         $scope.dealerUpgradeModal = function (dealer) {
             
             $scope.calculateAvailableDealerUpgrades(dealer);
+			
+			$('#upgradeDealerModal').on('shown.bs.modal', function (e) {
+				var height = 0;
+
+				$('#upgradeDealerModal .height-match').each(function(){
+
+					if ($(this).height() > height)
+						height = $(this).height();
+				});
+				
+				$('#upgradeDealerModal .height-match').each(function(){
+					if (height > $(this).height())
+						$(this).find('button').css('margin-top',(height - $(this).height()) + 'px');
+				});
+			});
             $('#upgradeDealerModal').modal('show');
         };
+		
+		$scope.upgradeDealer = function(){return upgradeDealer;};
 
         $scope.calculateAvailableDealerUpgrades = function(dealer) {
             upgradeDealer = dealer;
@@ -477,16 +569,20 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ui.bootstrap'
                     if (dealer.upgrades[j].name == dealerUpgrades[i].name)
                         alreadyBought = true;
                 }
-                if (!alreadyBought && $scope.gameModel.totalCashEarned > dealerUpgrades[i].price - 200)
+				dealerUpgrades[i].realPrice = dealerUpgrades[i].price;
+				
+				if (dealer.type == 'Prestige') dealerUpgrades[i].realPrice = dealerUpgrades[i].price * 6;
+				
+				if (!alreadyBought && $scope.gameModel.totalCashEarned > dealerUpgrades[i].price - 2000)
                     $scope.availableDealerUpgrades.push(dealerUpgrades[i]);
             }
         };
 
         $scope.purchaseDealerUpgrade = function (upgrade) {
-            if ($scope.gameModel.cash < upgrade.price)
+            if ($scope.gameModel.cash < upgrade.realPrice)
                 return;
             
-            $scope.gameModel.cash -= upgrade.price;
+            $scope.gameModel.cash -= upgrade.realPrice;
             upgradeDealer.upgrades.push(upgrade);
             upgradeDealer.volume *= upgrade.volumeMod;
             upgradeDealer.price *= upgrade.priceMod;
@@ -495,6 +591,7 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ui.bootstrap'
             writeToCookie();
         };
 
+		var dealerRefreshRate = 60000;
         $scope.secondsToDealerRefresh = 0;
 
         $scope.refreshDealers = function () {
@@ -502,24 +599,30 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ui.bootstrap'
                 $scope.gameModel.lastDealerRefresh = 0;
 
             var currentTime = new Date().getTime();
-            if (currentTime > $scope.gameModel.lastDealerRefresh + 60000) {
+            if (currentTime > $scope.gameModel.lastDealerRefresh + dealerRefreshRate) {
                 $scope.gameModel.lastDealerRefresh = currentTime;
             }
             $scope.hireDealers = [new Dealer($scope.gameModel.lastDealerRefresh), new Dealer($scope.gameModel.lastDealerRefresh - 25000), new Dealer($scope.gameModel.lastDealerRefresh - 45000)];
+
+			$scope.hireDealers.push.apply($scope.hireDealers, $scope.prestigeDealers);
             writeToCookie();
         };
 
         $scope.hireDealerModal = function () {
-            if ($scope.hireDealers.length === 0)
-                $scope.refreshDealers();
+            if ($scope.hireDealers.length === 0) {
+				$scope.refreshDealers();
+				$animate.enabled(false);
+				$timeout(function(){$animate.enabled(true);},1000);
+			}
 
             $('#hireDealerModal').modal('show');
         };
 
-        $scope.hireDealer = function (seed) {
+        $scope.hireDealer = function (dealer) {
             $('#hireDealerModal').modal('hide');
-            if ($scope.gameModel.dealers.length < 1 + $scope.gameModel.territoryUpgrades && !$scope.dealerHired(seed)) {
-                $scope.gameModel.dealers.push(new Dealer(seed));
+            if ($scope.gameModel.dealers.length < 1 + $scope.gameModel.territoryUpgrades && !$scope.dealerHired(dealer.seed)) {
+				dealer.drug='Weed';
+                $scope.gameModel.dealers.push(dealer);
                 writeToCookie();
             } else {
                 $timeout(function () {
@@ -533,17 +636,25 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ui.bootstrap'
             $scope.dealerToFire.kids = (2 + Math.random() * 6).toFixed();
             $('#fireDealerModal').modal('show');
         };
+		
+		$scope.payBail = function(dealer) {
+			if ($scope.gameModel.cash >= dealer.bail) {
+				$scope.gameModel.cash -= dealer.bail;
+				dealer.arrested = false;
+				dealer.bail = 0;
+				dealer.arrestMessage = false;
+			}
+		};
 
         $scope.fireDealerConfirm = function () {
-            var newDealerArray = [];
             for (var i = 0; i < $scope.gameModel.dealers.length; i++) {
-                if ($scope.gameModel.dealers[i].seed != $scope.dealerToFire.seed) {
-                    newDealerArray.push($scope.gameModel.dealers[i]);
+                if ($scope.gameModel.dealers[i].seed == $scope.dealerToFire.seed) {
+                    $scope.gameModel.dealers.splice(i,1);
+		            writeToCookie();
+        		    $('#fireDealerModal').modal('hide');
+					return;
                 }
             }
-            $scope.gameModel.dealers = newDealerArray;
-            writeToCookie();
-            $('#fireDealerModal').modal('hide');
         };
 		
         $scope.fireDealerCancel = function () {
@@ -564,6 +675,8 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ui.bootstrap'
             var timeDiff = (Math.min(1000, Math.max(updateTime - lastUpdate,0))) / 1000;
 
             var cashEarned = 0;
+			
+			var dealers = $scope.gameModel.dealers.concat().sort(function(a,b){return b.price - a.price;});
 
             if ($scope.gameModel.buff && $scope.gameModel.buff.expires <= updateTime) {
                 $scope.gameModel.buff = undefined;
@@ -571,7 +684,7 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ui.bootstrap'
             }
 
             if ($scope.gameModel.lastDealerRefresh)
-                $scope.secondsToDealerRefresh = (($scope.gameModel.lastDealerRefresh + 60000 - updateTime) / 1000).toFixed();
+                $scope.secondsToDealerRefresh = (($scope.gameModel.lastDealerRefresh + dealerRefreshRate - updateTime) / 1000).toFixed();
 
             if ($scope.gameModel.buff)
                 $scope.buffMsg = $scope.gameModel.buff.msg.format((($scope.gameModel.buff.expires - updateTime) / 1000).toFixed());
@@ -592,19 +705,19 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ui.bootstrap'
                     drug.total += producers[j].qty * producers[j].prodPerUnit * timeDiff;
                 }
 
-                for (j = 0; j < $scope.gameModel.dealers.length; j++) {
-                    if ($scope.gameModel.dealers[j].drug == drug.name && drug.qty >= getActualDealerVolume($scope.gameModel.dealers[j], drug) * timeDiff) {
-                        cashEarned += $scope.actualDealerPrice($scope.gameModel.dealers[j], drug) * getActualDealerVolume($scope.gameModel.dealers[j], drug) * timeDiff;
-                        drug.qty -= getActualDealerVolume($scope.gameModel.dealers[j], drug) * timeDiff;
-                        $scope.gameModel.dealers[j].cashEarned += $scope.actualDealerPrice($scope.gameModel.dealers[j], drug) * getActualDealerVolume($scope.gameModel.dealers[j], drug) * timeDiff;
+                for (j = 0; j < dealers.length; j++) {
+                    if (dealers[j].drug == drug.name && drug.qty >= getActualDealerVolume(dealers[j], drug) * timeDiff) {
+                        cashEarned += $scope.actualDealerPrice(dealers[j], drug) * getActualDealerVolume(dealers[j], drug) * timeDiff;
+                        drug.qty -= getActualDealerVolume(dealers[j], drug) * timeDiff;
+                        dealers[j].cashEarned += $scope.actualDealerPrice(dealers[j], drug) * getActualDealerVolume(dealers[j], drug) * timeDiff;
                     }
                 }
 
-                for (j = 0; j < $scope.gameModel.dealers.length; j++) {
-                    if ($scope.gameModel.dealers[j].drug != drug.name && drug.qty >= getActualDealerVolume($scope.gameModel.dealers[j], drug) * timeDiff) {
-                        cashEarned += $scope.actualDealerPrice($scope.gameModel.dealers[j], drug) * getActualDealerVolume($scope.gameModel.dealers[j], drug) * timeDiff;
-                        drug.qty -= getActualDealerVolume($scope.gameModel.dealers[j], drug) * timeDiff;
-                        $scope.gameModel.dealers[j].cashEarned += $scope.actualDealerPrice($scope.gameModel.dealers[j], drug) * getActualDealerVolume($scope.gameModel.dealers[j], drug) * timeDiff;
+                for (j = 0; j < dealers.length; j++) {
+                    if (dealers[j].drug != drug.name && drug.qty >= getActualDealerVolume(dealers[j], drug) * timeDiff) {
+                        cashEarned += $scope.actualDealerPrice(dealers[j], drug) * getActualDealerVolume(dealers[j], drug) * timeDiff;
+                        drug.qty -= getActualDealerVolume(dealers[j], drug) * timeDiff;
+                        dealers[j].cashEarned += $scope.actualDealerPrice(dealers[j], drug) * getActualDealerVolume(dealers[j], drug) * timeDiff;
                     }
                 }
             }
@@ -618,18 +731,31 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ui.bootstrap'
                 $scope.cashPerSecond = $scope.gameModel.cash - cashOneSecond;
                 cashOneSecond = $scope.gameModel.cash;
 
-                for (i = 0; i < $scope.gameModel.dealers.length; i++) {
-                    $scope.gameModel.dealers[i].cashPerSecond = $scope.gameModel.dealers[i].cashEarned - $scope.gameModel.dealers[i].cashOneSecondAgo;
-                    $scope.gameModel.dealers[i].cashOneSecondAgo = $scope.gameModel.dealers[i].cashEarned;
+                for (i = 0; i < dealers.length; i++) {
+                    dealers[i].cashPerSecond = dealers[i].cashEarned - dealers[i].cashOneSecondAgo;
+                    dealers[i].cashOneSecondAgo = dealers[i].cashEarned;
                 }
             }
 
             if (lastSaved < updateTime - 30000) {
+				if (Math.random() > 0.96 && $scope.gameModel.totalCashEarned > 30000) {
+					var dealerToArrest = $scope.gameModel.dealers[Math.floor(Math.random() * $scope.gameModel.dealers.length)];
+					if (!dealerToArrest.arrested) {
+						var bailValue = dealerToArrest.cashPerSecond * 95;
+						dealerToArrest.arrested = true;
+						dealerToArrest.bail = bailValue;
+						dealerToArrest.arrestMessage = dealerToArrest.name + ' has been arrested by the cops! Bail has been set at ' + formatMoney(bailValue) + '.';
+					}
+				}
                 if (Math.random() > 0.9 && !$scope.gameModel.buff) {
                     var buffDrug = $scope.gameModel.drugs[Math.floor(Math.random() * $scope.gameModel.drugs.length)];
-                    var percentage = 2 + (Math.random() * 3);
-                    var time = 60 + (Math.random() * 100);
-                    $scope.gameModel.buff = {drugname: buffDrug.name, modifier: percentage, expires: new Date().getTime() + (time * 1000), msg: "One of your rivals has been busted by the cops. The lack of competition is causing " + buffDrug.name + " to sell for " + (percentage * 100).toFixed() + "% of the normal street price for the next {0} seconds!" };
+   	                var percentage = 2 + (Math.random() * 3);
+       	            var time = 60 + (Math.random() * 100);
+           	        $scope.gameModel.buff = {
+						drugname: buffDrug.name, 
+						modifier: percentage, 
+						expires: new Date().getTime() + (time * 1000), 
+						msg: "One of your rivals has been busted by the cops. The lack of competition is causing " + buffDrug.name + " to sell for " + (percentage * 100).toFixed() + "% of the normal street price for the next {0} seconds!" };						
                 }
                 writeToCookie();
                 lastSaved = updateTime;
@@ -639,9 +765,42 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ui.bootstrap'
         }
 
         $document.ready(function () {
+			scrollMenu();
             readFromCookie();
+			
+			for (var i=0; i < $scope.prestigeDealers.length; i++) {
+				for (var j=0; j < $scope.gameModel.dealers.length; j++) {
+					if ($scope.prestigeDealers[i].seed == $scope.gameModel.dealers[j].seed) {
+						$scope.prestigeDealers[i] = $scope.gameModel.dealers[j];
+					}
+				}
+			}
+			
             $scope.calculateAvailableUpgrades();
-            $interval(update, 100);
+			$scope.updateDealerDrugIndex();
+			prestigeDealerUpgrade.price = 5000000 * Math.pow(1.4, $scope.prestigeDealers.length);
+            $interval(update, 200);
         });
+		
+		$scope.prestigeDealerConfirm = function() {
+			if ($scope.gameModel.cash >= prestigeDealerUpgrade.price) {
+				var prestigeDealer = new Dealer($scope.prestigeDealers.length + 1);
+				prestigeDealer.name = $scope.prestigeDealerName;
+				prestigeDealer.price = 1.5;
+				prestigeDealer.originalPrice = 1.5;
+				prestigeDealer.volume = 1.5;
+				prestigeDealer.originalVolume = 1.5;
+				prestigeDealer.type= 'Prestige';
+				$scope.prestigeDealers.push(prestigeDealer);
+				localStorage.removeItem('gameModel');
+				localStorage.setItem("prestigeDealers", JSON.stringify($scope.prestigeDealers));
+				window.location.reload();
+			}
+			$('#prestigeDealerModal').modal('hide');
+		};
+		
+		$scope.prestigeDealerCancel = function(){
+			$('#prestigeDealerModal').modal('hide');
+		};
 
     }]);
