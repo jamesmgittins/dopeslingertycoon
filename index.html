@@ -274,7 +274,7 @@
 						
                         <span class="col-xs-12 mt-10"><button class="btn btn-default" ng-click="dealerUpgradeModal(dealer)"><span class="glyphicon glyphicon-shopping-cart icongreen"></span>Buy Equipment</button></span>
 						
-						<div ng-repeat="upgrade in dealer.upgrades | orderBy:'price'">
+						<div ng-repeat="upgrade in dealer.upgrades | orderBy:'price' track by $index">
 							<div class="col-xs-12 mb-5 pr-0">
 								<span class="strong col-xs-6 pr-0" style="padding-left:6px;">{{upgrade.name}}</span>
 								<span class="col-xs-6 pl-0 pr-0">{{upgrade.synopsis}}</span>
