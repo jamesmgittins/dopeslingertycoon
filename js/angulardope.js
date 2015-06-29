@@ -307,7 +307,7 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ngAnimate','jg.progressbar'])
                 if ($scope.gameModel.drugs[i].name == name)
                     return $scope.gameModel.drugs[i];
             }
-            return $scope.gameModel.drugs[0];
+            return null;
         };
 
         $scope.sellOnSilkRoad = function (drug) {
@@ -649,6 +649,7 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ngAnimate','jg.progressbar'])
         $scope.fireDealerConfirm = function () {
             for (var i = 0; i < $scope.gameModel.dealers.length; i++) {
                 if ($scope.gameModel.dealers[i].seed == $scope.dealerToFire.seed) {
+                    $scope.dealerToFire.drug = 'Weed';
                     $scope.gameModel.dealers.splice(i,1);
 		            writeToCookie();
         		    $('#fireDealerModal').modal('hide');
@@ -792,6 +793,9 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ngAnimate','jg.progressbar'])
 				prestigeDealer.originalVolume = 1.5;
 				prestigeDealer.type= 'Prestige';
 				$scope.prestigeDealers.push(prestigeDealer);
+				for (var i = 0; i < $scope.prestigeDealers.length; i++) {
+				    $scope.prestigeDealers[i].drug = "Weed";
+				}
 				localStorage.removeItem('gameModel');
 				localStorage.setItem("prestigeDealers", JSON.stringify($scope.prestigeDealers));
 				window.location.reload();
