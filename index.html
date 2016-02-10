@@ -106,7 +106,7 @@
             </div>
 
             <div class="col-xs-12 col-sm-6" id="cash-wrap">
-                <p ng-show="!gameModel.workMode"><strong>Buy cannabis plants to grow weed. Hire dealers to sell the weed.</strong></p>
+                <p ng-show="!gameModel.workMode"><strong>Buy cannabis plants to grow weed. Hire dealers to sell the weed. Hire muscle to earn respect. Use respect to expand your territory or negotiate better prices.</strong></p>
                 <div id="current-cash" class="strong">
                     Current cash:
                     <span class="current-cash">{{gameModel.cash|money}}</span>
@@ -114,7 +114,11 @@
                     <span ng-class="cashPerSecond > 0 ? 'production-header' : 'muscle-header'">{{cashPerSecond|money}} / sec</span>
                 </div>
                 <p class="strong">Total earned {{gameModel.totalCashEarned|money}}</p>
-                <p class="strong">Respect earned: {{gameModel.respect|respect}}</p>
+                <p class="strong">
+                    Respect earned: {{gameModel.respect|respect}}
+                    <span class="glyphicon glyphicon-arrow-up muscle-header" ng-show="gameModel.respectPerSecond > 0"></span>
+                    <span class="muscle-header" ng-show="gameModel.respectPerSecond > 0">{{gameModel.respectPerSecond|respect}} / sec</span>
+                </p>
             </div>
 
             <div class="col-xs-12 col-sm-6">
@@ -129,15 +133,15 @@
 
                 <div ng-repeat="upgrade in drugResearch | orderBy:'price'" class="mb-10 research-anim">
                     <div class="btn-group" style="width:100%;" role="group">
-                        <button ng-click="purchaseUpgrade(upgrade)" style="width:85%;" class="btn btn-default btn-production" ng-disabled="gameModel.cash < upgrade.price" type="button">
-                            <span class="glyphicon icongreen" ng-class="upgrade.glyph"></span> {{upgrade.name}} (<strong>{{upgrade.price|money}}</strong>)
+                        <button ng-click="purchaseUpgrade(upgrade)" style="width:85%;" class="btn btn-default btn-production" ng-disabled="gameModel.cash < upgrade.price * discountMulti()" type="button">
+                            <span class="glyphicon icongreen" ng-class="upgrade.glyph"></span> {{upgrade.name}} (<strong>{{upgrade.price * discountMulti()|money}}</strong>)
                         </button>
                         <button class="btn btn-default btn-production text-center" style="width:15%;padding:6px 0;" onclick="toggleTooltip(this);">
                             <span class="glyphicon icongreen glyphicon-info-sign" style="width:100%;"></span>
                         </button>
                     </div>
                     <div style="display:none"><p class="jg-tooltip">{{upgrade.tooltip}}</p></div>
-                    <progressbar animate="false" value="cashPercentage(upgrade.price)" ng-class="gameModel.cash < upgrade.price ? 'active progress-striped' : 'progress-bar-success'"></progressbar>
+                    <progressbar animate="false" value="cashPercentage(upgrade.price * discountMulti())" ng-class="gameModel.cash < upgrade.price * discountMulti() ? 'active progress-striped' : 'progress-bar-success'"></progressbar>
                     <div class="clearfix"></div>
                 </div>
 
@@ -182,15 +186,15 @@
 
                         <div ng-repeat="upgrade in getUpgradesForDrug(drug) | orderBy:'price'" class="col-xs-12 pt-10 research-anim">
                             <div class="btn-group" role="group" style="width:100%;">
-                                <button ng-click="purchaseUpgrade(upgrade)" style="width:85%;" class="btn btn-default btn-production" ng-disabled="gameModel.cash < upgrade.price" type="button">
-                                    <span class="glyphicon icongreen" ng-class="upgrade.glyph"></span> {{upgrade.name}} (<strong>{{upgrade.price|money}}</strong>)
+                                <button ng-click="purchaseUpgrade(upgrade)" style="width:85%;" class="btn btn-default btn-production" ng-disabled="gameModel.cash < upgrade.price * discountMulti()" type="button">
+                                    <span class="glyphicon icongreen" ng-class="upgrade.glyph"></span> {{upgrade.name}} (<strong>{{upgrade.price * discountMulti()|money}}</strong>)
                                 </button>
                                 <button class="btn btn-default btn-production text-center pl-0 pr-0" style="width:15%;" onclick="toggleTooltip(this);">
                                     <span class="glyphicon icongreen glyphicon-info-sign" style="width:100%;"></span>
                                 </button>
                             </div>
                             <div style="display:none;"><p class="jg-tooltip">{{upgrade.tooltip}}</p></div>
-                            <progressbar animate="false" value="cashPercentage(upgrade.price)" ng-class="gameModel.cash < upgrade.price ? 'active progress-striped' : 'progress-bar-success'"></progressbar>
+                            <progressbar animate="false" value="cashPercentage(upgrade.price * discountMulti())" ng-class="gameModel.cash < upgrade.price * discountMulti() ? 'active progress-striped' : 'progress-bar-success'"></progressbar>
                         </div>
                     </div>
                 </div>
@@ -293,13 +297,24 @@
                 <div style="display:none;"><p class="jg-tooltip">Expand your territory, allowing you to hire an additional dealer</p></div>
                 <progressbar animate="false" value="respectPercentage(priceOfTerritory())" ng-class="gameModel.respect < priceOfTerritory() ? 'active progress-striped' : 'progress-bar-success'"></progressbar>
 
+                <div class="btn-group" role="group" style="width:100%;margin-top:10px;">
+                    <button ng-click="getDiscount()" style="width:85%;" class="btn btn-default btn-muscle" ng-disabled="gameModel.respect < priceOfDiscount()" type="button">
+                        <span class="glyphicon icongreen glyphicon-globe"></span> Negotiate discount (<strong>{{priceOfDiscount()|respect}} respect</strong>)
+                    </button>
+                    <button class="btn btn-default btn-muscle text-center pl-0 pr-0" style="width:15%;" onclick="toggleTooltip(this);">
+                        <span class="glyphicon icongreen glyphicon-info-sign" style="width:100%;"></span>
+                    </button>
+                </div>
+                <div style="display:none;"><p class="jg-tooltip">Renegotiate prices with your suppliers. This will reduce your costs by 10%</p></div>
+                <progressbar animate="false" value="respectPercentage(priceOfDiscount())" ng-class="gameModel.respect < priceOfDiscount() ? 'active progress-striped' : 'progress-bar-success'"></progressbar>
+
                 <div class="muscle-ui drug-anim" ng-repeat="muscle in gameModel.muscle track by $index">
                     <div class="muscle" ng-class="{'open':muscle.selected}" ng-click="selectDealer(muscle)">
                         <strong>{{muscle.name}} ({{muscle.qty}})</strong><span class="glyphicon" ng-class="muscle.selected ? 'glyphicon-chevron-up' : 'glyphicon-chevron-down'"></span>
                     </div>
                     <div class="muscle-content row" ng-class="{'content-open':muscle.selected}">
                         <p class="col-xs-12">Each {{muscle.name}} earns you <span class="strong">{{muscle.respect|respect}}</span> respect per second</p>
-                        <p class="col-xs-12">Your {{muscle.qty}} {{muscle.name}}s are earning you <span class="strong">{{muscle.respect*muscle.qty|respect}}</span> respect per second</p>
+                        <p class="col-xs-12">Your <span class="strong">{{muscle.qty}}</span> {{muscle.name}}s are earning you <span class="strong">{{muscle.respect*muscle.qty|respect}}</span> respect per second</p>
                         <div class="col-xs-12">
                             <button class="btn btn-default btn-muscle" style="width:100%" ng-click="hireMuscle(muscle)" ng-disabled="gameModel.cash < musclePrice(muscle)">
                                 <span class="qty">{{muscle.qty}}</span>{{muscle.name}} (<strong>{{musclePrice(muscle)|money}}</strong>)
