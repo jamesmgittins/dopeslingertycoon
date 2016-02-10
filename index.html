@@ -127,7 +127,7 @@
                 </div>
                 <p class="strong">Total earned {{gameModel.totalCashEarned|money}}</p>
                 <p class="strong">
-                    Respect earned: {{gameModel.respect|respect}}
+                    Current respect: {{gameModel.respect|respect}}
                     <span class="glyphicon glyphicon-arrow-up muscle-header" ng-show="gameModel.respectPerSecond > 0"></span>
                     <span class="muscle-header" ng-show="gameModel.respectPerSecond > 0">{{gameModel.respectPerSecond|respect}} / sec</span>
                 </p>
@@ -255,8 +255,22 @@
                     </div>
                     <div class="dealer-content row" ng-class="{'content-open':dealer.selected}">
 
+                        <p ng-show="dealer.type == 'Prestige' && !dealer.arrested" class="col-xs-12 strong" style="padding-left:21px;text-align:center;">Increases all respect earned by 100%</p>
+
                         <div class="alert alert-danger ml-10 mr-10 mb-10 text-center" role="alert" ng-show="dealer.arrested">ARRESTED</div>
                         <span class="col-xs-12 mb-5" ng-show="dealer.arrested"><button class="btn btn-default" ng-click="payBail(dealer)" ng-disabled="gameModel.cash < dealer.bail"><span class="glyphicon glyphicon-usd icongreen"></span>Pay Bail <b>{{dealer.bail | money}}</b></button></span>
+
+                        <div class="col-xs-12" style="margin-bottom:10px;" ng-hide="dealer.arrested">
+                            <div class="btn-group" style="width:100%" role="group">
+                                <button class="btn btn-default" style="width:85%;margin-bottom:0;" ng-click="dealer.payCops = !dealer.payCops;">
+                                    Pay off the cops (<strong>{{dealer.payCops ? "On" : "Off"}}</strong>)
+                                </button>
+                                <button class="btn btn-default text-center pl-0 pr-0" style="width:15%;margin-bottom:0;" onclick="toggleTooltip(this);">
+                                    <span class="glyphicon icongreen glyphicon-info-sign" style="width:100%;"></span>
+                                </button>
+                            </div>
+                            <div style="display:none;"><p class="jg-tooltip">Give the cops 10% of {{dealer.name}}'s income in order to keep them off their back. Reduces earnings, but they wont get arrested.</p></div>
+                        </div>
 
                         <p class="col-xs-6" style="padding-left:21px;padding-right:0;">Total: <strong>{{dealer.cashEarned|money}}</strong></p>
 
