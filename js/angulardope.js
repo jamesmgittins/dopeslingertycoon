@@ -18,10 +18,10 @@ var treeUpgradeBasePrice = 1000;
 var treeUpgradePriceMulti = 1.95;
 var treeUpgradeWeedMulti = 1.2;
 
-var territoryUpgradePriceMulti = 4.8;
+var territoryUpgradePriceMulti = 5;
 var territoryUpgradeBasePrice = 500;
 
-var discountUpgradePriceMulti = 5.2;
+var discountUpgradePriceMulti = 4.8;
 var discountUpgradeBasePrice = 1000;
 
 function DealerUpgrade(name, tooltip, price, volumeMod, priceMod, secondaryMod, synopsis) {
@@ -141,9 +141,9 @@ function muscle(name, price, respect, priceMulti) {
 var muscleMaster = [
     new muscle('Hood Rat', 80, 1, 1.2),
     new muscle('Young Thug', 1000, 5, 1.25),
-    new muscle('Hired Goon', 12000, 55, 1.29),
+    new muscle('Hired Goon', 12000, 75, 1.29),
     new muscle('Crooked Cop', 130000, 500, 1.4),
-    new muscle('Bought Judge', 1500000, 1000, 1.5),
+    new muscle('Bought Judge', 1500000, 1200, 1.5),
 ];
 
 var drugsMaster = [
@@ -333,6 +333,14 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ngAnimate','jg.progressbar'])
         $scope.musclePrice = function (muscle) { return muscle.price * Math.pow(muscle.priceMulti, muscle.qty) * $scope.discountMulti(); };
         $scope.discountMulti = function () { return Math.pow(0.9, $scope.gameModel.discountUpgrades); };
         $scope.discountPrice = function (price) { return price * $scope.discountMulti() };
+        $scope.captainMulti = function () {
+            var multi = 1;
+            for (var i = 0; i < $scope.gameModel.dealers.length; i++) {
+                if ($scope.gameModel.dealers[i].type == 'Prestige' && !$scope.gameModel.dealers[i].arrested)
+                    multi++;
+            }
+            return multi;
+        };
         $scope.availableUpgrades = [];
 		$scope.dealerSort = 'none';
 
@@ -669,7 +677,8 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ngAnimate','jg.progressbar'])
         $scope.hireDealer = function (dealer) {
             $('#hireDealerModal').modal('hide');
             if ($scope.gameModel.dealers.length < 1 + $scope.gameModel.territoryUpgrades && !$scope.dealerHired(dealer.seed)) {
-				dealer.drug='Weed';
+                dealer.drug = 'Weed';
+                dealer.payCops = false;
                 $scope.gameModel.dealers.push(dealer);
                 writeToCookie();
             } else {
@@ -765,17 +774,23 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ngAnimate','jg.progressbar'])
 
                 for (j = 0; j < dealers.length; j++) {
                     if (dealers[j].drug == drug.name && drug.qty >= getActualDealerVolume(dealers[j], drug) * timeDiff) {
-                        cashEarned += $scope.actualDealerPrice(dealers[j], drug) * getActualDealerVolume(dealers[j], drug) * timeDiff;
+                        var earned = $scope.actualDealerPrice(dealers[j], drug) * getActualDealerVolume(dealers[j], drug) * timeDiff;
+                        if (dealers[j].payCops)
+                            earned *= 0.9;
+                        cashEarned += earned;
                         drug.qty -= getActualDealerVolume(dealers[j], drug) * timeDiff;
-                        dealers[j].cashEarned += $scope.actualDealerPrice(dealers[j], drug) * getActualDealerVolume(dealers[j], drug) * timeDiff;
+                        dealers[j].cashEarned += earned;
                     }
                 }
 
                 for (j = 0; j < dealers.length; j++) {
                     if (dealers[j].drug != drug.name && drug.qty >= getActualDealerVolume(dealers[j], drug) * timeDiff) {
-                        cashEarned += $scope.actualDealerPrice(dealers[j], drug) * getActualDealerVolume(dealers[j], drug) * timeDiff;
+                        var earned = $scope.actualDealerPrice(dealers[j], drug) * getActualDealerVolume(dealers[j], drug) * timeDiff;
+                        if (dealers[j].payCops)
+                            earned *= 0.9;
+                        cashEarned += earned;
                         drug.qty -= getActualDealerVolume(dealers[j], drug) * timeDiff;
-                        dealers[j].cashEarned += $scope.actualDealerPrice(dealers[j], drug) * getActualDealerVolume(dealers[j], drug) * timeDiff;
+                        dealers[j].cashEarned += earned;
                     }
                 }
             }
@@ -783,6 +798,8 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ngAnimate','jg.progressbar'])
             for (var i = 0; i < $scope.gameModel.muscle.length; i++) {
                 respectEarned += $scope.gameModel.muscle[i].qty * $scope.gameModel.muscle[i].respect;
             }
+
+            respectEarned *= $scope.captainMulti();
 
             $scope.gameModel.cash += cashEarned;
             $scope.gameModel.totalCashEarned += cashEarned;
@@ -805,7 +822,7 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ngAnimate','jg.progressbar'])
             if (lastSaved < updateTime - 30000) {
 				if (Math.random() > 0.96 && $scope.gameModel.totalCashEarned > 30000) {
 					var dealerToArrest = $scope.gameModel.dealers[Math.floor(Math.random() * $scope.gameModel.dealers.length)];
-					if (!dealerToArrest.arrested) {
+					if (!dealerToArrest.arrested && !dealerToArrest.payCops) {
 						var bailValue = dealerToArrest.cashPerSecond * 95;
 						dealerToArrest.arrested = true;
 						dealerToArrest.bail = bailValue;
