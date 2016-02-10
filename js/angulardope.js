@@ -18,8 +18,11 @@ var treeUpgradeBasePrice = 1000;
 var treeUpgradePriceMulti = 1.95;
 var treeUpgradeWeedMulti = 1.2;
 
-var territoryUpgradePriceMulti = 3.1;
-var territoryUpgradeBasePrice = 2000;
+var territoryUpgradePriceMulti = 4.8;
+var territoryUpgradeBasePrice = 500;
+
+var discountUpgradePriceMulti = 5.2;
+var discountUpgradeBasePrice = 1000;
 
 function DealerUpgrade(name, tooltip, price, volumeMod, priceMod, secondaryMod, synopsis) {
     this.name = name;
@@ -66,18 +69,21 @@ function DrugUnlock (name,tooltip,price,drug) {
 }
 
 function formatMoney(input) {
-	if (!input) input = 0;
-	var symbol = '$';
-	if (input >= 1000000000000)
-		return symbol + (input / 1000000000000).toFixed(2) + 'T';
-	if (input >= 1000000000)
-		return symbol + (input / 1000000000).toFixed(2) + 'B';
-	if (input >= 1000000)
-		return symbol + (input / 1000000).toFixed(2) + 'M';
-	if (input >= 1000)
-		return symbol + (input / 1000).toFixed(2) + 'K';
+	return '$' + formatNumber(input);
+}
 
-	return symbol + input.toFixed(2);
+function formatNumber(input) {
+    if (!input) input = 0;
+    if (input >= 1000000000000)
+        return (input / 1000000000000).toFixed(2) + 'T';
+    if (input >= 1000000000)
+        return (input / 1000000000).toFixed(2) + 'B';
+    if (input >= 1000000)
+        return (input / 1000000).toFixed(2) + 'M';
+    if (input >= 1000)
+        return (input / 1000).toFixed(2) + 'K';
+
+    return input.toFixed(2);
 }
 
 var productionUpgradesMaster = [
@@ -122,6 +128,23 @@ function Drug(name, pricePerGram, costToUnlock) {
     this.totalCash = 0;
 	this.drugUnlock = new DrugUnlock('Research ' + this.name, 'Spend money to research production of a new drug, ' + this.name + '. Your customers will love it!', this.costToUnlock, this.name);
 }
+
+function muscle(name, price, respect, priceMulti) {
+    this.name = name;
+    this.price = price;
+    this.qty = 0;
+    this.selected = true;
+    this.respect = respect;
+    this.priceMulti = priceMulti;
+}
+
+var muscleMaster = [
+    new muscle('Hood Rat', 80, 1, 1.2),
+    new muscle('Young Thug', 1000, 5, 1.25),
+    new muscle('Hired Goon', 12000, 55, 1.29),
+    new muscle('Crooked Cop', 130000, 500, 1.4),
+    new muscle('Bought Judge', 1500000, 1000, 1.5),
+];
 
 var drugsMaster = [
     new Drug('Weed', 4.2, 0),
@@ -199,14 +222,17 @@ function getActualDealerVolume(dealer, drug) {
 
 function GameModel() {
     this.drugs = [drugsMaster[0]];
+    this.muscle = [muscleMaster[0]];
     this.upgrades = [];
     this.currencyCode = '$';
     this.cash = 100;
+    this.respect = 0;
     this.totalCashEarned = 0;
     this.treeUpgrades = 0;
     this.dealers = [];
     this.production = [productionMaster[0]];
     this.territoryUpgrades = 0;
+    this.discountUpgrades = 0;
     this.workMode = false;
     this.lastDealerRefresh = 0;
     this.silkRoadUnlocked = false;
@@ -281,6 +307,9 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ngAnimate','jg.progressbar'])
     .filter('money', function () {
         return formatMoney;
     })
+    .filter('respect', function() {
+        return formatNumber;
+    })
     .controller('DopeController', ['$scope', '$document', '$window', '$sce', '$interval', '$timeout', '$animate', function ($scope, $document, $window, $sce, $interval, $timeout, $animate) {
 
         var lastUpdate = 0;
@@ -297,8 +326,13 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ngAnimate','jg.progressbar'])
         $scope.hireDealers = [];
         $scope.toggleWorkMode = function () { $scope.gameModel.workMode = !$scope.gameModel.workMode;};
         $scope.priceOfTerritory = function () { return territoryUpgradeBasePrice * Math.pow(territoryUpgradePriceMulti, $scope.gameModel.territoryUpgrades); };
+        $scope.priceOfDiscount = function () { return discountUpgradeBasePrice * Math.pow(discountUpgradePriceMulti, $scope.gameModel.discountUpgrades); };
         $scope.cashPercentage = function (value) { return Math.min(100, $scope.gameModel.cash / value * 100); };
-        $scope.productionPrice = function (production) { return production.basePrice * Math.pow(production.priceMulti, production.qty); };
+        $scope.respectPercentage = function (value) { return Math.min(100, $scope.gameModel.respect / value * 100); };
+        $scope.productionPrice = function (production) { return production.basePrice * Math.pow(production.priceMulti, production.qty) * $scope.discountMulti(); };
+        $scope.musclePrice = function (muscle) { return muscle.price * Math.pow(muscle.priceMulti, muscle.qty) * $scope.discountMulti(); };
+        $scope.discountMulti = function () { return Math.pow(0.9, $scope.gameModel.discountUpgrades); };
+        $scope.discountPrice = function (price) { return price * $scope.discountMulti() };
         $scope.availableUpgrades = [];
 		$scope.dealerSort = 'none';
 
@@ -410,13 +444,19 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ngAnimate','jg.progressbar'])
                 $scope.dealerResearch.push(silkRoadUpgrade);
 			
 			if ($scope.gameModel.totalCashEarned > (prestigeDealerUpgrade.price * 1.5))
-                $scope.dealerResearch.push(prestigeDealerUpgrade);
+			    $scope.dealerResearch.push(prestigeDealerUpgrade);
+
+			for (var i = 0; i < muscleMaster.length; i++) {
+			    if ($scope.gameModel.totalCashEarned > muscleMaster[i].price * 2 && $scope.gameModel.muscle && $scope.gameModel.muscle.length <= i) {
+			        $scope.gameModel.muscle.push(muscleMaster[i]);
+			    }
+			}
 			
 			$timeout(function(){$(window).trigger('resize');},0);
         };
 
         $scope.purchaseUpgrade = function (upgrade) {
-            if ($scope.gameModel.cash < upgrade.price)
+            if ($scope.gameModel.cash < upgrade.price * $scope.discountMulti())
                 return;
 
 			var i = 0;
@@ -449,7 +489,7 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ngAnimate','jg.progressbar'])
                     }
                     break;
             }
-            $scope.gameModel.cash -= upgrade.price;
+            $scope.gameModel.cash -= upgrade.price * $scope.discountMulti();
 			$scope.calculateAvailableUpgrades();
             writeToCookie();
         };
@@ -458,6 +498,14 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ngAnimate','jg.progressbar'])
             if ($scope.gameModel.cash > $scope.productionPrice(production)) {
                 $scope.gameModel.cash = $scope.gameModel.cash - $scope.productionPrice(production);
                 production.qty++;
+                writeToCookie();
+            }
+        };
+
+        $scope.hireMuscle = function (muscle) {
+            if ($scope.gameModel.cash > $scope.musclePrice(muscle)) {
+                $scope.gameModel.cash = $scope.gameModel.cash - $scope.musclePrice(muscle);
+                muscle.qty++;
                 writeToCookie();
             }
         };
@@ -569,9 +617,9 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ngAnimate','jg.progressbar'])
                     if (dealer.upgrades[j].name == dealerUpgrades[i].name)
                         alreadyBought = true;
                 }
-				dealerUpgrades[i].realPrice = dealerUpgrades[i].price;
+				dealerUpgrades[i].realPrice = dealerUpgrades[i].price * $scope.discountMulti();
 				
-				if (dealer.type == 'Prestige') dealerUpgrades[i].realPrice = dealerUpgrades[i].price * 6;
+				if (dealer.type == 'Prestige') dealerUpgrades[i].realPrice = dealerUpgrades[i].price * 6 * $scope.discountMulti();
 				
 				if (!alreadyBought && $scope.gameModel.totalCashEarned > dealerUpgrades[i].price - 2000)
                     $scope.availableDealerUpgrades.push(dealerUpgrades[i]);
@@ -664,9 +712,18 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ngAnimate','jg.progressbar'])
 
         $scope.expandTerritory = function () {
             var upgradeCost = territoryUpgradeBasePrice * Math.pow(territoryUpgradePriceMulti, $scope.gameModel.territoryUpgrades);
-            if ($scope.gameModel.cash > upgradeCost) {
-                $scope.gameModel.cash = $scope.gameModel.cash - upgradeCost;
+            if ($scope.gameModel.respect > upgradeCost) {
+                $scope.gameModel.respect = $scope.gameModel.respect - upgradeCost;
                 $scope.gameModel.territoryUpgrades++;
+                writeToCookie();
+            }
+        };
+
+        $scope.getDiscount = function () {
+            var upgradeCost = discountUpgradeBasePrice * Math.pow(discountUpgradePriceMulti, $scope.gameModel.discountUpgrades);
+            if ($scope.gameModel.respect > upgradeCost) {
+                $scope.gameModel.respect = $scope.gameModel.respect - upgradeCost;
+                $scope.gameModel.discountUpgrades++;
                 writeToCookie();
             }
         };
@@ -676,6 +733,7 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ngAnimate','jg.progressbar'])
             var timeDiff = (Math.min(1000, Math.max(updateTime - lastUpdate,0))) / 1000;
 
             var cashEarned = 0;
+            var respectEarned = 0;
 			
 			var dealers = $scope.gameModel.dealers.concat().sort(function(a,b){return b.price - a.price;});
 
@@ -723,8 +781,15 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ngAnimate','jg.progressbar'])
                 }
             }
 
+            for (var i = 0; i < $scope.gameModel.muscle.length; i++) {
+                respectEarned += $scope.gameModel.muscle[i].qty * $scope.gameModel.muscle[i].respect;
+            }
+
             $scope.gameModel.cash += cashEarned;
             $scope.gameModel.totalCashEarned += cashEarned;
+            
+            $scope.gameModel.respectPerSecond = respectEarned;
+            $scope.gameModel.respect += respectEarned * timeDiff;
 
             lastUpdate = updateTime;
             if (updateTime - timeOneSecond >= 1000) {
@@ -776,6 +841,14 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ngAnimate','jg.progressbar'])
 					}
 				}
 			}
+
+			if (typeof $scope.gameModel.respect === "undefined") {
+			    $scope.gameModel.respect = 0;
+			    $scope.gameModel.muscle = [muscleMaster[0]];
+			}
+
+			if (typeof $scope.gameModel.discountUpgrades === "undefined")
+			    $scope.gameModel.discountUpgrades = 0;
 			
             $scope.calculateAvailableUpgrades();
 			$scope.updateDealerDrugIndex();
