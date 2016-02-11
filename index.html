@@ -19,19 +19,19 @@
     <script src="js/jg-progress.js"></script>
     <script src="js/angulardope.js"></script>
     <script>
-		
+
 		var scrollMenu = function() {
 			// Stick the #nav to the top of the window
 			var nav = $('#current-cash');
 			var navHomeY = nav.offset().top;
 			var workModeHeight = $('h1').first().height() + $('#cash-wrap > p').first().height();
-			
+
 			var isFixed = false;
 			var $w = $(window);
 			$w.scroll(function() {
 				var scrollTop = $w.scrollTop();
 				var shouldBeFixed = $('body').hasClass('work-mode') ? scrollTop > navHomeY - workModeHeight : scrollTop > navHomeY;
-				
+
 				if (shouldBeFixed && !isFixed) {
 					nav.css({
 						position: 'fixed',
@@ -48,13 +48,13 @@
 				}
 			});
 		};
-		
+
 		$(window).off('resize').on('resize',function(){
 			$('.btn-group').each(function(){
 				var height = 0;
 				$(this).find('button').each(function(){
 					$(this).height('auto');
-					
+
 					if ($(this).height() > height)
 						height = $(this).height();
 				});
@@ -64,7 +64,7 @@
 				});
 			});
 		});
-		
+
 		toggleTooltip = function(element) {
 			if ($(element).hasClass('jg-tooltip')) {
 				$(element).closest('div').next().slideToggle(200,function(){
@@ -75,7 +75,7 @@
 			}
 
 		};
-		
+
         resetGame = function () {
             localStorage.clear();
             window.location.reload();
@@ -123,6 +123,7 @@
 
             <div class="col-xs-12 col-sm-6">
                 <p class="distribution strong" ng-show="gameModel.buff">{{buffMsg}}</p>
+                <p class="distribution strong" ng-show="levelUpMsg">{{levelUpMsg}}</p>
                 <p class="distribution strong" ng-repeat="dealer in gameModel.dealers" ng-show="dealer.arrested">{{dealer.arrestMessage}}</p>
             </div>
 
@@ -243,7 +244,8 @@
                     </div>
                     <div class="dealer-content row" ng-class="{'content-open':dealer.selected}">
 
-                        <p ng-show="dealer.type == 'Prestige' && !dealer.arrested" class="col-xs-12 strong" style="padding-left:21px;text-align:center;">Increases all respect earned by 100%</p>
+                        <p ng-show="dealer.type == 'Prestige' && dealer.level < 10" class="col-xs-12" style="padding-left:21px;text-align:center;"><span class="strong">Level {{dealer.level}}</span> - {{dealer.currentXp.toFixed()}}% to level {{dealer.level + 1}}</p>
+                        <p ng-show="dealer.type == 'Prestige' && !dealer.arrested" class="col-xs-12 strong" style="padding-left:21px;text-align:center;">Increases all respect earned by {{100 + dealer.level * 10}}%</p>
 
                         <div class="alert alert-danger ml-10 mr-10 mb-10 text-center" role="alert" ng-show="dealer.arrested">ARRESTED</div>
                         <span class="col-xs-12 mb-5" ng-show="dealer.arrested"><button class="btn btn-default" ng-click="payBail(dealer)" ng-disabled="gameModel.cash < dealer.bail"><span class="glyphicon glyphicon-usd icongreen"></span>Pay Bail <b>{{dealer.bail | money}}</b></button></span>
