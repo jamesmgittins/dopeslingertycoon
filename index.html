@@ -317,7 +317,7 @@
 
                 <div class="btn-group" role="group" style="width:100%;margin-top:10px;">
                     <button ng-click="getDiscount()" style="width:85%;" class="btn btn-default btn-muscle" ng-disabled="gameModel.respect < priceOfDiscount()" type="button">
-                        <span class="glyphicon icongreen glyphicon-globe"></span> Negotiate discount (<strong>{{priceOfDiscount()|respect}} respect</strong>)
+                        <span class="glyphicon icongreen glyphicon-usd"></span> Negotiate discount (<strong>{{priceOfDiscount()|respect}} respect</strong>)
                     </button>
                     <button class="btn btn-default btn-muscle text-center pl-0 pr-0" style="width:15%;" onclick="toggleTooltip(this);">
                         <span class="glyphicon icongreen glyphicon-info-sign" style="width:100%;"></span>
@@ -434,7 +434,7 @@
                         <p class="col-xs-12 col-sm-8 dealer-warning" ng-show="gameModel.dealers.length >= gameModel.territoryUpgrades + 1">You already have the maximum number of dealers working for you. Either fire a dealer or expand your territory to hire another.</p>
                         <div class="clearfix"></div>
                         <div class="col-xs-12 col-sm-4 dealer-hire-anim" ng-repeat="dealer in hireDealers track by $index" ng-animate="'list'">
-                            <p class="dealer-name"><span class="glyphicon glyphicon-tower" ng-show="dealer.type == 'Prestige'"></span> <span class="distribution strong">{{dealer.name}}</span></p>
+                            <p class="dealer-name"><span class="glyphicon glyphicon-tower" ng-show="dealer.type == 'Prestige'"></span> <span class="distribution strong">{{dealer.name}}</span> <span class="strong" ng-show="dealer.type == 'Prestige'">({{dealer.level}})</span></p>
                             <p class="strong">Volume: <span class="volume iconyellow" ng-bind-html="getStars(dealer.originalVolume,5)"></span></p>
                             <p class="strong">Margin: <span class="price iconyellow" ng-bind-html="getStars(dealer.originalPrice,5)"></span></p>
                             <p>Sells {{actualDealerVolume(dealer,dealer.drug)|weight}} per second</p>
