@@ -339,7 +339,7 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ngAnimate','jg.progressbar'])
           }
           if (!dealer.level)
             dealer.level = 0;
-          var subtract = dealer.level > 0 ? 1000 * Math.pow(2.9, dealer.level -1) : 0;
+          var subtract = dealer.level > 0 ? 10000 * Math.pow(2.9, dealer.level -1) : 0;
           dealer.currentXp = (dealer.cashEarned - subtract) / (10000 * Math.pow(2.9,dealer.level)) * 100;
           if (dealer.currentXp >= 100 && dealer.level < 10) {
             dealer.currentXp = 0;
