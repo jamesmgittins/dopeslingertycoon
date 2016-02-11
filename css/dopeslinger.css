@@ -109,7 +109,7 @@ body.work-mode div.progress-bar,
 body.work-mode p.jg-tooltip,
 body.work-mode div.jg-tooltip,
 body.work-mode span.jg-tooltip{background-color: #bbb;}
- 
+
 
 .production-header {
     color: #259b24;
@@ -282,7 +282,7 @@ div.drug-content.content-open {
     display:inherit;
 }
 #cash-wrap {
-	height:120px;
+	height:190px;
 }
 #current-cash {
 	z-index:50;

@@ -321,7 +321,8 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ngAnimate','jg.progressbar'])
         $scope.log = [];
 
         $scope.gameModel = new GameModel();
-		$scope.prestigeDealers = [];
+		    $scope.prestigeDealers = [];
+        $scope.kingpins = [];
         $scope.cashPerSecond = 0;
         $scope.hireDealers = [];
         $scope.toggleWorkMode = function () { $scope.gameModel.workMode = !$scope.gameModel.workMode;};
@@ -350,13 +351,16 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ngAnimate','jg.progressbar'])
 
         };
         $scope.captainMulti = function () {
-            var multi = 1;
+            var multi = $scope.kingpinMulti();
             for (var i = 0; i < $scope.gameModel.dealers.length; i++) {
                 if ($scope.gameModel.dealers[i].type == 'Prestige' && !$scope.gameModel.dealers[i].arrested)
                     multi += 1 + ($scope.gameModel.dealers[i].level / 10)
             }
             return multi;
         };
+        $scope.kingpinMulti = function () {
+          return 1 + $scope.kingpins.length;
+        }
         $scope.availableUpgrades = [];
 		$scope.dealerSort = 'none';
 
@@ -518,6 +522,40 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ngAnimate','jg.progressbar'])
             writeToCookie();
         };
 
+        $scope.createKingpin = function(dealer) {
+          $scope.kingpinDealer = dealer;
+          $('#kingpinModal').modal('show');
+        };
+
+        $scope.confirmKingpin = function() {
+          $('#kingpinModal').modal('hide');
+          for (var i = 0; i < $scope.gameModel.dealers.length; i++) {
+              if ($scope.gameModel.dealers[i].seed == $scope.kingpinDealer.seed) {
+                  $scope.gameModel.dealers.splice(i,1);
+              }
+          }
+          for (var i = 0; i < $scope.prestigeDealers.length; i++) {
+              if ($scope.prestigeDealers[i].seed == $scope.kingpinDealer.seed) {
+                  $scope.prestigeDealers.splice(i,1);
+              }
+          }
+          for (var i = 0; i < $scope.hireDealers.length; i++) {
+              if ($scope.hireDealers[i].seed == $scope.kingpinDealer.seed) {
+                  $scope.hireDealers.splice(i,1);
+              }
+          }
+          $scope.kingpins.push($scope.kingpinDealer.name);
+
+          $scope.gameModel.dealers
+          $scope.kingpinDealer = undefined;
+          writeToCookie();
+        };
+
+        $scope.cancelKingpin = function() {
+          $('#kingpinModal').modal('hide');
+          $scope.kingpinDealer = undefined;
+        };
+
         $scope.increaseProduction = function (production) {
             if ($scope.gameModel.cash > $scope.productionPrice(production)) {
                 $scope.gameModel.cash = $scope.gameModel.cash - $scope.productionPrice(production);
@@ -548,7 +586,8 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ngAnimate','jg.progressbar'])
                 return;
             }
             if (localStorage.getItem("gameModel") !== null) $scope.gameModel = JSON.parse(localStorage.getItem("gameModel"));
-			if (localStorage.getItem("prestigeDealers") !== null) $scope.prestigeDealers = JSON.parse(localStorage.getItem("prestigeDealers"));
+			      if (localStorage.getItem("prestigeDealers") !== null) $scope.prestigeDealers = JSON.parse(localStorage.getItem("prestigeDealers"));
+            if (localStorage.getItem("kingpins") !== null) $scope.kingpins = JSON.parse(localStorage.getItem("kingpins"));
         }
 
         function writeToCookie() {
@@ -556,7 +595,8 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ngAnimate','jg.progressbar'])
                 return;
             }
             localStorage.setItem("gameModel", JSON.stringify($scope.gameModel));
-			localStorage.setItem("prestigeDealers", JSON.stringify($scope.prestigeDealers));
+			      localStorage.setItem("prestigeDealers", JSON.stringify($scope.prestigeDealers));
+            localStorage.setItem("kingpins", JSON.stringify($scope.kingpins));
         }
 
         $scope.drugMadePerSecond = function(drug) {
@@ -565,7 +605,7 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ngAnimate','jg.progressbar'])
             for (var j = 0; j < producers.length; j++) {
                 qty += producers[j].qty * producers[j].prodPerUnit;
             }
-            return qty;
+            return qty * $scope.kingpinMulti();
         };
 
         $scope.drugSoldPerSecond = function (drug) {
@@ -789,8 +829,8 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ngAnimate','jg.progressbar'])
 
                 var producers = $scope.producersForDrug(drug);
                 for (j = 0; j < producers.length; j++) {
-                    drug.qty += producers[j].qty * producers[j].prodPerUnit * timeDiff;
-                    drug.total += producers[j].qty * producers[j].prodPerUnit * timeDiff;
+                    drug.qty += producers[j].qty * producers[j].prodPerUnit * timeDiff * $scope.kingpinMulti();
+                    drug.total += producers[j].qty * producers[j].prodPerUnit * timeDiff * $scope.kingpinMulti();
                 }
 
                 for (j = 0; j < dealers.length; j++) {
