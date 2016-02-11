@@ -18,7 +18,7 @@ var treeUpgradeBasePrice = 1000;
 var treeUpgradePriceMulti = 1.95;
 var treeUpgradeWeedMulti = 1.2;
 
-var territoryUpgradePriceMulti = 5;
+var territoryUpgradePriceMulti = 5.2;
 var territoryUpgradeBasePrice = 500;
 
 var discountUpgradePriceMulti = 4.8;
@@ -339,8 +339,8 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ngAnimate','jg.progressbar'])
           }
           if (!dealer.level)
             dealer.level = 0;
-          var subtract = dealer.level > 0 ? 10000 * Math.pow(2.9, dealer.level -1) : 0;
-          dealer.currentXp = (dealer.cashEarned - subtract) / ((10000 * Math.pow(2.9,dealer.level)-subtract)) * 100;
+          var subtract = dealer.level > 0 ? 600000 * Math.pow(1.8, dealer.level -1) : 0;
+          dealer.currentXp = (dealer.cashEarned - subtract) / ((600000 * Math.pow(1.8,dealer.level)-subtract)) * 100;
           if (dealer.currentXp >= 100 && dealer.level < 10) {
             dealer.currentXp = 0;
             dealer.level++;
@@ -891,7 +891,7 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ngAnimate','jg.progressbar'])
 
             $scope.calculateAvailableUpgrades();
 			$scope.updateDealerDrugIndex();
-			prestigeDealerUpgrade.price = 5000000 * Math.pow(1.4, $scope.prestigeDealers.length);
+			prestigeDealerUpgrade.price = 5000000 * Math.pow(1.2, $scope.prestigeDealers.length);
             $interval(update, 200);
         });
 
