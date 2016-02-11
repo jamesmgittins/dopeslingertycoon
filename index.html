@@ -116,10 +116,11 @@
                 </div>
                 <p class="strong">Total earned {{gameModel.totalCashEarned|money}}</p>
                 <p class="strong">
-                    Current respect: {{gameModel.respect|respect}}
+                    Current respect: <span class="current-cash">{{gameModel.respect|respect}}</span>
                     <span class="glyphicon glyphicon-arrow-up muscle-header" ng-show="gameModel.respectPerSecond > 0"></span>
                     <span class="muscle-header" ng-show="gameModel.respectPerSecond > 0">{{gameModel.respectPerSecond|respect}} / sec</span>
                 </p>
+                <p class="strong" ng-show="kingpins.length > 0">You have {{kingpins.length}} Kingpin{{kingpins.length > 1 ? "s" : ""}}, giving you a {{kingpins.length * 100}}% bonus to all drug and respect production</p>
             </div>
 
             <div class="col-xs-12 col-sm-6">
@@ -246,6 +247,7 @@
                     </div>
                     <div class="dealer-content row" ng-class="{'content-open':dealer.selected}">
 
+                        <span class="col-xs-12 mt-10" ng-show="dealer.level >= 10"><button class="btn btn-default" ng-click="createKingpin(dealer)"><span class="glyphicon glyphicon-tower icongreen"></span>Promote to Kingpin</button></span>
                         <p ng-show="dealer.type == 'Prestige' && dealer.level < 10" class="col-xs-12" style="padding-left:21px;text-align:center;"><span class="strong">Level {{dealer.level}}</span> - {{dealer.currentXp.toFixed(2)}}% to level {{dealer.level + 1}}</p>
                         <p ng-show="dealer.type == 'Prestige' && !dealer.arrested" class="col-xs-12 strong" style="padding-left:21px;text-align:center;">Increases all respect earned by {{100 + dealer.level * 10}}%</p>
 
@@ -462,6 +464,34 @@
                         </div>
                         <div class="col-xs-12 col-sm-6" ng-show="gameModel.silkRoadUnlocked" tooltip="Toggle automatic selling of drugs on the silk road">
                             <button ng-click="toggleAutoSilk()" class="btn btn-default"><span class="glyphicon glyphicon-cloud icongreen"></span> Auto silk road sell {{gameModel.autoSilk ? '(on)' : '(off)'}}</button>
+                        </div>
+                        <div class="col-xs-12" ng-show="kingpins.length > 0" style="margin-top:25px;">
+                          <p class="strong">The names of your Kingpins</p>
+                          <span ng-repeat="kingpin in kingpins track by $index" style="margin-right:20px;"><span class="glyphicon glyphicon-tower"></span>{{kingpin}}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="kingpinModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-sm">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                        <h4 class="modal-title" id="myModalLabel">Recruit a Kingpin</h4>
+                    </div>
+                    <div class="modal-body row">
+                        <div class="col-xs-12 pb-10"><p>Turn your captain into a Kingpin</p><p class="strong">This will remove the captain from your available dealers but give you a permanent boost to drug and respect production.</p></div>
+                        <div class="col-xs-6 pr-10 mt-20">
+                            <button ng-click="confirmKingpin()" class="btn btn-default btn-distribution" type="button">
+                                <span class="glyphicon icongreen glyphicon-user"></span> Okay
+                            </button>
+                        </div>
+                        <div class="col-xs-6 pl-10 mt-20">
+                            <button ng-click="cancelKingpin()" class="btn btn-default btn-distribution" type="button">
+                                <span class="glyphicon iconred glyphicon-user"></span> Cancel
+                            </button>
                         </div>
                     </div>
                 </div>
