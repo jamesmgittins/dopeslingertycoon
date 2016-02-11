@@ -97,6 +97,7 @@
 <body ng-controller="DopeController" ng-class="{'work-mode' : gameModel.workMode}" ng-animate-children>
     <div class="container">
         <div class="row">
+
             <div class="col-xs-12 col-sm-9 col-md-10">
                 <h1 class="street" ng-class="{'hidden' : gameModel.workMode}"><span class="production-header">Dope</span> <span class="distribution-header">slinger</span> <span class="muscle-header">tycoon</span></h1>
             </div>
@@ -286,7 +287,7 @@
 
                         <span class="col-xs-12 mt-10"><button class="btn btn-default" ng-click="dealerUpgradeModal(dealer)"><span class="glyphicon glyphicon-shopping-cart icongreen"></span>Buy Equipment</button></span>
 
-                        <div ng-repeat="upgrade in dealer.upgrades | orderBy:'price'">
+                        <div ng-repeat="upgrade in dealer.upgrades | orderBy:'price' track by $index">
                             <div class="col-xs-12 mb-5 pr-0">
                                 <span class="strong col-xs-6 pr-0" style="padding-left:6px;">{{upgrade.name}}</span>
                                 <span class="col-xs-6 pl-0 pr-0">{{upgrade.synopsis}}</span>
@@ -458,9 +459,6 @@
                         </div>
                         <div class="col-xs-12 col-sm-6">
                             <button ng-click="toggleWorkMode()" class="btn btn-default"><span class="glyphicon glyphicon-filter iconred"></span> Toggle work mode</button>
-                        </div>
-                        <div class="col-xs-12 col-sm-6">
-                            <button class="btn btn-default" onclick="$('div.advert').hide();"><span class="glyphicon glyphicon-filter iconred"></span> Hide ads</button>
                         </div>
                         <div class="col-xs-12 col-sm-6" ng-show="gameModel.silkRoadUnlocked" tooltip="Toggle automatic selling of drugs on the silk road">
                             <button ng-click="toggleAutoSilk()" class="btn btn-default"><span class="glyphicon glyphicon-cloud icongreen"></span> Auto silk road sell {{gameModel.autoSilk ? '(on)' : '(off)'}}</button>
