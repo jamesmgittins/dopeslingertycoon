@@ -690,6 +690,7 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ngAnimate','jg.progressbar'])
             }
         };
 
+
         $scope.purchaseDealerUpgrade = function (upgrade) {
             if ($scope.gameModel.cash < upgrade.realPrice)
                 return;
@@ -937,7 +938,7 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ngAnimate','jg.progressbar'])
 
 		$scope.prestigeDealerConfirm = function() {
 			if ($scope.gameModel.cash >= prestigeDealerUpgrade.price) {
-				var prestigeDealer = new Dealer($scope.prestigeDealers.length + 1);
+				var prestigeDealer = new Dealer(new Date().getTime());
 				prestigeDealer.name = $scope.prestigeDealerName;
 				prestigeDealer.price = 1.5;
 				prestigeDealer.originalPrice = 1.5;
