@@ -141,9 +141,9 @@ function muscle(name, price, respect, priceMulti) {
 var muscleMaster = [
     new muscle('Hood Rat', 80, 1, 1.2),
     new muscle('Young Thug', 1000, 5, 1.25),
-    new muscle('Hired Goon', 12000, 75, 1.29),
-    new muscle('Crooked Cop', 130000, 500, 1.4),
-    new muscle('Bought Judge', 1500000, 1200, 1.5),
+    new muscle('Hired Goon', 12000, 75, 1.27),
+    new muscle('Crooked Cop', 130000, 500, 1.28),
+    new muscle('Bought Judge', 1500000, 1200, 1.3),
 ];
 
 var drugsMaster = [
@@ -339,8 +339,8 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ngAnimate','jg.progressbar'])
           }
           if (!dealer.level)
             dealer.level = 0;
-
-          dealer.currentXp = dealer.cashEarned / (10000 * Math.pow(3,dealer.level)) * 100;
+          var subtract = dealer.level > 0 ? 1000 * Math.pow(2.9, dealer.level -1) : 0;
+          dealer.currentXp = (dealer.cashEarned - subtract) / (10000 * Math.pow(2.9,dealer.level)) * 100;
           if (dealer.currentXp >= 100 && dealer.level < 10) {
             dealer.currentXp = 0;
             dealer.level++;
