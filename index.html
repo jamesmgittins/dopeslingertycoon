@@ -246,7 +246,7 @@
                     </div>
                     <div class="dealer-content row" ng-class="{'content-open':dealer.selected}">
 
-                        <p ng-show="dealer.type == 'Prestige' && dealer.level < 10" class="col-xs-12" style="padding-left:21px;text-align:center;"><span class="strong">Level {{dealer.level}}</span> - {{dealer.currentXp.toFixed()}}% to level {{dealer.level + 1}}</p>
+                        <p ng-show="dealer.type == 'Prestige' && dealer.level < 10" class="col-xs-12" style="padding-left:21px;text-align:center;"><span class="strong">Level {{dealer.level}}</span> - {{dealer.level > 3 ? dealer.currentXp.toFixed(2) : dealer.currentXp.toFixed()}}% to level {{dealer.level + 1}}</p>
                         <p ng-show="dealer.type == 'Prestige' && !dealer.arrested" class="col-xs-12 strong" style="padding-left:21px;text-align:center;">Increases all respect earned by {{100 + dealer.level * 10}}%</p>
 
                         <div class="alert alert-danger ml-10 mr-10 mb-10 text-center" role="alert" ng-show="dealer.arrested">ARRESTED</div>
