@@ -150,6 +150,7 @@
                 <div ng-repeat="drug in gameModel.drugs track by $index" class="drug-anim">
 
                     <div class="drug" ng-click="selectDrug(drug)" ng-class="{'open' : drug.selected}">
+                        <span class="glyphicon glyphicon-warning-sign pull-left" ng-show="drugSoldPerSecond(drug) >= drugMadePerSecond(drug)" style="font-size:18px;margin-right:-10px;"></span>
                         <strong>{{drug.name}} {{drug.qty|weight}}</strong>
                         <span class="glyphicon" ng-class="drug.selected ? 'glyphicon-chevron-up' : 'glyphicon-chevron-down'"></span>
                     </div>
