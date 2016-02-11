@@ -904,6 +904,9 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ngAnimate','jg.progressbar'])
 				prestigeDealer.originalVolume = 1.5;
 				prestigeDealer.type= 'Prestige';
 				$scope.prestigeDealers.push(prestigeDealer);
+        for (var i=0; i<$scope.prestigeDealers.length; i++){
+          $scope.prestigeDealers[i].arrested = false;
+        }
 				localStorage.removeItem('gameModel');
 				localStorage.setItem("prestigeDealers", JSON.stringify($scope.prestigeDealers));
 				window.location.reload();
