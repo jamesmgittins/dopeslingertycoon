@@ -43,7 +43,9 @@ var dealerUpgrades = [
     new DealerUpgrade('Personal Assistant', 'A personal assistant to take your calls. Allows the dealer to sell even more drugs on the side', 85000, 1, 1, 0.2, '+20% secondary sales'),
     new DealerUpgrade('Armed Gang', 'A gang of tooled up homies to help eliminate the competition. Allows the dealer to sell drugs for 20% more money', 150000, 1, 1.2, 0, '+20% margin'),
     new DealerUpgrade('Ferrari 458 Italia', 'A fine Italian supercar. Allows the dealer to sell an extra 30% volume', 575000, 1.3, 1, 0, '+30% volume'),
-    new DealerUpgrade('AW119 Ke Koala', 'A personal helicopter for transporting you and your homies! Allows the dealer to sell an extra 60% volume', 1890000, 1.6, 1, 0, '+60% volume')
+    new DealerUpgrade('AW119 Ke Koala', 'A personal helicopter for transporting you and your homies! Allows the dealer to sell an extra 60% volume', 1890000, 1.6, 1, 0, '+60% volume'),
+    new DealerUpgrade('Luxury Speedboat', 'A high speed civilian boat capable of outrunning the coastguard! Allows the dealer to sell an extra 80% volume', 5460000, 1.8, 1, 0, '+80% volume'),
+    new DealerUpgrade('Personal Army', 'A small band of paid mercenaries to intimidate your rivals and collect your debts! Allows the dealer to sell drugs for 30% more money', 21630000, 1, 1.3, 0, '+30% margin')
 ];
 
 var silkRoadUpgrade = {type:'SilkRoad',name:'Develop Silk Road',tooltip:'Develop the Silk Road dark web site to allow you to bulk sell drugs in units of 1kg',price:141592,glyph:'glyphicon-cloud'};
@@ -116,7 +118,22 @@ var productionUpgradesMaster = [
 
     new ProductionUpgrade('Plastic surgery disguise', 'Increases the amount of cocaine smuggled by your drug mules by 30%!', 350000, 'Drug Mule', 1.3, 'Cocaine'),
     new ProductionUpgrade('Cartel deal', 'Broker a deal with a major cartel south of the border. Increases the amount of cocaine smuggled by your drug mules by 80%!', 1500000, 'Drug Mule', 1.8, 'Cocaine'),
-    new ProductionUpgrade('DEA Mole', 'Install a mole within the DEA to help make your operations go more smoothly. Increases the amount of cocaine smuggled by your drug mules by 50%!', 2500000, 'Drug Mule', 1.5, 'Cocaine')];
+    new ProductionUpgrade('DEA Mole', 'Install a mole within the DEA to help make your operations go more smoothly. Increases the amount of cocaine smuggled by your drug mules by 50%!', 2500000, 'Drug Mule', 1.5, 'Cocaine'),
+
+    new ProductionUpgrade('Cult Leader Cain', 'Religious leader of the Nuke cult. Increases the amount of Nuke made by your Robot Criminals by 60%!', 14500000, 'Robot Criminal', 1.6, 'Nuke'),
+    new ProductionUpgrade('Deprogrammed Robocop', 'The one thing slowing down your Nuke operation, reprogrammed to use against your enemies! Increases the amount of Nuke made by your Robot Criminals by 50%!', 28000000, 'Robot Criminal', 1.5, 'Nuke'),
+
+    new ProductionUpgrade('Neural Net Research', 'Increases the amount of Cyber Crank made by your Blackhat Hiveminds by 50%!', 45000000, 'Blackhat Hivemind', 1.5, 'Cyber Crank'),
+    new ProductionUpgrade('Global Botnet', 'Increases the amount of Cyber Crank made by your Blackhat Hiveminds by 45%!', 75000000, 'Blackhat Hivemind', 1.45, 'Cyber Crank'),
+
+    new ProductionUpgrade('Human Test Subjects', 'Test your drug batches on human subjects. They might not survive the process but it will increases the amount of Ephemerol produced by 60%!', 120000000, 'Secret Facility', 1.6, 'Ephemerol'),
+    new ProductionUpgrade('ConSec Scanner', 'Increases the amount of Ephemerol made by your Secret Facilities by 75%!', 275000000, 'Secret Facility', 1.75, 'Ephemerol'),
+
+    new ProductionUpgrade('Peachtree Block', 'Give your Chem-techs somewhere safe to work. Increases the amount of Slo-mo produced by 100%!', 575000000, 'Chem-tech', 2, 'Slo-mo'),
+
+    new ProductionUpgrade('Guild Navigator', 'Increases the amount of Melange produced by 30%!', 1575000000, 'Sandworm', 1.3, 'Melange'),
+    new ProductionUpgrade("Muad'Dib", 'Leader of the Fremen. Increases the amount of Melange produced by 50%!', 7900000000, 'Sandworm', 1.5, 'Melange')
+  ];
 
 function Drug(name, pricePerGram, costToUnlock) {
     this.name = name;
@@ -126,7 +143,7 @@ function Drug(name, pricePerGram, costToUnlock) {
     this.selected = true;
     this.costToUnlock = costToUnlock;
     this.totalCash = 0;
-	this.drugUnlock = new DrugUnlock('Research ' + this.name, 'Spend money to research production of a new drug, ' + this.name + '. Your customers will love it!', this.costToUnlock, this.name);
+	  this.drugUnlock = new DrugUnlock('Research ' + this.name, 'Spend money to research production of a new drug, ' + this.name + '. Your customers will love it!', this.costToUnlock, this.name);
 }
 
 function muscle(name, price, respect, priceMulti) {
@@ -144,6 +161,8 @@ var muscleMaster = [
     new muscle('Hired Goon', 12000, 75, 1.27),
     new muscle('Crooked Cop', 130000, 500, 1.28),
     new muscle('Bought Judge', 1500000, 1200, 1.3),
+    new muscle('Corrupt Senator', 4500000, 4500, 1.31),
+    new muscle('Puppet World Leader', 33700000, 27000, 1.32)
 ];
 
 var drugsMaster = [
@@ -156,7 +175,12 @@ var drugsMaster = [
     new Drug('PCP', 40, 90000),
     new Drug('Heroin', 50, 120000),
     new Drug('MDMA', 60, 180000),
-    new Drug('Cocaine', 70, 250000)];
+    new Drug('Cocaine', 70, 250000),
+    new Drug('Nuke', 240, 5500000),
+    new Drug('Cyber Crank', 666.67, 15000000),
+    new Drug('Ephemerol', 3400, 55000000),
+    new Drug('Slo-mo', 11250, 125000000),
+    new Drug('Melange', 270000, 640000000)];
 
 function Producer(name, basePrice, drug, priceMulti, prodPerUnit) {
     this.name = name;
@@ -177,7 +201,12 @@ var productionMaster = [
     new Producer('Chemical Lab', 20000, 'PCP', 1.24, 0.4),
     new Producer('Opium Farm', 30000, 'Heroin', 1.25, 0.5),
     new Producer('Chemistry Professor', 40000, 'MDMA', 1.26, 0.45),
-    new Producer('Drug Mule', 50000, 'Cocaine', 1.27, 0.3)];
+    new Producer('Drug Mule', 50000, 'Cocaine', 1.27, 0.3),
+    new Producer('Robot Criminal', 700000, 'Nuke', 1.28, 0.2),
+    new Producer('Blackhat Hivemind', 2500000, 'Cyber Crank', 1.29, 0.15),
+    new Producer('Secret Facility', 5000000, 'Ephemerol', 1.30, 0.1),
+    new Producer('Chem-tech', 12000000, 'Slo-mo', 1.31, 0.12),
+    new Producer('Sandworm', 45000000, 'Melange', 1.32, 0.1)];
 
 
 function Dealer(seed) {
@@ -932,7 +961,7 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ngAnimate','jg.progressbar'])
 
             $scope.calculateAvailableUpgrades();
 			$scope.updateDealerDrugIndex();
-			prestigeDealerUpgrade.price = 5000000 * Math.pow(1.2, $scope.prestigeDealers.length);
+			prestigeDealerUpgrade.price = 5000000 * Math.pow(1.4, $scope.prestigeDealers.length);
             $interval(update, 200);
         });
 
