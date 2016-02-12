@@ -850,7 +850,7 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ngAnimate','jg.progressbar'])
             for (var i = 0; i < $scope.gameModel.drugs.length; i++) {
                 var drug = $scope.gameModel.drugs[i];
 
-                if ($scope.gameModel.autoSilk && drug.qty > 1000) {
+                if ($scope.gameModel.autoSilk && drug.qty > 1500) {
                     drug.qty -= 1000;
                     cashEarned += $scope.drugStreetPrice(drug) * 900;
                 }
