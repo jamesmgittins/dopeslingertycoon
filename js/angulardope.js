@@ -126,7 +126,7 @@ var productionUpgradesMaster = [
     new ProductionUpgrade('Neural Net Research', 'Increases the amount of Cyber Crank made by your Blackhat Hiveminds by 50%!', 45000000, 'Blackhat Hivemind', 1.5, 'Cyber Crank'),
     new ProductionUpgrade('Global Botnet', 'Increases the amount of Cyber Crank made by your Blackhat Hiveminds by 45%!', 75000000, 'Blackhat Hivemind', 1.45, 'Cyber Crank'),
 
-    new ProductionUpgrade('Human Test Subjects', 'Test your drug batches on human subjects. They might not survive the process but it will increases the amount of Ephemerol produced by 60%!', 120000000, 'Secret Facility', 1.6, 'Ephemerol'),
+    new ProductionUpgrade('Human Test Subjects', 'Test your drug batches on human subjects. They might not survive the process but it will increase the amount of Ephemerol produced by 60%!', 120000000, 'Secret Facility', 1.6, 'Ephemerol'),
     new ProductionUpgrade('ConSec Scanner', 'Increases the amount of Ephemerol made by your Secret Facilities by 75%!', 275000000, 'Secret Facility', 1.75, 'Ephemerol'),
 
     new ProductionUpgrade('Peachtree Block', 'Give your Chem-techs somewhere safe to work. Increases the amount of Slo-mo produced by 100%!', 575000000, 'Chem-tech', 2, 'Slo-mo'),
@@ -160,7 +160,7 @@ var muscleMaster = [
     new muscle('Young Thug', 1000, 5, 1.25),
     new muscle('Hired Goon', 12000, 75, 1.27),
     new muscle('Crooked Cop', 130000, 500, 1.28),
-    new muscle('Bought Judge', 1500000, 1200, 1.3),
+    new muscle('Bought Judge', 1500000, 2000, 1.3),
     new muscle('Corrupt Senator', 4500000, 7500, 1.31),
     new muscle('Puppet World Leader', 33700000, 45000, 1.32)
 ];
@@ -712,7 +712,7 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ngAnimate','jg.progressbar'])
                 }
 				dealerUpgrades[i].realPrice = dealerUpgrades[i].price * $scope.discountMulti();
 
-				if (dealer.type == 'Prestige') dealerUpgrades[i].realPrice = dealerUpgrades[i].price * 6 * $scope.discountMulti();
+				if (dealer.type == 'Prestige') dealerUpgrades[i].realPrice = dealerUpgrades[i].price * 4 * $scope.discountMulti();
 
 				if (!alreadyBought && $scope.gameModel.totalCashEarned > dealerUpgrades[i].price - 2000)
                     $scope.availableDealerUpgrades.push(dealerUpgrades[i]);
