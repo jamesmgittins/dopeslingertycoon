@@ -357,3 +357,7 @@ div.bottom-links {
 div.bottom-links > a {
     margin:0 10px 0 10px;
 }
+
+span.kingpin-name {
+  margin-right:20px;white-space:nowrap;float:left;
+}
