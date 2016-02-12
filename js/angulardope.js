@@ -161,8 +161,8 @@ var muscleMaster = [
     new muscle('Hired Goon', 12000, 75, 1.27),
     new muscle('Crooked Cop', 130000, 500, 1.28),
     new muscle('Bought Judge', 1500000, 1200, 1.3),
-    new muscle('Corrupt Senator', 4500000, 4500, 1.31),
-    new muscle('Puppet World Leader', 33700000, 27000, 1.32)
+    new muscle('Corrupt Senator', 4500000, 7500, 1.31),
+    new muscle('Puppet World Leader', 33700000, 45000, 1.32)
 ];
 
 var drugsMaster = [
@@ -178,9 +178,9 @@ var drugsMaster = [
     new Drug('Cocaine', 70, 250000),
     new Drug('Nuke', 240, 5500000),
     new Drug('Cyber Crank', 666.67, 15000000),
-    new Drug('Ephemerol', 3400, 55000000),
-    new Drug('Slo-mo', 11250, 125000000),
-    new Drug('Melange', 270000, 640000000)];
+    new Drug('Ephemerol', 3400, 75000000),
+    new Drug('Slo-mo', 11250, 165000000),
+    new Drug('Melange', 270000, 840000000)];
 
 function Producer(name, basePrice, drug, priceMulti, prodPerUnit) {
     this.name = name;
@@ -205,8 +205,8 @@ var productionMaster = [
     new Producer('Robot Criminal', 700000, 'Nuke', 1.28, 0.2),
     new Producer('Blackhat Hivemind', 2500000, 'Cyber Crank', 1.29, 0.15),
     new Producer('Secret Facility', 5000000, 'Ephemerol', 1.30, 0.1),
-    new Producer('Chem-tech', 12000000, 'Slo-mo', 1.31, 0.12),
-    new Producer('Sandworm', 45000000, 'Melange', 1.32, 0.1)];
+    new Producer('Chem-tech', 12000000, 'Slo-mo', 1.31, 0.08),
+    new Producer('Sandworm', 45000000, 'Melange', 1.32, 0.05)];
 
 
 function Dealer(seed) {
@@ -383,7 +383,7 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ngAnimate','jg.progressbar'])
             var multi = $scope.kingpinMulti();
             for (var i = 0; i < $scope.gameModel.dealers.length; i++) {
                 if ($scope.gameModel.dealers[i].type == 'Prestige' && !$scope.gameModel.dealers[i].arrested)
-                    multi += 1 + ($scope.gameModel.dealers[i].level / 10)
+                    multi += 1 + ($scope.gameModel.dealers[i].level / 2)
             }
             return multi;
         };
