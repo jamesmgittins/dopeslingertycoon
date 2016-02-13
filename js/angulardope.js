@@ -178,9 +178,9 @@ var drugsMaster = [
     new Drug('Cocaine', 70, 250000),
     new Drug('Nuke', 240, 5500000),
     new Drug('Cyber Crank', 666.67, 15000000),
-    new Drug('Ephemerol', 3400, 75000000),
-    new Drug('Slo-mo', 11250, 165000000),
-    new Drug('Melange', 270000, 840000000)];
+    new Drug('Ephemerol', 3400, 95000000),
+    new Drug('Slo-mo', 11250, 465000000),
+    new Drug('Melange', 270000, 2840000000)];
 
 function Producer(name, basePrice, drug, priceMulti, prodPerUnit) {
     this.name = name;
@@ -203,10 +203,10 @@ var productionMaster = [
     new Producer('Chemistry Professor', 40000, 'MDMA', 1.26, 0.45),
     new Producer('Drug Mule', 50000, 'Cocaine', 1.27, 0.3),
     new Producer('Robot Criminal', 700000, 'Nuke', 1.28, 0.2),
-    new Producer('Blackhat Hivemind', 2500000, 'Cyber Crank', 1.29, 0.15),
-    new Producer('Secret Facility', 5000000, 'Ephemerol', 1.30, 0.1),
-    new Producer('Chem-tech', 12000000, 'Slo-mo', 1.31, 0.08),
-    new Producer('Sandworm', 45000000, 'Melange', 1.32, 0.05)];
+    new Producer('Blackhat Hivemind', 2500000, 'Cyber Crank', 1.29, 0.1),
+    new Producer('Secret Facility', 5000000, 'Ephemerol', 1.30, 0.06),
+    new Producer('Chem-tech', 12000000, 'Slo-mo', 1.31, 0.03),
+    new Producer('Sandworm', 45000000, 'Melange', 1.32, 0.01)];
 
 
 function Dealer(seed) {
