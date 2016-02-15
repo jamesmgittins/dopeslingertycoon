@@ -112,7 +112,7 @@ body.work-mode span.jg-tooltip{background-color: #bbb;}
 
 
 .production-header {
-    color: #259b24;
+    color: #259b24 !important;
 }
 
 .btn-production {
@@ -138,7 +138,7 @@ body.work-mode span.jg-tooltip{background-color: #bbb;}
 }
 
 .distribution-header {
-    color: #673ab7;
+    color: #673ab7 !important;
 }
 
 .btn-distribution,
@@ -152,7 +152,7 @@ body.work-mode span.jg-tooltip{background-color: #bbb;}
 }
 
 .muscle-header {
-    color: #ff5722;
+    color: #ff5722 !important;
 }
 
 .btn-muscle {
