@@ -166,7 +166,7 @@
 
                         <p class="col-xs-12">Average street price <b>{{drugStreetPrice(drug)|money}}</b> per gram</p>
 
-                        <div class="mb-10" ng-show="gameModel.silkRoadUnlocked && !gameModel.autoSilk">
+                        <div class="mb-10" ng-show="gameModel.silkRoadUnlocked && !options.autoSilk">
                             <div class="col-xs-12 btn-group">
                                 <button class="btn btn-default btn-production" style="width:85%;" ng-disabled="drug.qty < 1000" ng-click="sellOnSilkRoad(drug)"><span class="glyphicon glyphicon-cloud-upload inline-glyph icongreen"></span>Sell 1kg (<b>{{drugStreetPrice(drug) * 900|money}}</b>)</button>
                                 <button class="btn btn-default btn-production text-center" style="width:15%;" onclick="toggleTooltip(this);">

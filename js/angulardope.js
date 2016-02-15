@@ -131,6 +131,8 @@ var productionUpgradesMaster = [
 
     new ProductionUpgrade('Peachtree Block', 'Give your Chem-techs somewhere safe to work. Increases the amount of Slo-mo produced by 100%!', 575000000, 'Chem-tech', 2, 'Slo-mo'),
 
+    new ProductionUpgrade('The Ludovico Technique', 'Take control over your Droogs and keep them focused on the important work of producing Drencrom. Increases the amount of Drencrom produced by 60%!', 575000000, 'Droog Squad', 2, 'Drencrom'),
+
     new ProductionUpgrade('Guild Navigator', 'Increases the amount of Melange produced by 30%!', 2575000000, 'Sandworm', 1.3, 'Melange'),
     new ProductionUpgrade("Muad'Dib", 'Leader of the Fremen. Increases the amount of Melange produced by 50%!', 7900000000, 'Sandworm', 1.5, 'Melange')
   ];
@@ -180,7 +182,8 @@ var drugsMaster = [
     new Drug('Cyber Crank', 666.67, 15000000),
     new Drug('Ephemerol', 3400, 95000000),
     new Drug('Slo-mo', 11250, 465000000),
-    new Drug('Melange', 270000, 2840000000)];
+    new Drug('Drencrom', 63250, 1200000000),
+    new Drug('Melange', 270000, 4840000000)];
 
 function Producer(name, basePrice, drug, priceMulti, prodPerUnit) {
     this.name = name;
@@ -206,7 +209,8 @@ var productionMaster = [
     new Producer('Blackhat Hivemind', 2500000, 'Cyber Crank', 1.29, 0.08),
     new Producer('Secret Facility', 5000000, 'Ephemerol', 1.30, 0.04),
     new Producer('Chem-tech', 12000000, 'Slo-mo', 1.31, 0.02),
-    new Producer('Sandworm', 45000000, 'Melange', 1.32, 0.01)];
+    new Producer('Droog Squad', 35000000, 'Drencrom', 1.31, 0.015),
+    new Producer('Sandworm', 75000000, 'Melange', 1.32, 0.01)];
 
 function dealerName() {
   var name = maleFirstNames[Math.floor(Math.random() * maleFirstNames.length)];
@@ -498,7 +502,7 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ngAnimate','jg.progressbar'])
             }
             for (i = 0; i < productionUpgradesMaster.length; i++) {
 
-                if (!$scope.upgradeUnlocked(productionUpgradesMaster[i]) && $scope.getDrugByName(productionUpgradesMaster[i].drug) !== null && $scope.gameModel.totalCashEarned > (productionUpgradesMaster[i].price * 1.5) && $scope.otherUpgradesForThisDrugUnlocked(productionUpgradesMaster[i])) {
+                if (!$scope.upgradeUnlocked(productionUpgradesMaster[i]) && $scope.getDrugByName(productionUpgradesMaster[i].drug) !== null && $scope.gameModel.totalCashEarned > (productionUpgradesMaster[i].price * 1) && $scope.otherUpgradesForThisDrugUnlocked(productionUpgradesMaster[i])) {
                     $scope.availableUpgrades.push(productionUpgradesMaster[i]);
                 }
             }
