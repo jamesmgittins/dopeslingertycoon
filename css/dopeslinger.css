@@ -100,7 +100,10 @@ body.work-mode div.muscle,
 body.work-mode div.dealer-content,
 body.work-mode div.dealer,
 body.work-mode div.drug-content,
-body.work-mode div.drug {color:black;border-color:#bbb;}
+body.work-mode div.drug {
+  color:black !important;
+  border-color:#bbb;
+}
 
 body.work-mode div.muscle.open,
 body.work-mode div.drug.open,
