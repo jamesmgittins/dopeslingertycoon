@@ -284,14 +284,6 @@ div.dealer-content.content-open,
 div.drug-content.content-open {
     display:inherit;
 }
-#cash-wrap {
-	height:190px;
-}
-#current-cash {
-	z-index:50;
-	padding-bottom:5px;
-	background: none repeat scroll 0 0 #ffffff;
-}
 
 div.muscle,
 div.dealer,
@@ -363,4 +355,17 @@ div.bottom-links > a {
 
 span.kingpin-name {
   margin-right:20px;white-space:nowrap;float:left;
+}
+
+div.cash-top {
+    position:fixed;
+    z-index:50;
+    top:0;
+    width:100%;
+    padding-bottom:5px;
+	background: none repeat scroll 0 0 #ffffff;
+    background: -webkit-linear-gradient(#fff 80%, rgba(255,255,255,0)); /* For Safari 5.1 to 6.0 */
+    background: -o-linear-gradient(#fff 80%, rgba(255,255,255,0)); /* For Opera 11.1 to 12.0 */
+    background: -moz-linear-gradient(#fff 80%, rgba(255,255,255,0)); /* For Firefox 3.6 to 15 */
+    background: linear-gradient(#fff 80%, rgba(255,255,255,0)); /* Standard syntax */
 }

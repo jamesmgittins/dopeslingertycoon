@@ -22,28 +22,20 @@
 
 		var scrollMenu = function() {
 			// Stick the #nav to the top of the window
-			var nav = $('#current-cash');
-			var navHomeY = nav.offset().top;
-			var workModeHeight = $('h1').first().height() + $('#cash-wrap > p').first().height();
-
+			var nav = $('div.cash-top');
+			
 			var isFixed = false;
 			var $w = $(window);
-			$w.scroll(function() {
+			$w.scroll(function () {
+			    var navHomeY = $("#cash-wrap").offset().top + ($("#cash-wrap").height() / 2);
 				var scrollTop = $w.scrollTop();
-				var shouldBeFixed = $('body').hasClass('work-mode') ? scrollTop > navHomeY - workModeHeight : scrollTop > navHomeY;
+				var shouldBeFixed = scrollTop > navHomeY;
 
 				if (shouldBeFixed && !isFixed) {
-					nav.css({
-						position: 'fixed',
-						top: 0,
-						left: nav.offset().left,
-						width: '100%'
-					});
+				    nav.fadeIn();
 					isFixed = true;
 				} else if (!shouldBeFixed && isFixed) {
-					nav.css({
-						position: 'static'
-					});
+				    nav.fadeOut();
 					isFixed = false;
 				}
 			});
@@ -95,6 +87,26 @@
     </script>
 </head>
 <body ng-controller="DopeController" ng-class="{'work-mode' : gameModel.workMode}" ng-animate-children>
+
+    <div class="cash-top" style="display:none;">
+        <div class="container">
+            <div class="strong row">
+                <div class="col-xs-12 col-sm-6 text-center">
+                    Current cash:
+                    <span class="current-cash">{{gameModel.cash|money}}</span>
+                    <span class="glyphicon" ng-class="cashPerSecond > 0 ? 'glyphicon-arrow-up production-header' : 'glypicon-arrow-down muscle-header'"></span>
+                    <span ng-class="cashPerSecond > 0 ? 'production-header' : 'muscle-header'">{{cashPerSecond|money}} / sec</span>
+                </div>
+                <div class="col-xs-12 col-sm-6 text-center">
+                    Current respect:
+                    <span class="current-cash">{{gameModel.respect|respect}}</span>
+                    <span class="glyphicon glyphicon-arrow-up muscle-header" ng-show="gameModel.respectPerSecond > 0"></span>
+                    <span class="muscle-header" ng-show="gameModel.respectPerSecond > 0">{{gameModel.respectPerSecond|respect}} / sec</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="container">
         <div class="row">
 
@@ -108,7 +120,7 @@
 
             <div class="col-xs-12 col-sm-6" id="cash-wrap">
                 <p ng-show="!gameModel.workMode"><strong>Buy cannabis plants to grow weed. Hire dealers to sell the weed. Hire muscle to earn respect. Use respect to expand your territory or negotiate better prices.</strong></p>
-                <div id="current-cash" class="strong">
+                <div class="strong">
                     Current cash:
                     <span class="current-cash">{{gameModel.cash|money}}</span>
                     <span class="glyphicon" ng-class="cashPerSecond > 0 ? 'glyphicon-arrow-up production-header' : 'glypicon-arrow-down muscle-header'"></span>
@@ -132,9 +144,9 @@
             <div class="clearfix"></div>
 
             <ul class="nav nav-tabs visible-xs">
-              <li role="presentation" ng-class="{'active':currentTab == 'production'}"><a class="production-header strong" ng-click="currentTab = 'production'">Production</a></li>
-              <li role="presentation" ng-class="{'active':currentTab == 'distribution'}"><a class="distribution-header strong" ng-click="currentTab = 'distribution'">Distribution</a></li>
-              <li role="presentation" ng-class="{'active':currentTab == 'muscle'}"><a class="muscle-header strong" ng-click="currentTab = 'muscle'">Muscle</a></li>
+                <li role="presentation" ng-class="{'active':currentTab == 'production'}"><a class="production-header strong" ng-click="currentTab = 'production'">Production</a></li>
+                <li role="presentation" ng-class="{'active':currentTab == 'distribution'}"><a class="distribution-header strong" ng-click="currentTab = 'distribution'">Distribution</a></li>
+                <li role="presentation" ng-class="{'active':currentTab == 'muscle'}"><a class="muscle-header strong" ng-click="currentTab = 'muscle'">Muscle</a></li>
             </ul>
 
             <div class="col-xs-12 col-sm-4 production col-pad-5" ng-class="{'hidden-xs':currentTab != 'production'}">
@@ -351,9 +363,9 @@
                 </div>
             </div>
             <div class="col-xs-12 bottom-links">
-              <a href="https://github.com/jamesmgittins/dopeslingertycoon">github</a>
-              <a href="http://www.reddit.com/r/dopeslinger">/r/dopeslinger</a>
-              <a href="http://www.reddit.com/r/incremental_games">/r/incremental_games</a>
+                <a href="https://github.com/jamesmgittins/dopeslingertycoon">github</a>
+                <a href="http://www.reddit.com/r/dopeslinger">/r/dopeslinger</a>
+                <a href="http://www.reddit.com/r/incremental_games">/r/incremental_games</a>
             </div>
         </div>
 
@@ -373,9 +385,9 @@
                             </div>
                         </div>
                         <div class="col-xs-12 col-sm-4">
-                          <button ng-click="randomPrestigeName()" class="btn btn-default btn-distribution" type="button">
-                              Random Name
-                          </button>
+                            <button ng-click="randomPrestigeName()" class="btn btn-default btn-distribution" type="button">
+                                Random Name
+                            </button>
                         </div>
                         <div class="col-xs-6 pr-10 mt-20">
                             <button ng-click="prestigeDealerConfirm()" class="btn btn-default btn-distribution" type="button">
@@ -484,8 +496,8 @@
                             <button ng-click="exportGame()" class="btn btn-default"><span class="glyphicon glyphicon-floppy-disk icongreen"></span> Export/Import game save</button>
                         </div>
                         <div class="col-xs-12" ng-show="kingpins.length > 0" style="margin-top:25px;">
-                          <p class="strong">The names of your Kingpins</p>
-                          <span ng-repeat="kingpin in kingpins track by $index" class="kingpin-name"><span class="glyphicon glyphicon-tower iconyellow" style="margin-right:5px;"></span>{{kingpin}}</span>
+                            <p class="strong">The names of your Kingpins</p>
+                            <span ng-repeat="kingpin in kingpins track by $index" class="kingpin-name"><span class="glyphicon glyphicon-tower iconyellow" style="margin-right:5px;"></span>{{kingpin}}</span>
                         </div>
                     </div>
                 </div>
@@ -501,24 +513,24 @@
                     </div>
                     <div class="modal-body row">
                         <div class="col-xs-12">
-                          <p class="strong">To export a save, copy the entire contents of the text box below</p>
+                            <p class="strong">To export a save, copy the entire contents of the text box below</p>
                         </div>
                         <div class="col-xs-12">
-                          <textarea class="form-control" rows="8" ng-model="exportGameSave"></textarea>
+                            <textarea class="form-control" rows="8" ng-model="exportGameSave"></textarea>
                         </div>
                         <div class="col-xs-12 mt-20">
-                          <p class="strong">To import a save, paste the data copied into the text box below and click import</p>
-                          <p class="strong">This will overwrite your current progress!</p>
+                            <p class="strong">To import a save, paste the data copied into the text box below and click import</p>
+                            <p class="strong">This will overwrite your current progress!</p>
                         </div>
                         <div class="col-xs-12">
-                          <textarea class="form-control" rows="8" ng-model="importGameSave"></textarea>
+                            <textarea class="form-control" rows="8" ng-model="importGameSave"></textarea>
                         </div>
                         <div class="col-xs-12 mt-5">
-                          <button ng-click="importGame()" class="btn btn-default"><span class="glyphicon glyphicon-floppy-disk icongreen"></span> Import</button>
+                            <button ng-click="importGame()" class="btn btn-default"><span class="glyphicon glyphicon-floppy-disk icongreen"></span> Import</button>
                         </div>
                         <div class="col-xs-12 mt-10" ng-show="importError">
-                          <p class="strong">Error: {{importError}}</p>
-                          <p class="strong">Import failed</p>
+                            <p class="strong">Error: {{importError}}</p>
+                            <p class="strong">Import failed</p>
                         </div>
                     </div>
                 </div>
