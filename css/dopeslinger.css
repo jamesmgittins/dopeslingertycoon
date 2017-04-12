@@ -36,6 +36,10 @@ body {
     padding: 20px 0;
 }
 
+body.top-hidden {
+  padding: 70px 0;
+}
+
 span.inline-glyph {
     margin-right: 2px;
 }
