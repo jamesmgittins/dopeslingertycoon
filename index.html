@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="css/bootstrap-theme.min.css">
     <link rel="stylesheet" href="css/dopeslinger.css">
+    <!-- <script src='https://cdn1.kongregate.com/javascripts/kongregate_api.js'></script> -->
     <script src="js/jquery.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
     <script src="js/angular.min.js"></script>
@@ -23,26 +24,35 @@
     <script src="js/angulardope.js"></script>
     <script>
 
+    // kongregateAPI.loadAPI(function(){
+  	//   window.kongregate = kongregateAPI.getAPI();
+  	//   // You can now access the Kongregate API with:
+  	//   // kongregate.services.getUsername(), etc
+  	//   // Proceed with loading your game...
+  	// });
+
+    var alwaysShowScroll = false;
+    var isFixed = false;
+
 		var scrollMenu = function() {
 			// Stick the #nav to the top of the window
-			var nav = $('div.cash-top');
-
-			var isFixed = false;
-			var $w = $(window);
-			$w.scroll(function () {
-			    var navHomeY = $("#cash-wrap").offset().top + ($("#cash-wrap").height() / 2);
-				var scrollTop = $w.scrollTop();
-				var shouldBeFixed = scrollTop > navHomeY;
-
-				if (shouldBeFixed && !isFixed) {
-				    nav.fadeIn();
-					isFixed = true;
-				} else if (!shouldBeFixed && isFixed) {
-				    nav.fadeOut();
-					isFixed = false;
-				}
-			});
+			$(window).scroll(fadeTop);
 		};
+
+    function fadeTop() {
+      var nav = $('div.cash-top');
+      var navHomeY = $("#cash-wrap").offset().top + ($("#cash-wrap").height() / 2);
+      var scrollTop = $(window).scrollTop();
+      var shouldBeFixed = scrollTop > navHomeY || alwaysShowScroll;
+
+      if (shouldBeFixed && !isFixed) {
+        nav.fadeIn();
+        isFixed = true;
+      } else if (!shouldBeFixed && isFixed) {
+        nav.fadeOut();
+        isFixed = false;
+      }
+    }
 
 		$(window).off('resize').on('resize',function(){
 			$('.btn-group').each(function(){
@@ -89,60 +99,66 @@
 
     </script>
 </head>
-<body ng-controller="DopeController" ng-class="{'work-mode' : gameModel.workMode}" ng-animate-children>
+<body ng-controller="DopeController" ng-class="{'work-mode' : gameModel.workMode, 'top-hidden' : gameModel.hideTop}" ng-animate-children>
 
     <div class="cash-top" style="display:none;">
         <div class="container">
             <div class="strong row">
                 <div class="col-xs-12 col-sm-6 text-center">
-                    Current cash:
+                    Money:
                     <span class="current-cash">{{gameModel.cash|money}}</span>
                     <span class="glyphicon" ng-class="cashPerSecond > 0 ? 'glyphicon-arrow-up production-header' : 'glypicon-arrow-down muscle-header'"></span>
                     <span ng-class="cashPerSecond > 0 ? 'production-header' : 'muscle-header'">{{cashPerSecond|money}} / sec</span>
                 </div>
                 <div class="col-xs-12 col-sm-6 text-center">
-                    Current respect:
+                    Respect:
                     <span class="current-cash">{{gameModel.respect|respect}}</span>
                     <span class="glyphicon glyphicon-arrow-up muscle-header" ng-show="gameModel.respectPerSecond > 0"></span>
                     <span class="muscle-header" ng-show="gameModel.respectPerSecond > 0">{{gameModel.respectPerSecond|respect}} / sec</span>
                 </div>
+                <p class="distribution strong col-xs-12 col-sm-6" ng-show="gameModel.buff && gameModel.hideTop">{{buffMsg}}</p>
+                <p class="distribution strong col-xs-12 col-sm-6" ng-show="levelUpMsg && gameModel.hideTop">{{levelUpMsg}}</p>
+                <p class="distribution strong col-xs-12 col-sm-6" ng-repeat="dealer in gameModel.dealers" ng-show="dealer.arrested && gameModel.hideTop">{{dealer.arrestMessage}}</p>
             </div>
         </div>
     </div>
 
     <div class="container">
         <div class="row">
+            <div>
+              <div class="col-xs-12 col-sm-9 col-md-10">
+                  <h1 class="street" ng-class="{'hidden' : gameModel.workMode || gameModel.hideTop}"><span class="production-header">Dope</span> <span class="distribution-header">slinger</span> <span class="muscle-header">tycoon</span></h1>
+              </div>
 
-            <div class="col-xs-12 col-sm-9 col-md-10">
-                <h1 class="street" ng-class="{'hidden' : gameModel.workMode}"><span class="production-header">Dope</span> <span class="distribution-header">slinger</span> <span class="muscle-header">tycoon</span></h1>
+              <div class="col-xs-12 col-sm-3 col-md-2" ng-if="!gameModel.hideTop">
+                  <button onclick="$('#optionsModal').modal('show');" class="btn btn-default options-button"><span class="iconred glyphicon glyphicon-cog"></span> Options</button>
+                  <button ng-click="hideTop()" class="btn btn-default"><span class="glyphicon glyphicon-eye-close icongreen"></span> Hide Title</button>
+              </div>
+
+              <div class="col-xs-12 col-sm-6" id="cash-wrap" ng-class="{'hidden' : gameModel.hideTop}">
+                  <p ng-show="!gameModel.workMode"><strong>Buy cannabis plants to grow weed. Hire dealers to sell the weed. Hire muscle to earn respect. Use respect to expand your territory or negotiate better prices.</strong></p>
+                  <div class="strong">
+                      Current cash:
+                      <span class="current-cash">{{gameModel.cash|money}}</span>
+                      <span class="glyphicon" ng-class="cashPerSecond > 0 ? 'glyphicon-arrow-up production-header' : 'glypicon-arrow-down muscle-header'"></span>
+                      <span ng-class="cashPerSecond > 0 ? 'production-header' : 'muscle-header'">{{cashPerSecond|money}} / sec</span>
+                  </div>
+                  <p class="strong">Total earned {{gameModel.totalCashEarned|money}}</p>
+                  <p class="strong">
+                      Current respect: <span class="current-cash">{{gameModel.respect|respect}}</span>
+                      <span class="glyphicon glyphicon-arrow-up muscle-header" ng-show="gameModel.respectPerSecond > 0"></span>
+                      <span class="muscle-header" ng-show="gameModel.respectPerSecond > 0">{{gameModel.respectPerSecond|respect}} / sec</span>
+                  </p>
+                  <p class="strong" ng-show="kingpins.length > 0">You have {{kingpins.length}} Kingpin{{kingpins.length > 1 ? "s" : ""}}, giving you a {{kingpins.length * 100}}% bonus to all drug and respect production</p>
+              </div>
+
+              <div class="col-xs-12 col-sm-6" ng-if="!gameModel.hideTop">
+                  <p class="distribution strong" ng-show="gameModel.buff">{{buffMsg}}</p>
+                  <p class="distribution strong" ng-show="levelUpMsg">{{levelUpMsg}}</p>
+                  <p class="distribution strong" ng-repeat="dealer in gameModel.dealers" ng-show="dealer.arrested">{{dealer.arrestMessage}}</p>
+              </div>
             </div>
 
-            <div class="col-xs-12 col-sm-3 col-md-2">
-                <button onclick="$('#optionsModal').modal('show');" class="btn btn-default options-button"><span class="iconred glyphicon glyphicon-cog"></span> Options</button>
-            </div>
-
-            <div class="col-xs-12 col-sm-6" id="cash-wrap">
-                <p ng-show="!gameModel.workMode"><strong>Buy cannabis plants to grow weed. Hire dealers to sell the weed. Hire muscle to earn respect. Use respect to expand your territory or negotiate better prices.</strong></p>
-                <div class="strong">
-                    Current cash:
-                    <span class="current-cash">{{gameModel.cash|money}}</span>
-                    <span class="glyphicon" ng-class="cashPerSecond > 0 ? 'glyphicon-arrow-up production-header' : 'glypicon-arrow-down muscle-header'"></span>
-                    <span ng-class="cashPerSecond > 0 ? 'production-header' : 'muscle-header'">{{cashPerSecond|money}} / sec</span>
-                </div>
-                <p class="strong">Total earned {{gameModel.totalCashEarned|money}}</p>
-                <p class="strong">
-                    Current respect: <span class="current-cash">{{gameModel.respect|respect}}</span>
-                    <span class="glyphicon glyphicon-arrow-up muscle-header" ng-show="gameModel.respectPerSecond > 0"></span>
-                    <span class="muscle-header" ng-show="gameModel.respectPerSecond > 0">{{gameModel.respectPerSecond|respect}} / sec</span>
-                </p>
-                <p class="strong" ng-show="kingpins.length > 0">You have {{kingpins.length}} Kingpin{{kingpins.length > 1 ? "s" : ""}}, giving you a {{kingpins.length * 100}}% bonus to all drug and respect production</p>
-            </div>
-
-            <div class="col-xs-12 col-sm-6">
-                <p class="distribution strong" ng-show="gameModel.buff">{{buffMsg}}</p>
-                <p class="distribution strong" ng-show="levelUpMsg">{{levelUpMsg}}</p>
-                <p class="distribution strong" ng-repeat="dealer in gameModel.dealers" ng-show="dealer.arrested">{{dealer.arrestMessage}}</p>
-            </div>
 
             <div class="clearfix"></div>
 
@@ -365,12 +381,22 @@
                     </div>
                 </div>
             </div>
-            <div class="col-xs-12 bottom-links">
+        </div>
+
+        <div class="row" ng-if="gameModel.hideTop" style="margin-top:20px;">
+          <div class="col-xs-12 col-sm-3 col-sm-offset-3">
+              <button onclick="$('#optionsModal').modal('show');" class="btn btn-default options-button"><span class="iconred glyphicon glyphicon-cog"></span> Options</button>
+          </div>
+          <div class="col-xs-12 col-sm-3">
+            <button ng-click="hideTop()" class="btn btn-default"><span class="glyphicon glyphicon-eye-open icongreen"></span> Show Title</button>
+          </div>
+        </div>
+
+        <div class="col-xs-12 bottom-links">
                 <a href="https://github.com/jamesmgittins/dopeslingertycoon">github</a>
                 <a href="http://www.reddit.com/r/dopeslinger">/r/dopeslinger</a>
                 <a href="http://www.reddit.com/r/incremental_games">/r/incremental_games</a>
             </div>
-        </div>
 
         <div class="modal fade" id="prestigeDealerModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
             <div class="modal-dialog">
@@ -497,6 +523,9 @@
                         </div>
                         <div class="col-xs-12 col-sm-6" tooltip="Export or Import game save">
                             <button ng-click="exportGame()" class="btn btn-default"><span class="glyphicon glyphicon-floppy-disk icongreen"></span> Export/Import game save</button>
+                        </div>
+                        <div class="col-xs-12 col-sm-6" tooltip="Hide the title section">
+                            <button ng-click="hideTop()" class="btn btn-default"><span class="glyphicon glyphicon-eye-close icongreen"></span> Hide/Show Title</button>
                         </div>
                         <div class="col-xs-12" ng-show="kingpins.length > 0" style="margin-top:25px;">
                             <p class="strong">The names of your Kingpins</p>
