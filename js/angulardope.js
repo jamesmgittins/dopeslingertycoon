@@ -873,8 +873,9 @@ angular.module('dopeslingerApp', ['ngSanitize', 'ngAnimate','jg.progressbar'])
                 var drug = $scope.gameModel.drugs[i];
 
                 if ($scope.options.autoSilk && $scope.gameModel.silkRoadUnlocked && drug.qty > 1500) {
-                    drug.qty -= 1000;
-                    cashEarned += $scope.drugStreetPrice(drug) * 900;
+                    var amountToSell = Math.trunc(drug.qty / 1000) * 1000;
+                    drug.qty -= amountToSell;
+                    cashEarned += amountToSell * $scope.drugStreetPrice(drug) * .9;
                 }
 
 				var j = 0;
