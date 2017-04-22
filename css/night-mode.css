@@ -1,3 +1,93 @@
-body.night-mode {
-  background-color: #ccc;
-}
+body.night-mode, .dropdown-menu {
+    background: #1a1a1a;
+    color: #eee;
+  }
+  
+  .modal-content {
+    background: #1a1a1a;
+    border: 1px solid #262626;
+  }
+  
+  .btn, .btn:hover, .btn-default:hover, .btn-default:focus {
+    background-image: linear-gradient(to bottom,#262626 0,#333 100%);
+    background: #333;
+    text-shadow: 0 1px 0 #333;
+    color: #eee;
+    border-color: #262626;
+  }
+  
+  .btn-default:disabled, .btn-default[disabled] {
+    background: linear-gradient(to bottom,#333 0,#4d4d4d 100%);
+    text-shadow: 0 1px 0 #333;
+    color: #eee;
+    border-color: #262626;
+  }
+  
+  .btn-distribution, .distribution .btn-default, .distribution {
+    color: #ccccff !important;
+  }
+  
+  .distribution .btn-default {
+    background-image: linear-gradient(to bottom,#262626 0,#333 100%);
+    background: #333;
+    text-shadow: 0 1px 0 #333;
+    border-color: #262626;
+  }
+  
+  .close {
+    color: #700;
+    text-shadow: 0 1px 0 #666;
+    opacity: 1;
+  }
+  
+  .close:hover {
+    color: #900;
+    text-shadow: 0 1px 0 #666;
+    opacity: 1;
+  }
+  
+  .form-control {
+    background-image: linear-gradient(to bottom,#262626 0,#333 100%);
+    background: #333;
+    text-shadow: 0 1px 0 #333;
+    color: #eee;
+    border-color: #262626;
+  }
+  
+  div.dealer-content, div.dealer {
+    color: #ccccff !important;
+  }
+  
+  div.cash-top {
+    background: #1a1a1a;
+    border-bottom: 1px dotted #333;
+  }
+  
+  div.drug-content, div.drug {
+    color: #1bae04;
+  }
+  
+  .progress {
+    background-image: linear-gradient(to bottom,#262626 0,#333 100%);
+  }
+  
+  .dropdown-menu > li > a {
+    color: #eee;
+  }
+  
+  .alert-danger {
+    background-image: linear-gradient(to bottom,#330000 0,#660000 100%);
+    background: #660000;
+    text-shadow: 0 1px 0 #333;
+    border-color: #262626;
+    color: #eee;
+  }
+  
+  body.work-mode .production, body.work-mode .production-header, body.work-mode .distribution, body.work-mode .distribution-header, body.work-mode .muscle-column, body.work-mode .muscle-header, body.work-mode .btn-distribution, body.work-mode .distribution .btn-default, body.work-mode .btn-production, body.work-mode .btn-muscle, body.work-mode div.muscle-content, body.work-mode div.muscle, body.work-mode div.dealer-content, body.work-mode div.dealer, body.work-mode div.drug-content, body.work-mode div.drug {
+    color: #eee !important;
+    border-color: #262626;
+  }
+  
+  body.work-mode div.muscle.open, body.work-mode div.drug.open, body.work-mode div.dealer.open, body.work-mode div.progress-bar, body.work-mode p.jg-tooltip, body.work-mode div.jg-tooltip, body.work-mode span.jg-tooltip {
+    background-color: #262626 !important;
+  }
