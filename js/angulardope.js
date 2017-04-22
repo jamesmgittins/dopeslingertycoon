@@ -369,6 +369,9 @@ var drugsMaster = [
       $scope.prestiged = false;
       $scope.hireDealers = [];
       $scope.toggleWorkMode = function () { $scope.gameModel.workMode = !$scope.gameModel.workMode;};
+      $scope.toggleNightMode = function () { $scope.gameModel.nightMode = !$scope.gameModel.nightMode;};
+      $scope.kongregateLargeWindow = function () { $scope.gameModel.kongregateLargeWindow = true;};
+      $scope.kongregateSmallWindow = function () { $scope.gameModel.kongregateLargeWindow = false;};
       $scope.hideTop = function () { alwaysShowScroll = !alwaysShowScroll; $scope.gameModel.hideTop = !$scope.gameModel.hideTop; fadeTop();};
       $scope.priceOfTerritory = function () { return territoryUpgradeBasePrice * Math.pow(territoryUpgradePriceMulti, $scope.gameModel.territoryUpgrades); };
       $scope.priceOfDiscount = function () { return discountUpgradeBasePrice * Math.pow(discountUpgradePriceMulti, $scope.gameModel.discountUpgrades); };
@@ -416,10 +419,18 @@ var drugsMaster = [
         return null;
       };
 
+      $scope.silkQty = function(drug) {
+        if (drug.qty > 1000)
+          return Math.floor(drug.qty / 1000);
+
+        return 1;
+      };
+
       $scope.sellOnSilkRoad = function (drug) {
         if (drug.qty > 1000) {
-          drug.qty -= 1000;
-          var cashEarned = $scope.drugStreetPrice(drug) * 900;
+          var qtyToSell = $scope.silkQty(drug) * 1000;
+          drug.qty -= qtyToSell;
+          var cashEarned = $scope.drugStreetPrice(drug) * qtyToSell * 0.9;
           $scope.gameModel.cash += cashEarned;
           $scope.gameModel.totalCashEarned += cashEarned;
         }
@@ -897,7 +908,7 @@ var drugsMaster = [
           if ($scope.options.autoSilk && $scope.gameModel.silkRoadUnlocked && drug.qty > 1500) {
             var amountToSell = Math.trunc((drug.qty - 500) / 1000) * 1000;
             drug.qty -= amountToSell;
-            cashEarned += amountToSell * $scope.drugStreetPrice(drug) * .9;
+            cashEarned += amountToSell * $scope.drugStreetPrice(drug) * 0.9;
           }
 
           var j = 0;

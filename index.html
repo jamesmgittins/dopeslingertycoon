@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="css/bootstrap-theme.min.css">
     <link rel="stylesheet" href="css/dopeslinger.css">
+    <link rel="stylesheet" href="css/night-mode.css">
     <script src='https://cdn1.kongregate.com/javascripts/kongregate_api.js'></script>
     <script src="js/jquery.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
@@ -94,7 +95,7 @@
     });
     </script>
 </head>
-<body ng-controller="DopeController" ng-class="{'work-mode' : gameModel.workMode, 'top-hidden' : gameModel.hideTop}" ng-animate-children>
+<body ng-controller="DopeController" ng-class="{'work-mode' : gameModel.workMode, 'top-hidden' : gameModel.hideTop, 'night-mode' : gameModel.nightMode, 'kongregate' : gameModel.kongregateLargeWindow}" ng-animate-children>
 
     <div class="cash-top" style="display:none;">
         <div class="container">
@@ -118,7 +119,7 @@
         </div>
     </div>
 
-    <div class="container-fluid">
+    <div class="container main-container">
         <div class="row">
             <div>
               <div class="col-xs-12 col-sm-9 col-md-10">
@@ -180,7 +181,7 @@
                     <div class="clearfix"></div>
                 </div>
                 <div class="row">
-                <div class="col-xs-12 col-lg-6" ng-repeat="drug in gameModel.drugs track by $index">
+                <div class="col-xs-12 drug-element" ng-repeat="drug in gameModel.drugs track by $index" ng-class="{'col-lg-6' : gameModel.kongregateLargeWindow}">
                 <div  class="drug-anim">
 
                     <div class="drug" ng-click="selectDrug(drug)" ng-class="{'open' : drug.selected}">
@@ -195,12 +196,14 @@
 
                         <div class="mb-10" ng-show="gameModel.silkRoadUnlocked && !options.autoSilk">
                             <div class="col-xs-12 btn-group">
-                                <button class="btn btn-default btn-production" style="width:85%;" ng-disabled="drug.qty < 1000" ng-click="sellOnSilkRoad(drug)"><span class="glyphicon glyphicon-cloud-upload inline-glyph icongreen"></span>Sell 1kg (<b>{{drugStreetPrice(drug) * 900|money}}</b>)</button>
+                                <button class="btn btn-default btn-production" style="width:85%;" ng-disabled="drug.qty < 1000" ng-click="sellOnSilkRoad(drug)">
+                                  <span class="glyphicon glyphicon-cloud-upload inline-glyph icongreen"></span>Sell {{silkQty(drug)}}kg (<b>{{drugStreetPrice(drug) * silkQty(drug) * 900|money}}</b>)
+                                </button>
                                 <button class="btn btn-default btn-production text-center" style="width:15%;" onclick="toggleTooltip(this);">
                                     <span class="glyphicon icongreen glyphicon-info-sign" style="width:100%;"></span>
                                 </button>
                             </div>
-                            <div style="display:none;" class="col-xs-12"><p class="jg-tooltip">Sell 1kg of {{drug.name}} on the silk road for 90% of the current street price</p></div>
+                            <div style="display:none;" class="col-xs-12"><p class="jg-tooltip">Sell {{silkQty(drug)}}kg of {{drug.name}} on the silk road for 90% of the current street price</p></div>
                             <div class="clearfix"></div>
                         </div>
 
@@ -240,7 +243,7 @@
             </div>
 
 
-            <div class="col-xs-12 col-sm-4 col-lg-5 distribution col-pad-5" ng-class="{'hidden-xs':currentTab != 'distribution'}">
+            <div class="col-xs-12 col-sm-4 distribution col-pad-5" ng-class="{'hidden-xs':currentTab != 'distribution', 'col-lg-5' : gameModel.kongregateLargeWindow}">
                 <h3 class="strong distribution-header">Distribution</h3>
 
                 <div ng-repeat="upgrade in dealerResearch | orderBy:'price'" class="mb-10 research-anim">
@@ -274,7 +277,7 @@
                     </ul>
                 </div>
                 <div class="row dealer-row">
-                <div class="col-xs-12 col-lg-6 dealer-element" ng-repeat="dealer in gameModel.dealers | orderBy:dealerSort:dealerSortReverse track by $index">
+                <div class="col-xs-12 dealer-element" ng-repeat="dealer in gameModel.dealers | orderBy:dealerSort:dealerSortReverse track by $index" ng-class="{'col-lg-6' : gameModel.kongregateLargeWindow}">
                   <div class="dealer-ui dealer-anim" >
                       <div class="dealer" ng-class="{'open':dealer.selected}" ng-click="selectDealer(dealer)">
                           <span class="glyphicon glyphicon-exclamation-sign" ng-show="dealer.arrested"></span>
@@ -343,7 +346,7 @@
                 </div>
               </div>
 
-            <div class="col-xs-12 col-sm-4 col-lg-3 muscle-column col-pad-5" ng-class="{'hidden-xs':currentTab != 'muscle'}">
+            <div class="col-xs-12 col-sm-4 muscle-column col-pad-5" ng-class="{'hidden-xs':currentTab != 'muscle', 'col-lg-3' : gameModel.kongregateLargeWindow}">
                 <h3 class="strong muscle-header">Muscle</h3>
 
                 <div class="btn-group" role="group" style="width:100%;">
@@ -515,6 +518,9 @@
                         <div class="col-xs-12 col-sm-6">
                             <button ng-click="toggleWorkMode()" class="btn btn-default"><span class="glyphicon glyphicon-filter iconred"></span> Toggle work mode</button>
                         </div>
+                        <div class="col-xs-12 col-sm-6">
+                            <button ng-click="toggleNightMode()" class="btn btn-default"><span class="glyphicon glyphicon-filter iconred"></span> Toggle night mode</button>
+                        </div>
                         <div class="col-xs-12 col-sm-6" tooltip="Toggle automatic selling of drugs on the silk road">
                             <button ng-click="toggleAutoSilk()" class="btn btn-default"><span class="glyphicon glyphicon-cloud icongreen"></span> Auto silk road sell {{options.autoSilk ? '(on)' : '(off)'}}</button>
                         </div>
@@ -525,10 +531,10 @@
                             <button ng-click="hideTop()" class="btn btn-default"><span class="glyphicon glyphicon-eye-close icongreen"></span> Hide/Show Title</button>
                         </div>
                         <div class="col-xs-12 col-sm-6" tooltip="Toggle automatic selling of drugs on the silk road">
-                            <button onclick="kongregate.services.resizeGame(1600, 1080);" class="btn btn-default"><span class="glyphicon glyphicon-zoom-in icongreen"></span> Larger window</button>
+                            <button onclick="kongregate.services.resizeGame(1600, 1080);" ng-click="kongregateLargeWindow()" class="btn btn-default"><span class="glyphicon glyphicon-zoom-in icongreen"></span> Larger window</button>
                         </div>
                         <div class="col-xs-12 col-sm-6" tooltip="Toggle automatic selling of drugs on the silk road">
-                            <button onclick="kongregate.services.resizeGame(1199, 700);" class="btn btn-default"><span class="glyphicon glyphicon-zoom-out icongreen"></span> Smaller window</button>
+                            <button onclick="kongregate.services.resizeGame(1199, 700);" ng-click="kongregateSmallWindow()" class="btn btn-default"><span class="glyphicon glyphicon-zoom-out icongreen"></span> Smaller window</button>
                         </div>
                         <div class="col-xs-12" ng-show="kingpins.length > 0" style="margin-top:25px;">
                             <p class="strong">The names of your Kingpins</p>
