@@ -13,7 +13,7 @@
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="css/bootstrap-theme.min.css">
     <link rel="stylesheet" href="css/dopeslinger.css">
-    <!-- <script src='https://cdn1.kongregate.com/javascripts/kongregate_api.js'></script> -->
+    <script src='https://cdn1.kongregate.com/javascripts/kongregate_api.js'></script>
     <script src="js/jquery.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
     <script src="js/angular.min.js"></script>
@@ -24,20 +24,13 @@
     <script src="js/angulardope.js"></script>
     <script>
 
-    // kongregateAPI.loadAPI(function(){
-  	//   window.kongregate = kongregateAPI.getAPI();
-  	//   // You can now access the Kongregate API with:
-  	//   // kongregate.services.getUsername(), etc
-  	//   // Proceed with loading your game...
-  	// });
-
     var alwaysShowScroll = false;
     var isFixed = false;
 
-		var scrollMenu = function() {
-			// Stick the #nav to the top of the window
-			$(window).scroll(fadeTop);
-		};
+    var scrollMenu = function() {
+      // Stick the #nav to the top of the window
+      $(window).scroll(fadeTop);
+    };
 
     function fadeTop() {
       var nav = $('div.cash-top');
@@ -52,51 +45,53 @@
         nav.fadeOut();
         isFixed = false;
       }
+      fixTopPadding();
     }
 
-		$(window).off('resize').on('resize',function(){
-			$('.btn-group').each(function(){
-				var height = 0;
-				$(this).find('button').each(function(){
-					$(this).height('auto');
+    function fixTopPadding() {
+      if (alwaysShowScroll) {
+        document.getElementsByTagName("BODY")[0].style.paddingTop = ($('div.cash-top').height() + 10) + "px";
+      }
+    }
 
-					if ($(this).height() > height)
-						height = $(this).height();
-				});
-				$(this).find('button').each(function(){
-					if (height > 0)
-						$(this).height(height);
-				});
-			});
-		});
+    $(window).off('resize').on('resize',function(){
+      $('.btn-group').each(function(){
+        var height = 0;
+        $(this).find('button').each(function(){
+          $(this).height('auto');
 
-		toggleTooltip = function(element) {
-			if ($(element).hasClass('jg-tooltip')) {
-				$(element).closest('div').next().slideToggle(200,function(){
-					$(element).toggleClass('jg-tooltip');
-				});
-			} else {
-				$(element).toggleClass('jg-tooltip').closest('div').next().slideToggle(200);
-			}
+          if ($(this).height() > height)
+          height = $(this).height();
+        });
+        $(this).find('button').each(function(){
+          if (height > 0)
+          $(this).height(height);
+        });
+      });
+    });
 
-		};
+    toggleTooltip = function(element) {
+      if ($(element).hasClass('jg-tooltip')) {
+        $(element).closest('div').next().slideToggle(200,function(){
+          $(element).toggleClass('jg-tooltip');
+        });
+      } else {
+        $(element).toggleClass('jg-tooltip').closest('div').next().slideToggle(200);
+      }
 
-        resetGame = function () {
-            localStorage.clear();
-            window.location.reload();
-        };
-    </script>
-    <script>
-    (function (i, s, o, g, r, a, m) {
-        i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
-            (i[r].q = i[r].q || []).push(arguments)
-        }, i[r].l = 1 * new Date(); a = s.createElement(o),
-        m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
-    })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+    };
 
-    ga('create', 'UA-56478232-1', 'auto');
-    ga('send', 'pageview');
+    resetGame = function () {
+      localStorage.clear();
+      window.location.reload();
+    };
 
+    kongregateAPI.loadAPI(function(){
+      window.kongregate = kongregateAPI.getAPI();
+      // You can now access the Kongregate API with:
+      // kongregate.services.getUsername(), etc
+      // Proceed with loading your game...
+    });
     </script>
 </head>
 <body ng-controller="DopeController" ng-class="{'work-mode' : gameModel.workMode, 'top-hidden' : gameModel.hideTop}" ng-animate-children>
@@ -123,7 +118,7 @@
         </div>
     </div>
 
-    <div class="container">
+    <div class="container-fluid">
         <div class="row">
             <div>
               <div class="col-xs-12 col-sm-9 col-md-10">
@@ -135,16 +130,16 @@
                   <button ng-click="hideTop()" class="btn btn-default"><span class="glyphicon glyphicon-eye-close icongreen"></span> Hide Title</button>
               </div>
 
-              <div class="col-xs-12 col-sm-6" id="cash-wrap" ng-class="{'hidden' : gameModel.hideTop}">
-                  <p ng-show="!gameModel.workMode"><strong>Buy cannabis plants to grow weed. Hire dealers to sell the weed. Hire muscle to earn respect. Use respect to expand your territory or negotiate better prices.</strong></p>
-                  <div class="strong">
+              <div class="col-xs-12 col-sm-6" id="cash-wrap" >
+                  <p ng-show="!gameModel.workMode" ng-class="{'hidden' : gameModel.hideTop}"><strong>Buy cannabis plants to grow weed. Hire dealers to sell the weed. Hire muscle to earn respect. Use respect to expand your territory or negotiate better prices.</strong></p>
+                  <div class="strong" ng-class="{'hidden' : gameModel.hideTop}">
                       Current cash:
                       <span class="current-cash">{{gameModel.cash|money}}</span>
                       <span class="glyphicon" ng-class="cashPerSecond > 0 ? 'glyphicon-arrow-up production-header' : 'glypicon-arrow-down muscle-header'"></span>
                       <span ng-class="cashPerSecond > 0 ? 'production-header' : 'muscle-header'">{{cashPerSecond|money}} / sec</span>
                   </div>
-                  <p class="strong">Total earned {{gameModel.totalCashEarned|money}}</p>
-                  <p class="strong">
+                  <p class="strong" ng-class="{'hidden' : gameModel.hideTop}">Total earned {{gameModel.totalCashEarned|money}}</p>
+                  <p class="strong" ng-class="{'hidden' : gameModel.hideTop}">
                       Current respect: <span class="current-cash">{{gameModel.respect|respect}}</span>
                       <span class="glyphicon glyphicon-arrow-up muscle-header" ng-show="gameModel.respectPerSecond > 0"></span>
                       <span class="muscle-header" ng-show="gameModel.respectPerSecond > 0">{{gameModel.respectPerSecond|respect}} / sec</span>
@@ -184,8 +179,9 @@
                     <progressbar animate="false" value="cashPercentage(upgrade.price * discountMulti())" ng-class="gameModel.cash < upgrade.price * discountMulti() ? 'active progress-striped' : 'progress-bar-success'"></progressbar>
                     <div class="clearfix"></div>
                 </div>
-
-                <div ng-repeat="drug in gameModel.drugs track by $index" class="drug-anim">
+                <div class="row">
+                <div class="col-xs-12 col-lg-6" ng-repeat="drug in gameModel.drugs track by $index">
+                <div  class="drug-anim">
 
                     <div class="drug" ng-click="selectDrug(drug)" ng-class="{'open' : drug.selected}">
                         <span class="glyphicon glyphicon-warning-sign pull-left" ng-show="drugSoldPerSecond(drug) >= drugMadePerSecond(drug)" style="font-size:18px;margin-right:-10px;"></span>
@@ -239,10 +235,12 @@
                         </div>
                     </div>
                 </div>
+              </div></div>
+
             </div>
 
 
-            <div class="col-xs-12 col-sm-4 distribution col-pad-5" ng-class="{'hidden-xs':currentTab != 'distribution'}">
+            <div class="col-xs-12 col-sm-4 col-lg-5 distribution col-pad-5" ng-class="{'hidden-xs':currentTab != 'distribution'}">
                 <h3 class="strong distribution-header">Distribution</h3>
 
                 <div ng-repeat="upgrade in dealerResearch | orderBy:'price'" class="mb-10 research-anim">
@@ -275,72 +273,77 @@
                         <li><a href="#" ng-click="dealerSort = 'originalPrice';dealerSortReverse = true;">Margin <span class="glyphicon glyphicon-ok" ng-show="dealerSort == 'originalPrice'"></span></a></li>
                     </ul>
                 </div>
+                <div class="row dealer-row">
+                <div class="col-xs-12 col-lg-6 dealer-element" ng-repeat="dealer in gameModel.dealers | orderBy:dealerSort:dealerSortReverse track by $index">
+                  <div class="dealer-ui dealer-anim" >
+                      <div class="dealer" ng-class="{'open':dealer.selected}" ng-click="selectDealer(dealer)">
+                          <span class="glyphicon glyphicon-exclamation-sign" ng-show="dealer.arrested"></span>
+                          <span class="glyphicon glyphicon-tower pull-left" ng-show="dealer.type == 'Prestige'" style="font-size:18px;margin-right:-10px;"></span>
+                          <strong>{{dealer.name}} ({{dealer.drug}})</strong><span class="glyphicon" ng-class="dealer.selected ? 'glyphicon-chevron-up' : 'glyphicon-chevron-down'"></span>
+                      </div>
+                      <div class="dealer-content row" ng-class="{'content-open':dealer.selected}">
 
-                <div class="dealer-ui dealer-anim" ng-repeat="dealer in gameModel.dealers | orderBy:dealerSort:dealerSortReverse track by $index">
-                    <div class="dealer" ng-class="{'open':dealer.selected}" ng-click="selectDealer(dealer)">
-                        <span class="glyphicon glyphicon-exclamation-sign" ng-show="dealer.arrested"></span>
-                        <span class="glyphicon glyphicon-tower pull-left" ng-show="dealer.type == 'Prestige'" style="font-size:18px;margin-right:-10px;"></span>
-                        <strong>{{dealer.name}} ({{dealer.drug}})</strong><span class="glyphicon" ng-class="dealer.selected ? 'glyphicon-chevron-up' : 'glyphicon-chevron-down'"></span>
-                    </div>
-                    <div class="dealer-content row" ng-class="{'content-open':dealer.selected}">
+                          <span class="col-xs-12 mt-10" ng-show="dealer.level >= 10"><button class="btn btn-default" ng-click="createKingpin(dealer)"><span class="glyphicon glyphicon-tower icongreen"></span>Promote to Kingpin</button></span>
+                          <p ng-show="dealer.type == 'Prestige' && dealer.level < 10" class="col-xs-12" style="padding-left:21px;text-align:center;"><span class="strong">Level {{dealer.level}}</span> - {{dealer.currentXp.toFixed(2)}}% to level {{dealer.level + 1}}</p>
+                          <p ng-show="dealer.type == 'Prestige' && !dealer.arrested" class="col-xs-12 strong" style="padding-left:21px;text-align:center;">Increases all respect earned by {{100 + dealer.level * 50}}%</p>
 
-                        <span class="col-xs-12 mt-10" ng-show="dealer.level >= 10"><button class="btn btn-default" ng-click="createKingpin(dealer)"><span class="glyphicon glyphicon-tower icongreen"></span>Promote to Kingpin</button></span>
-                        <p ng-show="dealer.type == 'Prestige' && dealer.level < 10" class="col-xs-12" style="padding-left:21px;text-align:center;"><span class="strong">Level {{dealer.level}}</span> - {{dealer.currentXp.toFixed(2)}}% to level {{dealer.level + 1}}</p>
-                        <p ng-show="dealer.type == 'Prestige' && !dealer.arrested" class="col-xs-12 strong" style="padding-left:21px;text-align:center;">Increases all respect earned by {{100 + dealer.level * 50}}%</p>
+                          <div class="alert alert-danger ml-10 mr-10 mb-10 text-center" role="alert" ng-show="dealer.arrested" style="clear:both;">ARRESTED</div>
+                          <span class="col-xs-12 mb-5" ng-show="dealer.arrested"><button class="btn btn-default" ng-click="payBail(dealer)" ng-disabled="gameModel.cash < dealer.bail"><span class="glyphicon glyphicon-usd icongreen"></span>Pay Bail <b>{{dealer.bail | money}}</b></button></span>
 
-                        <div class="alert alert-danger ml-10 mr-10 mb-10 text-center" role="alert" ng-show="dealer.arrested" style="clear:both;">ARRESTED</div>
-                        <span class="col-xs-12 mb-5" ng-show="dealer.arrested"><button class="btn btn-default" ng-click="payBail(dealer)" ng-disabled="gameModel.cash < dealer.bail"><span class="glyphicon glyphicon-usd icongreen"></span>Pay Bail <b>{{dealer.bail | money}}</b></button></span>
+                          <div class="col-xs-12" style="margin-bottom:10px;" ng-hide="dealer.arrested">
+                              <div class="btn-group" style="width:100%" role="group">
+                                  <button class="btn btn-default" style="width:85%;margin-bottom:0;" ng-click="dealer.payCops = !dealer.payCops;">
+                                      Pay off the cops (<strong>{{dealer.payCops ? "On" : "Off"}}</strong>)
+                                  </button>
+                                  <button class="btn btn-default text-center pl-0 pr-0" style="width:15%;margin-bottom:0;" onclick="toggleTooltip(this);">
+                                      <span class="glyphicon icongreen glyphicon-info-sign" style="width:100%;"></span>
+                                  </button>
+                              </div>
+                              <div style="display:none;"><p class="jg-tooltip">Give the cops 10% of {{dealer.name}}'s income in order to keep them off their back. Reduces earnings, but they wont get arrested.</p></div>
+                          </div>
 
-                        <div class="col-xs-12" style="margin-bottom:10px;" ng-hide="dealer.arrested">
-                            <div class="btn-group" style="width:100%" role="group">
-                                <button class="btn btn-default" style="width:85%;margin-bottom:0;" ng-click="dealer.payCops = !dealer.payCops;">
-                                    Pay off the cops (<strong>{{dealer.payCops ? "On" : "Off"}}</strong>)
-                                </button>
-                                <button class="btn btn-default text-center pl-0 pr-0" style="width:15%;margin-bottom:0;" onclick="toggleTooltip(this);">
-                                    <span class="glyphicon icongreen glyphicon-info-sign" style="width:100%;"></span>
-                                </button>
-                            </div>
-                            <div style="display:none;"><p class="jg-tooltip">Give the cops 10% of {{dealer.name}}'s income in order to keep them off their back. Reduces earnings, but they wont get arrested.</p></div>
-                        </div>
+                          <p class="col-xs-6" style="padding-left:21px;padding-right:0;">Total: <strong>{{dealer.cashEarned|money}}</strong></p>
 
-                        <p class="col-xs-6" style="padding-left:21px;padding-right:0;">Total: <strong>{{dealer.cashEarned|money}}</strong></p>
+                          <p class="col-xs-6"><strong>{{dealer.cashPerSecond|money}} / sec</strong></p>
+                          <div class="clearfix"></div>
 
-                        <p class="col-xs-6"><strong>{{dealer.cashPerSecond|money}} / sec</strong></p>
-                        <div class="clearfix"></div>
+                          <p class="col-xs-5 col-sm-4" style="padding-left:21px;">Selling:</p>
+                          <span class="col-xs-7 col-sm-8">
+                              <select class="form-control" ng-model="dealer.drug" ng-change="updateDealerDrugIndex()" tooltip="Select which drug you want this dealer to sell">
+                                  <option ng-repeat="drug in gameModel.drugs track by $index">{{drug.name}}</option>
+                              </select>
+                          </span>
+                          <div class="col-xs-12"><span class="jg-tooltip-btn strong" onclick="toggleTooltip(this)">Volume: <span class="volume iconyellow" ng-bind-html="getStars(dealer.originalVolume,5)"></span> <span class="pl-10 glyphicon glyphicon-info-sign"></span></span></div>
+                          <div class="col-xs-12 mb-5" style="display:none;">
+                              <p class="jg-tooltip left-tip">{{dealer.name.split(' ')[0]}} can sell up to {{actualDealerVolume(dealer,dealer.drug)|weight}} of {{dealer.drug}} per second, as well as {{dealer.sideVolume * actualDealerVolume(dealer,dealer.drug)|weight}} of other drugs</p>
+                          </div>
 
-                        <p class="col-xs-5 col-sm-4" style="padding-left:21px;">Selling:</p>
-                        <span class="col-xs-7 col-sm-8">
-                            <select class="form-control" ng-model="dealer.drug" ng-change="updateDealerDrugIndex()" tooltip="Select which drug you want this dealer to sell">
-                                <option ng-repeat="drug in gameModel.drugs track by $index">{{drug.name}}</option>
-                            </select>
-                        </span>
-                        <div class="col-xs-12"><span class="jg-tooltip-btn strong" onclick="toggleTooltip(this)">Volume: <span class="volume iconyellow" ng-bind-html="getStars(dealer.originalVolume,5)"></span> <span class="pl-10 glyphicon glyphicon-info-sign"></span></span></div>
-                        <div class="col-xs-12 mb-5" style="display:none;">
-                            <p class="jg-tooltip left-tip">{{dealer.name.split(' ')[0]}} can sell up to {{actualDealerVolume(dealer,dealer.drug)|weight}} of {{dealer.drug}} per second, as well as {{dealer.sideVolume * actualDealerVolume(dealer,dealer.drug)|weight}} of other drugs</p>
-                        </div>
+                          <div class="col-xs-12 mt-10"><span class="jg-tooltip-btn strong" onclick="toggleTooltip(this)">Margin: <span class="price iconyellow" ng-bind-html="getStars(dealer.originalPrice,5)"></span> <span class="pl-10 glyphicon glyphicon-info-sign"></span></span></div>
+                          <div class="col-xs-12" style="display:none;">
+                              <p class="jg-tooltip left-tip">{{dealer.name.split(' ')[0]}} sells 1g of {{dealer.drug}} for {{actualDealerPrice(dealer)|money}}</p>
+                          </div>
 
-                        <div class="col-xs-12 mt-10"><span class="jg-tooltip-btn strong" onclick="toggleTooltip(this)">Margin: <span class="price iconyellow" ng-bind-html="getStars(dealer.originalPrice,5)"></span> <span class="pl-10 glyphicon glyphicon-info-sign"></span></span></div>
-                        <div class="col-xs-12" style="display:none;">
-                            <p class="jg-tooltip left-tip">{{dealer.name.split(' ')[0]}} sells 1g of {{dealer.drug}} for {{actualDealerPrice(dealer)|money}}</p>
-                        </div>
+                          <span class="col-xs-12 mt-10"><button class="btn btn-default" ng-click="dealerUpgradeModal(dealer)">
+                            <span class="glyphicon glyphicon-shopping-cart" ng-class="areDealerUpgradesAvailable(dealer) ? 'icongreen' : 'iconred'"></span>Buy Equipment</button>
+                          </span>
 
-                        <span class="col-xs-12 mt-10"><button class="btn btn-default" ng-click="dealerUpgradeModal(dealer)"><span class="glyphicon glyphicon-shopping-cart icongreen"></span>Buy Equipment</button></span>
+                          <div ng-repeat="upgrade in dealer.upgrades | orderBy:'price' track by $index">
+                              <div class="col-xs-12 mb-5 pr-0">
+                                  <span class="strong col-xs-6 pr-0" style="padding-left:6px;">{{upgrade.name}}</span>
+                                  <span class="col-xs-6 pl-0 pr-0">{{upgrade.synopsis}}</span>
+                              </div>
+                          </div>
 
-                        <div ng-repeat="upgrade in dealer.upgrades | orderBy:'price' track by $index">
-                            <div class="col-xs-12 mb-5 pr-0">
-                                <span class="strong col-xs-6 pr-0" style="padding-left:6px;">{{upgrade.name}}</span>
-                                <span class="col-xs-6 pl-0 pr-0">{{upgrade.synopsis}}</span>
-                            </div>
-                        </div>
-
-                        <div class="col-xs-12">
-                            <button class="btn btn-default" ng-click="fireDealerModal(dealer)"><span class="glyphicon iconred glyphicon-user"></span>Fire {{dealer.name.split(' ')[0]}}</button>
-                        </div>
-                    </div>
+                          <div class="col-xs-12">
+                              <button class="btn btn-default" ng-click="fireDealerModal(dealer)"><span class="glyphicon iconred glyphicon-user"></span>Fire {{dealer.name.split(' ')[0]}}</button>
+                          </div>
+                      </div>
+                  </div>
+                  </div>
                 </div>
-            </div>
+              </div>
 
-            <div class="col-xs-12 col-sm-4 muscle-column col-pad-5" ng-class="{'hidden-xs':currentTab != 'muscle'}">
+            <div class="col-xs-12 col-sm-4 col-lg-3 muscle-column col-pad-5" ng-class="{'hidden-xs':currentTab != 'muscle'}">
                 <h3 class="strong muscle-header">Muscle</h3>
 
                 <div class="btn-group" role="group" style="width:100%;">
@@ -391,12 +394,6 @@
             <button ng-click="hideTop()" class="btn btn-default"><span class="glyphicon glyphicon-eye-open icongreen"></span> Show Title</button>
           </div>
         </div>
-
-        <div class="col-xs-12 bottom-links">
-                <a href="https://github.com/jamesmgittins/dopeslingertycoon">github</a>
-                <a href="http://www.reddit.com/r/dopeslinger">/r/dopeslinger</a>
-                <a href="http://www.reddit.com/r/incremental_games">/r/incremental_games</a>
-            </div>
 
         <div class="modal fade" id="prestigeDealerModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
             <div class="modal-dialog">
@@ -521,11 +518,17 @@
                         <div class="col-xs-12 col-sm-6" tooltip="Toggle automatic selling of drugs on the silk road">
                             <button ng-click="toggleAutoSilk()" class="btn btn-default"><span class="glyphicon glyphicon-cloud icongreen"></span> Auto silk road sell {{options.autoSilk ? '(on)' : '(off)'}}</button>
                         </div>
-                        <div class="col-xs-12 col-sm-6" tooltip="Export or Import game save">
+                        <!-- <div class="col-xs-12 col-sm-6" tooltip="Export or Import game save">
                             <button ng-click="exportGame()" class="btn btn-default"><span class="glyphicon glyphicon-floppy-disk icongreen"></span> Export/Import game save</button>
-                        </div>
+                        </div> -->
                         <div class="col-xs-12 col-sm-6" tooltip="Hide the title section">
                             <button ng-click="hideTop()" class="btn btn-default"><span class="glyphicon glyphicon-eye-close icongreen"></span> Hide/Show Title</button>
+                        </div>
+                        <div class="col-xs-12 col-sm-6" tooltip="Toggle automatic selling of drugs on the silk road">
+                            <button onclick="kongregate.services.resizeGame(1600, 1080);" class="btn btn-default"><span class="glyphicon glyphicon-zoom-in icongreen"></span> Larger window</button>
+                        </div>
+                        <div class="col-xs-12 col-sm-6" tooltip="Toggle automatic selling of drugs on the silk road">
+                            <button onclick="kongregate.services.resizeGame(1199, 700);" class="btn btn-default"><span class="glyphicon glyphicon-zoom-out icongreen"></span> Smaller window</button>
                         </div>
                         <div class="col-xs-12" ng-show="kingpins.length > 0" style="margin-top:25px;">
                             <p class="strong">The names of your Kingpins</p>
@@ -587,6 +590,24 @@
                             <button ng-click="cancelKingpin()" class="btn btn-default btn-distribution" type="button">
                                 <span class="glyphicon iconred glyphicon-user"></span> Cancel
                             </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="offlineModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-sm">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                        <h4 class="modal-title" id="myModalLabel">Business Report</h4>
+                    </div>
+                    <div class="modal-body row">
+                        <div class="col-xs-12 pb-10">
+                          <p>Boss, we've been taking care of business while you were away. Just like you asked.</p>
+                          <p>You've earned <span class="strong">{{offlineCash|money}}</span></p>
+                          <p>And <span class="strong">{{offlineRespect|respect}} Respect</span>.</p>
                         </div>
                     </div>
                 </div>
