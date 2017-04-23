@@ -43,7 +43,7 @@ body.night-mode .modal-content {
 
   body.night-mode div.drug.open, 
   body.night-mode div.dealer.open {
-    color: #eee;
+    color: #eee !important;
   }
 
   body.night-mode .close {
