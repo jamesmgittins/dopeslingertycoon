@@ -41,7 +41,7 @@ body.night-mode .modal-content {
     border-color: #262626;
   }
 
-  body.night-mode div.drug.open, 
+  body.night-mode div.drug.open,
   body.night-mode div.dealer.open {
     color: #eee !important;
   }
@@ -97,9 +97,9 @@ body.night-mode .modal-content {
     color: #eee;
   }
 
-  .input-group-addon {
+  body.night-mode .input-group-addon {
     color: #eee;
-    background-color: #262626; 
+    background-color: #262626;
     border-color: #333333;
   }
 

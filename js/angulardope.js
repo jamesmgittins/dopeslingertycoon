@@ -21,7 +21,7 @@ var treeUpgradeWeedMulti = 1.2;
 var territoryUpgradePriceMulti = 5.2;
 var territoryUpgradeBasePrice = 500;
 
-var discountUpgradePriceMulti = 4.8;
+var discountUpgradePriceMulti = 3.8;
 var discountUpgradeBasePrice = 1000;
 
 function DealerUpgrade(name, tooltip, price, volumeMod, priceMod, secondaryMod, synopsis) {
@@ -386,14 +386,15 @@ var drugsMaster = [
           return;
         }
         if (!dealer.level)
-        dealer.level = 0;
-        var subtract = dealer.level > 0 ? 500000 * Math.pow(1.8, dealer.level -1) : 0;
-        dealer.currentXp = (dealer.cashEarned - subtract) / ((500000 * Math.pow(1.8,dealer.level)-subtract)) * 100;
+          dealer.level = 0;
+        var subtract = dealer.level > 0 ? 500000 * Math.pow(1.9, dealer.level -1) : 0;
+        dealer.currentXp = (dealer.cashEarned - subtract) / ((500000 * Math.pow(1.9,dealer.level)-subtract)) * 100;
         if (dealer.currentXp >= 100 && dealer.level < 10) {
           dealer.currentXp = 0;
           dealer.level++;
           $scope.levelUpMsg = dealer.name + " has earned enough experience to reach level " + dealer.level + "!";
           $scope.levelUpMsgExpires = new Date().getTime() + 20000;
+          $timeout(fixTopPadding,10);
         }
 
       };
@@ -511,26 +512,26 @@ var drugsMaster = [
           var drugUnlocked = false;
 
           if ($scope.getDrugByName(drugsMaster[i].name) !== null)
-          drugUnlocked = true;
+            drugUnlocked = true;
 
-          if (!drugUnlocked && (i > 0 && $scope.getDrugByName(drugsMaster[i - 1].name) !== null) && $scope.gameModel.totalCashEarned > (drugsMaster[i].costToUnlock * 0.8)) {
+          if (!drugUnlocked && (i > 0 && $scope.getDrugByName(drugsMaster[i - 1].name) !== null) && ($scope.gameModel.totalCashEarned > (drugsMaster[i].costToUnlock * 0.8) || $scope.kingpins.length > 0)) {
             $scope.drugResearch.push(drugsMaster[i].drugUnlock);
           }
         }
         for (i = 0; i < productionUpgradesMaster.length; i++) {
 
-          if (!$scope.upgradeUnlocked(productionUpgradesMaster[i]) && $scope.getDrugByName(productionUpgradesMaster[i].drug) !== null && $scope.gameModel.totalCashEarned > (productionUpgradesMaster[i].price * 1) && $scope.otherUpgradesForThisDrugUnlocked(productionUpgradesMaster[i])) {
+          if (!$scope.upgradeUnlocked(productionUpgradesMaster[i]) && $scope.getDrugByName(productionUpgradesMaster[i].drug) !== null && ($scope.gameModel.totalCashEarned > (productionUpgradesMaster[i].price * 1) || $scope.kingpins.length > 0) && $scope.otherUpgradesForThisDrugUnlocked(productionUpgradesMaster[i])) {
             $scope.availableUpgrades.push(productionUpgradesMaster[i]);
           }
         }
-        if ($scope.gameModel.totalCashEarned > (silkRoadUpgrade.price * 1.5) && !$scope.gameModel.silkRoadUnlocked)
+        if (($scope.gameModel.totalCashEarned > (silkRoadUpgrade.price * 1.5) || $scope.kingpins.length > 0) && !$scope.gameModel.silkRoadUnlocked)
         $scope.dealerResearch.push(silkRoadUpgrade);
 
-        if ($scope.gameModel.totalCashEarned > (prestigeDealerUpgrade.price * 1.5))
-        $scope.dealerResearch.push(prestigeDealerUpgrade);
+        if ($scope.gameModel.totalCashEarned > (prestigeDealerUpgrade.price * 1.5) || $scope.kingpins.length > 0)
+          $scope.dealerResearch.push(prestigeDealerUpgrade);
 
         for (var i = 0; i < muscleMaster.length; i++) {
-          if ($scope.gameModel.totalCashEarned > muscleMaster[i].price * 2 && $scope.gameModel.muscle && $scope.gameModel.muscle.length <= i) {
+          if (($scope.gameModel.totalCashEarned > muscleMaster[i].price * 2 || $scope.kingpins.length > 0) && $scope.gameModel.muscle && $scope.gameModel.muscle.length <= i) {
             $scope.gameModel.muscle.push(muscleMaster[i]);
           }
         }
@@ -762,7 +763,7 @@ var drugsMaster = [
 
           if (dealer.type == 'Prestige') dealerUpgrades[i].realPrice = dealerUpgrades[i].price * 4 * $scope.discountMulti();
 
-          if (!alreadyBought && $scope.gameModel.totalCashEarned > dealerUpgrades[i].price - 2000)
+          if (!alreadyBought && ($scope.gameModel.totalCashEarned > dealerUpgrades[i].price - 2000 || $scope.kingpins.length > 0))
           $scope.availableDealerUpgrades.push(dealerUpgrades[i]);
         }
       };
@@ -884,23 +885,26 @@ var drugsMaster = [
       function innerUpdate(timeDiff, updateTime) {
         var cashEarned = 0;
         var respectEarned = 0;
+        var messagesHaveChanged = false;
 
         var dealers = $scope.gameModel.dealers.concat().sort(function(a,b){return b.price - a.price;});
 
         if ($scope.levelUpMsg && $scope.levelUpMsgExpires <= updateTime) {
           $scope.levelUpMsg = undefined;
+          messagesHaveChanged = true;
         }
 
         if ($scope.gameModel.buff && $scope.gameModel.buff.expires <= updateTime) {
           $scope.gameModel.buff = undefined;
           $scope.buffMsg = undefined;
+          messagesHaveChanged = true;
         }
 
         if ($scope.gameModel.lastDealerRefresh)
-        $scope.secondsToDealerRefresh = (($scope.gameModel.lastDealerRefresh + $scope.dealerRefreshRate() - updateTime) / 1000).toFixed();
+          $scope.secondsToDealerRefresh = (($scope.gameModel.lastDealerRefresh + $scope.dealerRefreshRate() - updateTime) / 1000).toFixed();
 
         if ($scope.gameModel.buff)
-        $scope.buffMsg = $scope.gameModel.buff.msg.format((($scope.gameModel.buff.expires - updateTime) / 1000).toFixed());
+          $scope.buffMsg = $scope.gameModel.buff.msg.format((($scope.gameModel.buff.expires - updateTime) / 1000).toFixed());
 
         for (var i = 0; i < $scope.gameModel.drugs.length; i++) {
           var drug = $scope.gameModel.drugs[i];
@@ -976,6 +980,7 @@ var drugsMaster = [
               dealerToArrest.arrested = true;
               dealerToArrest.bail = bailValue;
               dealerToArrest.arrestMessage = dealerToArrest.name + ' has been arrested by the cops! Bail has been set at ' + formatMoney(bailValue) + '.';
+              messagesHaveChanged = true;
             }
           }
           if (Math.random() > 0.9 && !$scope.gameModel.buff) {
@@ -988,16 +993,17 @@ var drugsMaster = [
               expires: new Date().getTime() + (time * 1000),
               msg: "One of your rivals has been busted by the cops. The lack of competition is causing " + buffDrug.name + " to sell for " + (percentage * 100).toFixed() + "% of the normal street price for the next {0} seconds!" };
             }
-            writeToCookie();
-            lastSaved = updateTime;
-            $scope.calculateAvailableUpgrades();
-
+            messagesHaveChanged = true;
+          }
+          $scope.calculateAvailableUpgrades();
+          writeToCookie();
+          lastSaved = updateTime;
+          if (messagesHaveChanged) {
+            $timeout(fixTopPadding,10);
           }
         }
 
-        $document.ready(function () {
-          scrollMenu();
-          readFromCookie();
+        function onReady() {
 
           for (var i=0; i < $scope.prestigeDealers.length; i++) {
             for (var j=0; j < $scope.gameModel.dealers.length; j++) {
@@ -1037,8 +1043,18 @@ var drugsMaster = [
 
           $scope.calculateAvailableUpgrades();
           $scope.updateDealerDrugIndex();
-          prestigeDealerUpgrade.price = 5000000 * Math.pow(1.4, $scope.prestigeDealers.length);
-          $interval(update, 200);
+          prestigeDealerUpgrade.price = 5000000 * Math.pow(1.15, $scope.prestigeDealers.length + $scope.kingpins.length);
+          $scope.updatePromise = $interval(update, 200);
+        }
+
+        $document.ready(function () {
+          scrollMenu();
+          readFromCookie();
+
+          onReady();
+          if ($scope.gameModel.kongregateLargeWindow) {
+            kongResize = true;
+          }
         });
 
         $scope.randomPrestigeName = function() {
@@ -1046,7 +1062,7 @@ var drugsMaster = [
         };
 
         $scope.prestigeDealerConfirm = function() {
-          if ($scope.gameModel.cash >= prestigeDealerUpgrade.price && !$scope.prestiged) {
+          if ($scope.gameModel.cash >= prestigeDealerUpgrade.price * $scope.discountMulti() && !$scope.prestiged) {
             $scope.prestiged = true;
             var prestigeDealer = new Dealer(new Date().getTime());
             prestigeDealer.name = $scope.prestigeDealerName;
@@ -1064,7 +1080,11 @@ var drugsMaster = [
             }
             localStorage.removeItem('gameModel');
             localStorage.setItem("prestigeDealers", JSON.stringify($scope.prestigeDealers));
-            window.location.reload();
+            $scope.gameModel = new GameModel();
+            $interval.cancel($scope.updatePromise);
+            $scope.prestigeDealerName = "";
+            onReady();
+            $scope.refreshDealers();
           }
           $('#prestigeDealerModal').modal('hide');
         };
@@ -1074,38 +1094,40 @@ var drugsMaster = [
         };
 
         $scope.exportGame = function() {
-          $scope.exportGameSave = JSON.stringify(
-            {gameModel : $scope.gameModel,
+          $scope.exportGameSave = LZString.compressToEncodedURIComponent(JSON.stringify(
+            {
+              gameModel : $scope.gameModel,
               prestigeDealers : $scope.prestigeDealers,
               kingpins : $scope.kingpins,
-              options : $scope.options}
-            );
-            $scope.importError = undefined;
-            $("#optionsModal").modal('hide');
-            $("#exportModal").modal('show');
-          };
-
-          $scope.importGame = function() {
-            if (typeof $scope.importGameSave == 'undefined' || $scope.importGameSave.length < 1) {
-              $scope.importError = "No game save entered";
-              return;
+              options : $scope.options
             }
-            try {
-              var gameSave = JSON.parse($scope.importGameSave);
+          ));
+          $scope.importError = undefined;
+          $("#optionsModal").modal('hide');
+          $("#exportModal").modal('show');
+        };
 
-              $scope.gameModel = gameSave.gameModel;
-              $scope.prestigeDealers = gameSave.prestigeDealers;
-              $scope.kingpins = gameSave.kingpins;
-              $scope.options = gameSave.options;
+        $scope.importGame = function() {
+          if (typeof $scope.importGameSave == 'undefined' || $scope.importGameSave.length < 1) {
+            $scope.importError = "No game save entered";
+            return;
+          }
+          try {
+            var gameSave = JSON.parse(LZString.decompressFromEncodedURIComponent($scope.importGameSave));
 
-              $("#exportModal").modal('hide');
+            $scope.gameModel = gameSave.gameModel;
+            $scope.prestigeDealers = gameSave.prestigeDealers;
+            $scope.kingpins = gameSave.kingpins;
+            $scope.options = gameSave.options;
 
-              $scope.importGameSave = "";
-              $scope.exportGameSave = "";
+            $("#exportModal").modal('hide');
 
-            } catch (err) {
-              $scope.importError = "Game save could not be parsed";
-            }
-          };
+            $scope.importGameSave = "";
+            $scope.exportGameSave = "";
 
-        }]);
+          } catch (err) {
+            $scope.importError = "Game save could not be parsed";
+          }
+        };
+
+      }]);

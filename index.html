@@ -16,6 +16,7 @@
     <link rel="stylesheet" href="css/night-mode.css">
     <script src='https://cdn1.kongregate.com/javascripts/kongregate_api.js'></script>
     <script src="js/jquery.min.js"></script>
+    <script src="js/lz-string.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
     <script src="js/angular.min.js"></script>
     <script src="js/angular-sanitize.min.js"></script>
@@ -87,11 +88,16 @@
       window.location.reload();
     };
 
+    var kongResize = false;
+
     kongregateAPI.loadAPI(function(){
       window.kongregate = kongregateAPI.getAPI();
       // You can now access the Kongregate API with:
       // kongregate.services.getUsername(), etc
       // Proceed with loading your game...
+      if (kongResize) {
+        kongregate.services.resizeGame(1600, 1080);
+      }
     });
     </script>
 </head>
@@ -248,15 +254,15 @@
 
                 <div ng-repeat="upgrade in dealerResearch | orderBy:'price'" class="mb-10 research-anim">
                     <div class="btn-group" style="width:100%;" role="group">
-                        <button ng-click="purchaseUpgrade(upgrade)" style="width:85%;" class="btn btn-default btn-distribution" ng-disabled="gameModel.cash < upgrade.price" type="button">
-                            <span class="glyphicon icongreen" ng-class="upgrade.glyph"></span> {{upgrade.name}} (<strong>{{upgrade.price|money}}</strong>)
+                        <button ng-click="purchaseUpgrade(upgrade)" style="width:85%;" class="btn btn-default btn-distribution" ng-disabled="gameModel.cash < upgrade.price * discountMulti()" type="button">
+                            <span class="glyphicon icongreen" ng-class="upgrade.glyph"></span> {{upgrade.name}} (<strong>{{upgrade.price * discountMulti()|money}}</strong>)
                         </button>
                         <button class="btn btn-default btn-distribution text-center pl-0 pr-0" style="width:15%;" onclick="toggleTooltip(this);">
                             <span class="glyphicon icongreen glyphicon-info-sign" style="width:100%;"></span>
                         </button>
                     </div>
                     <div style="display:none"><p class="jg-tooltip">{{upgrade.tooltip}}</p></div>
-                    <progressbar animate="false" value="cashPercentage(upgrade.price)" ng-class="gameModel.cash < upgrade.price ? 'active progress-striped' : 'progress-bar-success'"></progressbar>
+                    <progressbar animate="false" value="cashPercentage(upgrade.price * discountMulti())" ng-class="gameModel.cash < upgrade.price * discountMulti() ? 'active progress-striped' : 'progress-bar-success'"></progressbar>
                     <div class="clearfix"></div>
                 </div>
 
