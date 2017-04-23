@@ -16,6 +16,7 @@
     <link rel="stylesheet" href="css/night-mode.css">
     <script src='https://cdn1.kongregate.com/javascripts/kongregate_api.js'></script>
     <script src="js/jquery.min.js"></script>
+    <script src="js/lz-string.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
     <script src="js/angular.min.js"></script>
     <script src="js/angular-sanitize.min.js"></script>
@@ -87,11 +88,16 @@
       window.location.reload();
     };
 
+    var kongResize = false;
+
     kongregateAPI.loadAPI(function(){
       window.kongregate = kongregateAPI.getAPI();
       // You can now access the Kongregate API with:
       // kongregate.services.getUsername(), etc
       // Proceed with loading your game...
+      if (kongResize) {
+        kongregate.services.resizeGame(1600, 1080);
+      }
     });
     </script>
 </head>
@@ -248,15 +254,15 @@
 
                 <div ng-repeat="upgrade in dealerResearch | orderBy:'price'" class="mb-10 research-anim">
                     <div class="btn-group" style="width:100%;" role="group">
-                        <button ng-click="purchaseUpgrade(upgrade)" style="width:85%;" class="btn btn-default btn-distribution" ng-disabled="gameModel.cash < upgrade.price" type="button">
-                            <span class="glyphicon icongreen" ng-class="upgrade.glyph"></span> {{upgrade.name}} (<strong>{{upgrade.price|money}}</strong>)
+                        <button ng-click="purchaseUpgrade(upgrade)" style="width:85%;" class="btn btn-default btn-distribution" ng-disabled="gameModel.cash < upgrade.price * discountMulti()" type="button">
+                            <span class="glyphicon icongreen" ng-class="upgrade.glyph"></span> {{upgrade.name}} (<strong>{{upgrade.price * discountMulti()|money}}</strong>)
                         </button>
                         <button class="btn btn-default btn-distribution text-center pl-0 pr-0" style="width:15%;" onclick="toggleTooltip(this);">
                             <span class="glyphicon icongreen glyphicon-info-sign" style="width:100%;"></span>
                         </button>
                     </div>
                     <div style="display:none"><p class="jg-tooltip">{{upgrade.tooltip}}</p></div>
-                    <progressbar animate="false" value="cashPercentage(upgrade.price)" ng-class="gameModel.cash < upgrade.price ? 'active progress-striped' : 'progress-bar-success'"></progressbar>
+                    <progressbar animate="false" value="cashPercentage(upgrade.price * discountMulti())" ng-class="gameModel.cash < upgrade.price * discountMulti() ? 'active progress-striped' : 'progress-bar-success'"></progressbar>
                     <div class="clearfix"></div>
                 </div>
 
@@ -492,12 +498,14 @@
                         <p class="col-xs-12 col-sm-8 dealer-warning" ng-show="gameModel.dealers.length >= gameModel.territoryUpgrades + 1">You already have the maximum number of dealers working for you. Either fire a dealer or expand your territory to hire another.</p>
                         <div class="clearfix"></div>
                         <div class="col-xs-12 col-sm-4 dealer-hire-anim" ng-repeat="dealer in hireDealers track by $index" ng-animate="'list'">
+                          <div style="min-height:180px;">
                             <p class="dealer-name"><span class="glyphicon glyphicon-tower" ng-show="dealer.type == 'Prestige'"></span> <span class="distribution strong">{{dealer.name}}</span> <span class="strong" ng-show="dealer.type == 'Prestige'">({{dealer.level}})</span></p>
                             <p class="strong">Volume: <span class="volume iconyellow" ng-bind-html="getStars(dealer.originalVolume,5)"></span></p>
                             <p class="strong">Margin: <span class="price iconyellow" ng-bind-html="getStars(dealer.originalPrice,5)"></span></p>
                             <p>Sells {{actualDealerVolume(dealer,dealer.drug)|weight}} per second</p>
                             <p>Sells 1g of {{dealer.drug}} for {{actualDealerPrice(dealer)|money}}</p>
-                            <button class="btn btn-default btn-distribution" ng-click="hireDealer(dealer)" ng-disabled="gameModel.dealers.length >= gameModel.territoryUpgrades + 1 || dealerHired(dealer.seed)">{{dealerHired(dealer.seed) ? 'Hired' : 'Hire ' + dealer.name.split(' ')[0]}}</button>
+                          </div>
+                          <button class="btn btn-default btn-distribution" ng-click="hireDealer(dealer)" ng-disabled="gameModel.dealers.length >= gameModel.territoryUpgrades + 1 || dealerHired(dealer.seed)">{{dealerHired(dealer.seed) ? 'Hired' : 'Hire ' + dealer.name.split(' ')[0]}}</button>
                         </div>
                     </div>
                 </div>
