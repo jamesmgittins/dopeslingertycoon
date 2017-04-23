@@ -97,6 +97,12 @@ body.night-mode .modal-content {
     color: #eee;
   }
 
+  .input-group-addon {
+    color: #eee;
+    background-color: #262626; 
+    border-color: #333333;
+  }
+
   body.work-mode.night-mode .production,
   body.work-mode.night-mode .production-header,
   body.work-mode.night-mode .distribution,
