@@ -41,7 +41,7 @@ body.night-mode .modal-content {
     border-color: #262626;
   }
 
-  body.night-mode div.drug.open {
+  body.night-mode div.drug.open, body.night-mode div.dealer.open {
     color: #eee;
   }
 
