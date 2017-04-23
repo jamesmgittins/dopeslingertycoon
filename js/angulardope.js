@@ -994,6 +994,7 @@ var drugsMaster = [
 
         if (lastSaved < updateTime - 30000) {
           if (Math.random() > 0.96 && $scope.gameModel.totalCashEarned > 30000) {
+            console.log("Arresting a dealer");
             var dealerToArrest = $scope.gameModel.dealers[Math.floor(Math.random() * $scope.gameModel.dealers.length)];
             if (!dealerToArrest.arrested && !dealerToArrest.payCops) {
               var bailValue = dealerToArrest.cashPerSecond * 95;
@@ -1011,13 +1012,15 @@ var drugsMaster = [
               drugname: buffDrug.name,
               modifier: percentage,
               expires: new Date().getTime() + (time * 1000),
-              msg: "One of your rivals has been busted by the cops. The lack of competition is causing " + buffDrug.name + " to sell for " + (percentage * 100).toFixed() + "% of the normal street price for the next {0} seconds!" };
-            }
-            messagesHaveChanged = true;
+              msg: "One of your rivals has been busted by the cops. The lack of competition is causing " + buffDrug.name + " to sell for " + (percentage * 100).toFixed() + "% of the normal street price for the next {0} seconds!"
+            };
           }
+          messagesHaveChanged = true;
           $scope.calculateAvailableUpgrades();
           writeToCookie();
           lastSaved = updateTime;
+        }
+
           if (messagesHaveChanged) {
             $timeout(fixTopPadding,10);
           }
