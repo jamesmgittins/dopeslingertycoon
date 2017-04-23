@@ -271,7 +271,6 @@ var drugsMaster = [
       this.territoryUpgrades = 0;
       this.discountUpgrades = 0;
       this.workMode = false;
-      this.hideTop = false;
       this.lastDealerRefresh = 0;
       this.silkRoadUnlocked = false;
     }
@@ -364,15 +363,18 @@ var drugsMaster = [
       $scope.gameModel = new GameModel();
       $scope.prestigeDealers = [];
       $scope.kingpins = [];
-      $scope.options = {autoSilk:false};
+      $scope.options = {
+        autoSilk : false,
+        hideTop : false
+      };
       $scope.cashPerSecond = 0;
       $scope.prestiged = false;
       $scope.hireDealers = [];
-      $scope.toggleWorkMode = function () { $scope.gameModel.workMode = !$scope.gameModel.workMode;};
-      $scope.toggleNightMode = function () { $scope.gameModel.nightMode = !$scope.gameModel.nightMode;};
-      $scope.kongregateLargeWindow = function () { $scope.gameModel.kongregateLargeWindow = true;};
-      $scope.kongregateSmallWindow = function () { $scope.gameModel.kongregateLargeWindow = false;};
-      $scope.hideTop = function () { alwaysShowScroll = !alwaysShowScroll; $scope.gameModel.hideTop = !$scope.gameModel.hideTop; fadeTop();};
+      $scope.toggleWorkMode = function () { $scope.options.workMode = !$scope.options.workMode;};
+      $scope.toggleNightMode = function () { $scope.options.nightMode = !$scope.options.nightMode;};
+      $scope.kongregateLargeWindow = function () { $scope.options.kongregateLargeWindow = true;};
+      $scope.kongregateSmallWindow = function () { $scope.options.kongregateLargeWindow = false;};
+      $scope.hideTop = function () { alwaysShowScroll = !alwaysShowScroll; $scope.options.hideTop = !$scope.options.hideTop; fadeTop();};
       $scope.priceOfTerritory = function () { return territoryUpgradeBasePrice * Math.pow(territoryUpgradePriceMulti, $scope.gameModel.territoryUpgrades); };
       $scope.priceOfDiscount = function () { return discountUpgradeBasePrice * Math.pow(discountUpgradePriceMulti, $scope.gameModel.discountUpgrades); };
       $scope.cashPercentage = function (value) { return Math.min(100, $scope.gameModel.cash / value * 100); };
@@ -639,15 +641,21 @@ var drugsMaster = [
       };
 
       function readFromCookie() {
+
         if (typeof (Storage) == "undefined") {
           return;
         }
-        if (localStorage.getItem("gameModel") !== null) $scope.gameModel = JSON.parse(localStorage.getItem("gameModel"));
-        if (localStorage.getItem("prestigeDealers") !== null) $scope.prestigeDealers = JSON.parse(localStorage.getItem("prestigeDealers"));
-        if (localStorage.getItem("kingpins") !== null) $scope.kingpins = JSON.parse(localStorage.getItem("kingpins"));
-        if (localStorage.getItem("options") !== null) $scope.options = JSON.parse(localStorage.getItem("options"));
 
-        if ($scope.gameModel.hideTop) {
+        try {
+          if (localStorage.getItem("gameModel") !== null) $scope.gameModel = JSON.parse(localStorage.getItem("gameModel"));
+          if (localStorage.getItem("prestigeDealers") !== null) $scope.prestigeDealers = JSON.parse(localStorage.getItem("prestigeDealers"));
+          if (localStorage.getItem("kingpins") !== null) $scope.kingpins = JSON.parse(localStorage.getItem("kingpins"));
+          if (localStorage.getItem("options") !== null) $scope.options = JSON.parse(localStorage.getItem("options"));
+        } catch (e) {
+          console.log(e);
+        }
+
+        if ($scope.options.hideTop) {
           alwaysShowScroll = true;
           fadeTop();
         }
@@ -657,11 +665,18 @@ var drugsMaster = [
         if (typeof (Storage) == "undefined") {
           return;
         }
+
         $scope.gameModel.dateOfSave = Date.now();
-        localStorage.setItem("gameModel", JSON.stringify($scope.gameModel));
-        localStorage.setItem("prestigeDealers", JSON.stringify($scope.prestigeDealers));
-        localStorage.setItem("kingpins", JSON.stringify($scope.kingpins));
-        localStorage.setItem("options", JSON.stringify($scope.options));
+
+        try {
+          localStorage.setItem("gameModel", JSON.stringify($scope.gameModel));
+          localStorage.setItem("prestigeDealers", JSON.stringify($scope.prestigeDealers));
+          localStorage.setItem("kingpins", JSON.stringify($scope.kingpins));
+          localStorage.setItem("options", JSON.stringify($scope.options));
+        } catch (e) {
+
+        }
+
       }
 
       $scope.drugMadePerSecond = function(drug) {
@@ -682,7 +697,12 @@ var drugsMaster = [
       };
 
       $scope.resetGame = function () {
-        localStorage.removeItem('gameModel');
+        try {
+          localStorage.removeItem('gameModel');
+        } catch (e) {
+          console.log(e);
+        }
+
         window.location.reload();
       };
 
@@ -1045,6 +1065,7 @@ var drugsMaster = [
           $scope.updateDealerDrugIndex();
           prestigeDealerUpgrade.price = 5000000 * Math.pow(1.15, $scope.prestigeDealers.length + $scope.kingpins.length);
           $scope.updatePromise = $interval(update, 200);
+          $scope.prestiged = false;
         }
 
         $document.ready(function () {
@@ -1052,7 +1073,7 @@ var drugsMaster = [
           readFromCookie();
 
           onReady();
-          if ($scope.gameModel.kongregateLargeWindow) {
+          if ($scope.options.kongregateLargeWindow) {
             kongResize = true;
           }
         });
@@ -1078,8 +1099,14 @@ var drugsMaster = [
               $scope.prestigeDealers[i].arrested = false;
               $scope.prestigeDealers[i].drug = "Weed";
             }
-            localStorage.removeItem('gameModel');
-            localStorage.setItem("prestigeDealers", JSON.stringify($scope.prestigeDealers));
+
+            try {
+              localStorage.removeItem('gameModel');
+              localStorage.setItem("prestigeDealers", JSON.stringify($scope.prestigeDealers));
+            } catch (e) {
+              console.log(e);
+            }
+
             $scope.gameModel = new GameModel();
             $interval.cancel($scope.updatePromise);
             $scope.prestigeDealerName = "";

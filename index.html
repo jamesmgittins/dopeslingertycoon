@@ -101,7 +101,7 @@
     });
     </script>
 </head>
-<body ng-controller="DopeController" ng-class="{'work-mode' : gameModel.workMode, 'top-hidden' : gameModel.hideTop, 'night-mode' : gameModel.nightMode, 'kongregate' : gameModel.kongregateLargeWindow}" ng-animate-children>
+<body ng-controller="DopeController" ng-class="{'work-mode' : options.workMode, 'top-hidden' : options.hideTop, 'night-mode' : options.nightMode, 'kongregate' : options.kongregateLargeWindow}" ng-animate-children>
 
     <div class="cash-top" style="display:none;">
         <div class="container">
@@ -118,9 +118,9 @@
                     <span class="glyphicon glyphicon-arrow-up muscle-header" ng-show="gameModel.respectPerSecond > 0"></span>
                     <span class="muscle-header" ng-show="gameModel.respectPerSecond > 0">{{gameModel.respectPerSecond|respect}} / sec</span>
                 </div>
-                <p class="distribution strong col-xs-12 col-sm-6" ng-show="gameModel.buff && gameModel.hideTop">{{buffMsg}}</p>
-                <p class="distribution strong col-xs-12 col-sm-6" ng-show="levelUpMsg && gameModel.hideTop">{{levelUpMsg}}</p>
-                <p class="distribution strong col-xs-12 col-sm-6" ng-repeat="dealer in gameModel.dealers" ng-show="dealer.arrested && gameModel.hideTop">{{dealer.arrestMessage}}</p>
+                <p class="distribution strong col-xs-12 col-sm-6" ng-show="gameModel.buff && options.hideTop">{{buffMsg}}</p>
+                <p class="distribution strong col-xs-12 col-sm-6" ng-show="levelUpMsg && options.hideTop">{{levelUpMsg}}</p>
+                <p class="distribution strong col-xs-12 col-sm-6" ng-repeat="dealer in gameModel.dealers" ng-show="dealer.arrested && options.hideTop">{{dealer.arrestMessage}}</p>
             </div>
         </div>
     </div>
@@ -129,24 +129,24 @@
         <div class="row">
             <div>
               <div class="col-xs-12 col-sm-9 col-md-10">
-                  <h1 class="street" ng-class="{'hidden' : gameModel.workMode || gameModel.hideTop}"><span class="production-header">Dope</span> <span class="distribution-header">slinger</span> <span class="muscle-header">tycoon</span></h1>
+                  <h1 class="street" ng-class="{'hidden' : options.workMode || options.hideTop}"><span class="production-header">Dope</span> <span class="distribution-header">slinger</span> <span class="muscle-header">tycoon</span></h1>
               </div>
 
-              <div class="col-xs-12 col-sm-3 col-md-2" ng-if="!gameModel.hideTop">
+              <div class="col-xs-12 col-sm-3 col-md-2" ng-if="!options.hideTop">
                   <button onclick="$('#optionsModal').modal('show');" class="btn btn-default options-button"><span class="iconred glyphicon glyphicon-cog"></span> Options</button>
                   <button ng-click="hideTop()" class="btn btn-default"><span class="glyphicon glyphicon-eye-close icongreen"></span> Hide Title</button>
               </div>
 
               <div class="col-xs-12 col-sm-6" id="cash-wrap" >
-                  <p ng-show="!gameModel.workMode" ng-class="{'hidden' : gameModel.hideTop}"><strong>Buy cannabis plants to grow weed. Hire dealers to sell the weed. Hire muscle to earn respect. Use respect to expand your territory or negotiate better prices.</strong></p>
-                  <div class="strong" ng-class="{'hidden' : gameModel.hideTop}">
+                  <p ng-show="!options.workMode" ng-class="{'hidden' : options.hideTop}"><strong>Buy cannabis plants to grow weed. Hire dealers to sell the weed. Hire muscle to earn respect. Use respect to expand your territory or negotiate better prices.</strong></p>
+                  <div class="strong" ng-class="{'hidden' : options.hideTop}">
                       Current cash:
                       <span class="current-cash">{{gameModel.cash|money}}</span>
                       <span class="glyphicon" ng-class="cashPerSecond > 0 ? 'glyphicon-arrow-up production-header' : 'glypicon-arrow-down muscle-header'"></span>
                       <span ng-class="cashPerSecond > 0 ? 'production-header' : 'muscle-header'">{{cashPerSecond|money}} / sec</span>
                   </div>
-                  <p class="strong" ng-class="{'hidden' : gameModel.hideTop}">Total earned {{gameModel.totalCashEarned|money}}</p>
-                  <p class="strong" ng-class="{'hidden' : gameModel.hideTop}">
+                  <p class="strong" ng-class="{'hidden' : options.hideTop}">Total earned {{gameModel.totalCashEarned|money}}</p>
+                  <p class="strong" ng-class="{'hidden' : options.hideTop}">
                       Current respect: <span class="current-cash">{{gameModel.respect|respect}}</span>
                       <span class="glyphicon glyphicon-arrow-up muscle-header" ng-show="gameModel.respectPerSecond > 0"></span>
                       <span class="muscle-header" ng-show="gameModel.respectPerSecond > 0">{{gameModel.respectPerSecond|respect}} / sec</span>
@@ -154,7 +154,7 @@
                   <p class="strong" ng-show="kingpins.length > 0">You have {{kingpins.length}} Kingpin{{kingpins.length > 1 ? "s" : ""}}, giving you a {{kingpins.length * 100}}% bonus to all drug and respect production</p>
               </div>
 
-              <div class="col-xs-12 col-sm-6" ng-if="!gameModel.hideTop">
+              <div class="col-xs-12 col-sm-6" ng-if="!options.hideTop">
                   <p class="distribution strong" ng-show="gameModel.buff">{{buffMsg}}</p>
                   <p class="distribution strong" ng-show="levelUpMsg">{{levelUpMsg}}</p>
                   <p class="distribution strong" ng-repeat="dealer in gameModel.dealers" ng-show="dealer.arrested">{{dealer.arrestMessage}}</p>
@@ -187,7 +187,7 @@
                     <div class="clearfix"></div>
                 </div>
                 <div class="row">
-                <div class="col-xs-12 drug-element" ng-repeat="drug in gameModel.drugs track by $index" ng-class="{'col-lg-6' : gameModel.kongregateLargeWindow}">
+                <div class="col-xs-12 drug-element" ng-repeat="drug in gameModel.drugs track by $index" ng-class="{'col-lg-6' : options.kongregateLargeWindow}">
                 <div  class="drug-anim">
 
                     <div class="drug" ng-click="selectDrug(drug)" ng-class="{'open' : drug.selected}">
@@ -249,7 +249,7 @@
             </div>
 
 
-            <div class="col-xs-12 col-sm-4 distribution col-pad-5" ng-class="{'hidden-xs':currentTab != 'distribution', 'col-lg-5' : gameModel.kongregateLargeWindow}">
+            <div class="col-xs-12 col-sm-4 distribution col-pad-5" ng-class="{'hidden-xs':currentTab != 'distribution', 'col-lg-5' : options.kongregateLargeWindow}">
                 <h3 class="strong distribution-header">Distribution</h3>
 
                 <div ng-repeat="upgrade in dealerResearch | orderBy:'price'" class="mb-10 research-anim">
@@ -283,7 +283,7 @@
                     </ul>
                 </div>
                 <div class="row dealer-row">
-                <div class="col-xs-12 dealer-element" ng-repeat="dealer in gameModel.dealers | orderBy:dealerSort:dealerSortReverse track by $index" ng-class="{'col-lg-6' : gameModel.kongregateLargeWindow}">
+                <div class="col-xs-12 dealer-element" ng-repeat="dealer in gameModel.dealers | orderBy:dealerSort:dealerSortReverse track by $index" ng-class="{'col-lg-6' : options.kongregateLargeWindow}">
                   <div class="dealer-ui dealer-anim" >
                       <div class="dealer" ng-class="{'open':dealer.selected}" ng-click="selectDealer(dealer)">
                           <span class="glyphicon glyphicon-exclamation-sign" ng-show="dealer.arrested"></span>
@@ -352,7 +352,7 @@
                 </div>
               </div>
 
-            <div class="col-xs-12 col-sm-4 muscle-column col-pad-5" ng-class="{'hidden-xs':currentTab != 'muscle', 'col-lg-3' : gameModel.kongregateLargeWindow}">
+            <div class="col-xs-12 col-sm-4 muscle-column col-pad-5" ng-class="{'hidden-xs':currentTab != 'muscle', 'col-lg-3' : options.kongregateLargeWindow}">
                 <h3 class="strong muscle-header">Muscle</h3>
 
                 <div class="btn-group" role="group" style="width:100%;">
@@ -395,7 +395,7 @@
             </div>
         </div>
 
-        <div class="row" ng-if="gameModel.hideTop" style="margin-top:20px;">
+        <div class="row" ng-if="options.hideTop" style="margin-top:20px;">
           <div class="col-xs-12 col-sm-3 col-sm-offset-3">
               <button onclick="$('#optionsModal').modal('show');" class="btn btn-default options-button"><span class="iconred glyphicon glyphicon-cog"></span> Options</button>
           </div>
@@ -412,7 +412,7 @@
                         <h4 class="modal-title" id="myModalLabel">Recruit a dealer captain</h4>
                     </div>
                     <div class="modal-body row">
-                        <div class="col-xs-12 pb-10"><p>Recruit a dealer captain for {{prestigeDealerPrice | money}}</p><p class="strong">This will reset your current game progress but give you access to a captain dealer with perfect attributes and persistant upgrades.</p></div>
+                        <div class="col-xs-12 pb-10"><p>Recruit a dealer captain for {{prestigeDealerPrice * discountMulti()| money}}</p><p class="strong">This will reset your current game progress but give you access to a captain dealer with perfect attributes and persistant upgrades.</p></div>
                         <div class="col-xs-12 col-sm-8">
                             <div class="input-group">
                                 <span class="input-group-addon">Dealer name</span>
