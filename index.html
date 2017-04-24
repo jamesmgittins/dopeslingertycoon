@@ -226,7 +226,7 @@
                                     <span class="glyphicon icongreen glyphicon-info-sign" style="width:100%;"></span>
                                 </button>
                             </div>
-                            <div style="display:none;"><p class="jg-tooltip">Buy {{producer.name == 'Opium Farm' ? 'an' : 'a'}} {{producer.name.toLowerCase()}} to increase your {{drug.name.toLowerCase()}} production by {{producer.prodPerUnit|weight}} per second</p></div>
+                            <div style="display:none;"><p class="jg-tooltip">Buy {{producer.name == 'Opium Farm' ? 'an' : 'a'}} {{producer.name.toLowerCase()}} to increase your {{drug.name.toLowerCase()}} production by {{producer.prodPerUnit * kingpinMulti()|weight}} per second</p></div>
                             <progressbar animate="false" value="cashPercentage(productionPrice(producer))" ng-class="gameModel.cash < productionPrice(producer) ? 'active progress-striped' : 'progress-bar-success'"></progressbar>
                         </div>
 
