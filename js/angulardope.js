@@ -156,37 +156,44 @@ function muscle(name, price, respect, priceMulti) {
   this.respect = respect;
   this.priceMulti = priceMulti;
 }
+var createMuscleMaster = function() {
+  return [
+    new muscle('Hood Rat', 80, 1, 1.2),
+    new muscle('Young Thug', 1000, 5, 1.25),
+    new muscle('Hired Goon', 12000, 75, 1.27),
+    new muscle('Crooked Cop', 130000, 500, 1.28),
+    new muscle('Bought Judge', 1500000, 2000, 1.3),
+    new muscle('Corrupt Senator', 4500000, 7500, 1.31),
+    new muscle('Puppet World Leader', 33700000, 45000, 1.32),
+    new muscle('Hunter Killer Submarine', 7500100800, 150000, 1.33),
+    new muscle('Nimitz-class aircraft carrier', 45500700000, 350000, 1.34),
+    new muscle('Orbital Ion Cannon', 9345500700000, 7490000, 1.35)
+  ];
+};
 
-var muscleMaster = [
-  new muscle('Hood Rat', 80, 1, 1.2),
-  new muscle('Young Thug', 1000, 5, 1.25),
-  new muscle('Hired Goon', 12000, 75, 1.27),
-  new muscle('Crooked Cop', 130000, 500, 1.28),
-  new muscle('Bought Judge', 1500000, 2000, 1.3),
-  new muscle('Corrupt Senator', 4500000, 7500, 1.31),
-  new muscle('Puppet World Leader', 33700000, 45000, 1.32),
-  new muscle('Hunter Killer Submarine', 7500100800, 150000, 1.33),
-  new muscle('Nimitz-class aircraft carrier', 45500700000, 350000, 1.34),
-  new muscle('Orbital Ion Cannon', 9345500700000, 7490000, 1.35)
-];
+var muscleMaster = createMuscleMaster();
 
-var drugsMaster = [
-  new Drug('Weed', 4.2, 0),
-  new Drug('Magic Mushrooms', 6, 2000),
-  new Drug('Meth', 10, 7000),
-  new Drug('Speed', 15, 20000),
-  new Drug('Acid', 20, 40000),
-  new Drug('Crack', 30, 75000),
-  new Drug('PCP', 40, 90000),
-  new Drug('Heroin', 50, 120000),
-  new Drug('MDMA', 60, 180000),
-  new Drug('Cocaine', 70, 250000),
-  new Drug('Nuke', 240, 5500000),
-  new Drug('Cyber Crank', 666.67, 15000000),
-  new Drug('Ephemerol', 3400, 95000000),
-  new Drug('Slo-mo', 11250, 465000000),
-  new Drug('Drencrom', 63250, 1200000000),
-  new Drug('Melange', 270000, 4840000000)];
+var createDrugsMaster = function() {
+  return [
+    new Drug('Weed', 4.2, 0),
+    new Drug('Magic Mushrooms', 6, 2000),
+    new Drug('Meth', 10, 7000),
+    new Drug('Speed', 15, 20000),
+    new Drug('Acid', 20, 40000),
+    new Drug('Crack', 30, 75000),
+    new Drug('PCP', 40, 90000),
+    new Drug('Heroin', 50, 120000),
+    new Drug('MDMA', 60, 180000),
+    new Drug('Cocaine', 70, 250000),
+    new Drug('Nuke', 240, 5500000),
+    new Drug('Cyber Crank', 666.67, 15000000),
+    new Drug('Ephemerol', 3400, 95000000),
+    new Drug('Slo-mo', 11250, 465000000),
+    new Drug('Drencrom', 63250, 1200000000),
+    new Drug('Melange', 270000, 4840000000)];
+};
+
+var drugsMaster = createDrugsMaster();
 
   function Producer(name, basePrice, drug, priceMulti, prodPerUnit) {
     this.name = name;
@@ -197,23 +204,27 @@ var drugsMaster = [
     this.prodPerUnit = prodPerUnit;
   }
 
-  var productionMaster = [
-    new Producer('Cannabis Plant', 15, 'Weed', 1.12, 0.2),
-    new Producer('Mushroom Farm', 150, 'Magic Mushrooms', 1.15, 0.3),
-    new Producer('Meth Cook', 1000, 'Meth', 1.2, 0.5),
-    new Producer('Base Chef', 2500, 'Speed', 1.21, 0.4),
-    new Producer('Lab Technician', 5000, 'Acid', 1.22, 0.5),
-    new Producer('Crack Den', 10000, 'Crack', 1.23, 0.5),
-    new Producer('Chemical Lab', 20000, 'PCP', 1.24, 0.4),
-    new Producer('Opium Farm', 30000, 'Heroin', 1.25, 0.5),
-    new Producer('Chemistry Professor', 40000, 'MDMA', 1.26, 0.4),
-    new Producer('Drug Mule', 50000, 'Cocaine', 1.27, 0.25),
-    new Producer('Robot Criminal', 700000, 'Nuke', 1.28, 0.16),
-    new Producer('Blackhat Hivemind', 2500000, 'Cyber Crank', 1.29, 0.08),
-    new Producer('Secret Facility', 5000000, 'Ephemerol', 1.30, 0.04),
-    new Producer('Chem-tech', 12000000, 'Slo-mo', 1.31, 0.02),
-    new Producer('Droog Squad', 35000000, 'Drencrom', 1.31, 0.015),
-    new Producer('Sandworm', 75000000, 'Melange', 1.32, 0.01)];
+  var createProductionMaster = function() {
+    return [
+      new Producer('Cannabis Plant', 15, 'Weed', 1.12, 0.2),
+      new Producer('Mushroom Farm', 150, 'Magic Mushrooms', 1.15, 0.3),
+      new Producer('Meth Cook', 1000, 'Meth', 1.2, 0.5),
+      new Producer('Base Chef', 2500, 'Speed', 1.21, 0.4),
+      new Producer('Lab Technician', 5000, 'Acid', 1.22, 0.5),
+      new Producer('Crack Den', 10000, 'Crack', 1.23, 0.5),
+      new Producer('Chemical Lab', 20000, 'PCP', 1.24, 0.4),
+      new Producer('Opium Farm', 30000, 'Heroin', 1.25, 0.5),
+      new Producer('Chemistry Professor', 40000, 'MDMA', 1.26, 0.4),
+      new Producer('Drug Mule', 50000, 'Cocaine', 1.27, 0.25),
+      new Producer('Robot Criminal', 700000, 'Nuke', 1.28, 0.16),
+      new Producer('Blackhat Hivemind', 2500000, 'Cyber Crank', 1.29, 0.08),
+      new Producer('Secret Facility', 5000000, 'Ephemerol', 1.30, 0.04),
+      new Producer('Chem-tech', 12000000, 'Slo-mo', 1.31, 0.02),
+      new Producer('Droog Squad', 35000000, 'Drencrom', 1.31, 0.015),
+      new Producer('Sandworm', 75000000, 'Melange', 1.32, 0.01)];
+  };
+
+  var productionMaster = createProductionMaster();
 
     function dealerName() {
       var name = maleFirstNames[Math.floor(Math.random() * maleFirstNames.length)];
@@ -994,7 +1005,6 @@ var drugsMaster = [
 
         if (lastSaved < updateTime - 30000) {
           if (Math.random() > 0.96 && $scope.gameModel.totalCashEarned > 30000) {
-            console.log("Arresting a dealer");
             var dealerToArrest = $scope.gameModel.dealers[Math.floor(Math.random() * $scope.gameModel.dealers.length)];
             if (!dealerToArrest.arrested && !dealerToArrest.payCops) {
               var bailValue = dealerToArrest.cashPerSecond * 95;
@@ -1102,6 +1112,9 @@ var drugsMaster = [
               $scope.prestigeDealers[i].arrested = false;
               $scope.prestigeDealers[i].drug = "Weed";
             }
+            productionMaster = createProductionMaster();
+            muscleMaster = createMuscleMaster();
+            drugsMaster = createDrugsMaster();
 
             try {
               localStorage.removeItem('gameModel');
