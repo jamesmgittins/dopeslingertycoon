@@ -941,7 +941,7 @@ var drugsMaster = createDrugsMaster();
           var drug = $scope.gameModel.drugs[i];
 
           if ($scope.options.autoSilk && $scope.gameModel.silkRoadUnlocked && drug.qty > 1500) {
-            var amountToSell = Math.trunc((drug.qty - 500) / 1000) * 1000;
+            var amountToSell = Math.floor((drug.qty - 500) / 1000) * 1000;
             drug.qty -= amountToSell;
             cashEarned += amountToSell * $scope.drugStreetPrice(drug) * 0.9;
           }
