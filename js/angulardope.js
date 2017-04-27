@@ -1076,7 +1076,7 @@ var drugsMaster = createDrugsMaster();
 
           $scope.calculateAvailableUpgrades();
           $scope.updateDealerDrugIndex();
-          prestigeDealerUpgrade.price = 5000000 * Math.pow(1.15, $scope.prestigeDealers.length + $scope.kingpins.length);
+          prestigeDealerUpgrade.price = 5000000 * Math.pow(1.18, $scope.prestigeDealers.length + $scope.kingpins.length);
           $scope.updatePromise = $interval(update, 200);
           $scope.prestiged = false;
         }
