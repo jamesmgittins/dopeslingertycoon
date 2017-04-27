@@ -26,10 +26,14 @@
     <script src="js/angulardope.js"></script>
     <script>
 
-    // if(document.referrer != "" && document.referrer.indexOf("kongregate.com") == -1 && document.referrer.indexOf("konggames.com") == -1 && document.referrer.indexOf("gti.nz") == -1 && document.referrer.indexOf("jamesgittins.com") == -1) {
-    //     window.location = "http://www.youtube.com/watch_popup?v=oHg5SJYRHA0";
-    //     // alert("stolen");
-    // }
+    if(window.self !== window.top &&
+      document.referrer != "" &&
+      document.referrer.indexOf("kongregate.com") == -1 &&
+      document.referrer.indexOf("konggames.com") == -1 &&
+      document.referrer.indexOf("gti.nz") == -1 &&
+      document.referrer.indexOf("jamesgittins.com") == -1) {
+        window.location = "http://www.youtube.com/watch_popup?v=oHg5SJYRHA0";
+    }
 
     var alwaysShowScroll = false;
     var isFixed = false;
